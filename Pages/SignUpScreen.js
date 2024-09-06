@@ -9,9 +9,9 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { Card, TextInput } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from '@react-navigation/native';
 
-function SignUp() {
+function SignUpScreen() {
     const navigation = useNavigation();
 
     return (
@@ -73,19 +73,17 @@ function SignUp() {
                             <Text style={styles.signInLabel}> Sign Up </Text>
                         </TouchableOpacity>
                         <View style={styles.accountText}>
-                            <Text style={{ textDecorationLine: "underline" }}>
-                                Already have an account?
-                                <TouchableOpacity
-                                    onPress={() =>
-                                        navigation.navigate("./Pages/SignUp")
-                                    }
-                                >
-                                    <Text style={styles.signUpLabel}>
-                                        {" "}
-                                        Sign In here
-                                    </Text>
-                                </TouchableOpacity>
-                            </Text>
+                            <TouchableOpacity
+                                    onPress={() => navigation.navigate('Login')}
+                            >
+                                <Text style={{ textDecorationLine: "underline" }}>
+                                    Already have an account?
+                                        <Text style={styles.SignInLabel}>
+                                            {" "}
+                                            Sign In here
+                                        </Text>
+                                </Text>
+                            </TouchableOpacity>
                         </View>
                     </Card>
                 </View>
@@ -94,7 +92,7 @@ function SignUp() {
     );
 }
 
-export default SignUp;
+export default SignUpScreen;
 
 const styles = StyleSheet.create({
     mainImage: {
@@ -105,7 +103,7 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
     },
-    signUpLabel: {
+    SignInLabel: {
         color: "#FCD12A",
     },
     accountText: {
@@ -132,11 +130,11 @@ const styles = StyleSheet.create({
     titleLabel: {
         fontSize: 30,
         fontWeight: "700",
-        marginVertical: -40,
+        marginVertical: -50,
     },
     imageContainer: {
         alignItems: "center",
-        marginVertical: 30,
+        marginVertical: 40,
     },
     mainContainer: {
         marginTop: 30,
