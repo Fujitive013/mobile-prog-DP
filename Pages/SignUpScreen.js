@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
     Image,
     StyleSheet,
@@ -7,12 +8,37 @@ import {
     Platform,
     ScrollView,
     TouchableOpacity,
+    Alert,
 } from "react-native";
 import { Card, TextInput } from "react-native-paper";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
 function SignUpScreen() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const navigation = useNavigation();
+
+    // if password is strictly equal to confirmPassword and also not empty
+    const isPasswordMatch = password === confirmPassword && password !== "";
+    const isEmailValid = email.includes("@.");
+    // here we check if the email input has and @ and . (dot) symbol
+
+    const handlePress = () => {
+        if (isPasswordMatch && isEmailValid) {
+            console.log("Sign Up pressed");
+            // here is after sign up button is pressed
+            // diri mabutang checking sa ceredentials
+        } else {
+            Alert.alert(
+                "Sign Up Failed",
+                !isEmailValid
+                    ? "Please enter a valid email."
+                    : "Passwords do not match.",
+                [{ text: "OK" }]
+            );
+        }
+    };
 
     return (
         <KeyboardAvoidingView
@@ -37,15 +63,17 @@ function SignUpScreen() {
                                 style={styles.userImage}
                             />
                         </View>
-                        <Text style={styles.emailLabel}> Email </Text>
+                        <Text style={styles.emailLabel}>Email</Text>
                         <TextInput
                             placeholder="Email"
                             placeholderTextColor="#AFAFAF"
                             style={styles.inputEmailAddress}
                             mode="outlined"
                             theme={{ roundness: 20 }}
+                            value={email}
+                            onChangeText={(text) => setEmail(text)}
                         />
-                        <Text style={styles.passwordLabel}> Password </Text>
+                        <Text style={styles.passwordLabel}>Password</Text>
                         <TextInput
                             placeholder="Password"
                             placeholderTextColor="#AFAFAF"
@@ -53,35 +81,48 @@ function SignUpScreen() {
                             secureTextEntry
                             mode="outlined"
                             theme={{ roundness: 20 }}
+                            value={password}
+                            onChangeText={(text) => setPassword(text)}
                         />
-                        <Text style={styles.passwordLabel}>
-                            {" "}
-                            Confirm Password{" "}
+                        <Text style={styles.confirmPasswordLabel}>
+                            Confirm Password
                         </Text>
                         <TextInput
-                            placeholder="Password"
+                            placeholder="Confirm Password"
                             placeholderTextColor="#AFAFAF"
                             style={styles.inputConfirmPassword}
                             secureTextEntry
                             mode="outlined"
                             theme={{ roundness: 20 }}
+                            value={confirmPassword}
+                            onChangeText={(text) => setConfirmPassword(text)}
                         />
                         <TouchableOpacity
-                            style={styles.submitButton}
-                            onPress={() => console.log("Sign Up pressed")}
+                            style={[
+                                styles.submitButton,
+                                {
+                                    opacity:
+                                        isPasswordMatch && isEmailValid
+                                            ? 1
+                                            : 0.5,
+                                },
+                            ]}
+                            onPress={handlePress} // Call the handler
                         >
-                            <Text style={styles.signInLabel}> Sign Up </Text>
+                            <Text style={styles.signInLabel}>Sign Up</Text>
                         </TouchableOpacity>
                         <View style={styles.accountText}>
                             <TouchableOpacity
-                                    onPress={() => navigation.navigate('Login')}
+                                onPress={() => navigation.navigate("Login")}
                             >
-                                <Text style={{ textDecorationLine: "underline" }}>
+                                <Text
+                                    style={{ textDecorationLine: "underline" }}
+                                >
                                     Already have an account?
-                                        <Text style={styles.SignInLabel}>
-                                            {" "}
-                                            Sign In here
-                                        </Text>
+                                    <Text style={styles.SignInLabel}>
+                                        {" "}
+                                        Sign In here
+                                    </Text>
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -155,6 +196,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#F9F9F9",
     },
     passwordLabel: {
+        fontSize: 17,
+        marginBottom: 5,
+    },
+    confirmPasswordLabel: {
         fontSize: 17,
         marginBottom: 5,
     },
