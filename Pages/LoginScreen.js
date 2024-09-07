@@ -23,12 +23,10 @@ function LoginScreen() {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.imageContainer}>
                     <Image
-                        source={require("../Images/FoxLogo.png")}
-                        style={styles.mainImage}
+                        source={require("../Images/text_logo_black.png")}
+                        style={[styles.mainImage, { width: 300, height: 300 }]}
+                        resizeMode="contain"
                     />
-                </View>
-                <View style={styles.titleContainer}>
-                    <Text style={styles.titleLabel}>CunningCarat</Text>
                 </View>
                 <View style={styles.mainContainer}>
                     <Card style={styles.subContainer}>
@@ -84,8 +82,7 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
     mainImage: {
-        width: 120,
-        height: 150,
+        marginBottom: -10,
     },
     userImage: {
         width: 50,
@@ -110,17 +107,10 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: "center",
     },
-    titleContainer: {
-        alignItems: "center",
-    },
-    titleLabel: {
-        fontSize: 30,
-        fontWeight: "700",
-        marginVertical: -40,
-    },
     imageContainer: {
         alignItems: "center",
         marginVertical: 30,
+        marginBottom: -10,
     },
     mainContainer: {
         marginTop: 30,
