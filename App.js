@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import LoginScreen from "./Pages/LoginScreen";
 import SignUpScreen from "./Pages/SignUpScreen";
 import IndexPage from "./Pages/IndexPage";
-import Book from "./Pages/Book";
+import Book from "./Pages/Screens/Book";
 import Dashboard from "./Pages/Dashboard";
 
 const Stack = createNativeStackNavigator();

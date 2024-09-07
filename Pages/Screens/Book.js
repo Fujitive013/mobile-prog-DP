@@ -8,7 +8,7 @@ const Book = () => {
         <View style={styles.container}>
             <View style={styles.topRow}>
                 <Image
-                    source={require("../Images/text_logo_black.png")}
+                    source={require("../../Images/text_logo_black.png")}
                     style={styles.mainImage}
                 />
                 <View style={styles.containerTitle}>
@@ -38,7 +38,7 @@ const Book = () => {
                             }}
                         >
                             <Image
-                                source={require("../Images/PickUp.png")}
+                                source={require("../../Images/PickUp.png")}
                                 style={{
                                     width: 24,
                                     height: 24,
@@ -58,7 +58,7 @@ const Book = () => {
                             }}
                         >
                             <Image
-                                source={require("../Images/DropOut.png")}
+                                source={require("../../Images/DropOut.png")}
                                 style={{
                                     width: 24,
                                     height: 24,
@@ -75,7 +75,7 @@ const Book = () => {
                             }}
                         >
                             <Image
-                                source={require("../Images/Fare.png")}
+                                source={require("../../Images/Fare.png")}
                                 style={{
                                     width: 24,
                                     height: 24,
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         flexDirection: "column", // Stack elements vertically
         justifyContent: "flex-start", // Move elements to the top
         alignItems: "center", // Center elements horizontally
-        backgroundColor: "#FFDC2E",
+        backgroundColor: "#F2F0EF",
         height: "100%",
     },
     topRow: {
