@@ -135,6 +135,13 @@ const styles = StyleSheet.create({
         marginHorizontal: -295,
         backgroundColor: "#FFE761",
     },
+    containerFour: {
+        height: 150,
+        width: 150,
+        marginVertical: 150,
+        marginHorizontal: 305,
+        backgroundColor: "#FFE761",
+    },
     descriptionVoucher: {
         fontSize: 11,
         marginHorizontal: 10,
