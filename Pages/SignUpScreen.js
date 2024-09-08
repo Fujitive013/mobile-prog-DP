@@ -21,12 +21,13 @@ function SignUpScreen() {
 
     // if password is strictly equal to confirmPassword and also not empty
     const isPasswordMatch = password === confirmPassword && password !== "";
-    const isEmailValid = email.includes("@.");
+    const isEmailValid = email.includes("@") && email.includes(".");
     // here we check if the email input has and @ and . (dot) symbol
 
     const handlePress = () => {
         if (isPasswordMatch && isEmailValid) {
             console.log("Sign Up pressed");
+            navigation.navigate("Registration");
             // here is after sign up button is pressed
             // diri mabutang checking sa ceredentials
         } else {
