@@ -7,6 +7,7 @@ import {
     Platform,
     ScrollView,
     TouchableOpacity,
+    Image,
     Alert,
 } from "react-native";
 import { Button, Card, TextInput } from "react-native-paper";
@@ -19,6 +20,7 @@ function RegistrationScreen() {
     const [lastName, setLastName] = useState("");
     const [age, setAge] = useState("");
     const [address, setAddress] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
 
     const handleRegister = () => {
         // Basic validation
@@ -26,7 +28,8 @@ function RegistrationScreen() {
             firstName === "" ||
             lastName === "" ||
             age === "" ||
-            address === ""
+            address === "" ||
+            phoneNumber === ""
         ) {
             Alert.alert("Missing Information", "Please fill out all fields.");
             return;
@@ -47,18 +50,23 @@ function RegistrationScreen() {
         >
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.mainContainer}>
+                    <Image
+                        source={require('../Images/backgroundLogo.png')} // replace with your image file
+                        style={styles.backgroundImage}
+                        resizeMode="cover"
+                    />
                     <Card style={styles.subContainer}>
+                        <Image
+                            source={require("../Images/text_logo_black.png")}
+                            style={[styles.mainImage, { width: 190, height: 170, alignSelf: 'center' }]}
+                            resizeMode="contain"
+                        />
                         <View>
                             <Text style={styles.headerLabel}>
-                                Tell us about yourself
-                            </Text>
-                        </View>
-                        <View>
-                            <Text style={styles.registerLabel}>
                                 Registration
                             </Text>
                         </View>
-                        <View>
+                        <View style={{flexDirection:'row'}}>
                             <View style={styles.nameInput}>
                                 <Text style={styles.label}> First Name </Text>
                                 <TextInput
@@ -84,21 +92,37 @@ function RegistrationScreen() {
                                 />
                             </View>
                         </View>
-
-                        <Text style={styles.label}> Age </Text>
-                        <TextInput
-                            placeholder="Age"
-                            placeholderTextColor="#AFAFAF"
-                            style={styles.inputField}
-                            mode="outlined"
-                            keyboardType="numeric"
-                            value={age}
-                            onChangeText={setAge}
-                            theme={{ roundness: 20 }}
-                        />
-
-                        <Text style={styles.label}> Address </Text>
-                        <TextInput
+                        <View style={{flexDirection:'row'}}>
+                            <View style={styles.nameInput}>
+                                <Text style={styles.label}> Age </Text>
+                                <TextInput
+                                placeholder="Age"
+                                placeholderTextColor="#AFAFAF"
+                                style={styles.inputField}
+                                mode="outlined"
+                                value={age}
+                                onChangeText={setAge}
+                                theme={{ roundness: 20 }}
+                                keyboardType="numeric"
+                                />
+                            </View>
+                            <View style={styles.nameInput}>
+                                <Text style={styles.label}> Phone Number </Text>
+                                <TextInput
+                                placeholder="Phone Number"
+                                placeholderTextColor="#AFAFAF"
+                                style={styles.inputField}
+                                mode="outlined"
+                                value={phoneNumber}
+                                onChangeText={setPhoneNumber}
+                                theme={{ roundness: 20 }}
+                                keyboardType="numeric"
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.nameInput}>
+                            <Text style={styles.label}> Address </Text>
+                            <TextInput
                             placeholder="Address"
                             placeholderTextColor="#AFAFAF"
                             style={styles.inputField}
@@ -106,7 +130,8 @@ function RegistrationScreen() {
                             value={address}
                             onChangeText={setAddress}
                             theme={{ roundness: 20 }}
-                        />
+                            />
+                        </View>
                         <Button
                             mode="elevated"
                             style={styles.submitButton}
@@ -124,8 +149,12 @@ function RegistrationScreen() {
 export default RegistrationScreen;
 
 const styles = StyleSheet.create({
+    nameInput: {
+        marginRight: 10,
+        flex: 1,
+    },
     headerLabel: {
-        fontSize: 24,
+        fontSize: 30,
         fontWeight: "bold",
         textAlign: "center",
         color: "#333",
@@ -135,12 +164,13 @@ const styles = StyleSheet.create({
         color: "white",
     },
     label: {
-        fontSize: 17,
+        fontSize: 14,
         marginTop: 15,
         marginBottom: 5,
     },
     inputField: {
-        marginBottom: 10,
+        width: "100%",
+        justifyContent: 'space-between',
         backgroundColor: "#F9F9F9",
     },
     submitButton: {
@@ -159,17 +189,27 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     mainContainer: {
-        marginTop: 30,
-        padding: 20,
+        marginBottom: "100%",
+        padding: 15,
     },
     subContainer: {
         backgroundColor: "#F9F9F9",
-        padding: 35,
+        padding: 20,
         borderRadius: 25,
         paddingVertical: 20,
+        marginTop: 50,
     },
     container: {
         flex: 1,
         backgroundColor: "#FFDC2E",
+    },
+    backgroundImage: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        width: "110%",
+        height: "120%"
     },
 });

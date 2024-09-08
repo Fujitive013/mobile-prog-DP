@@ -7,6 +7,7 @@ import IndexPage from "./Pages/IndexPage";
 import Book from "./Pages/Screens/Book";
 import Dashboard from "./Pages/Dashboard";
 import Registration from "./Pages/Registration";
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
