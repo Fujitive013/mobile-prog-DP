@@ -60,11 +60,11 @@ const Profile = () => {
                     style={{ width: 65, height: 65 }}
                     />
                     <Text style={{fontSize: 17, marginBottom: 20}}>Facebook</Text>
-                    <Text style={{fontSize: 17, marginTop: 20, marginLeft: -78, opacity: 0.5}}> CONNECTED </Text>
+                    <Text style={{fontSize: 17, marginTop: 20, marginLeft: -78, opacity: 0.5}}> DISABLED </Text>
                     <Switch styles={styles.facebookSwitch}
                         onValueChange={toggleSwitch}
                         value={isEnabled}
-                        style={{ marginLeft: 80, transform: [{ scale: 1.5 }] }}
+                        style={{ marginLeft: 110, transform: [{ scale: 1.5 }] }}
                     />
                 </View>
             </Card>
