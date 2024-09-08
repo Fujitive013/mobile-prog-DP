@@ -6,7 +6,7 @@ import SignUpScreen from "./Pages/SignUpScreen";
 import IndexPage from "./Pages/IndexPage";
 import Book from "./Pages/Screens/Book";
 import Dashboard from "./Pages/Dashboard";
-
+import Registration from "./Pages/Registration";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -22,6 +22,7 @@ export default function App() {
                 <Stack.Screen name="SignUp" component={SignUpScreen} />
                 <Stack.Screen name="Book" component={Book} />
                 <Stack.Screen name="Dashboard" component={Dashboard} />
+                <Stack.Screen name="Registration" component={Registration} />
             </Stack.Navigator>
         </NavigationContainer>
     );
