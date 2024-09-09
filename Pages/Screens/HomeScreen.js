@@ -98,10 +98,18 @@ const HomeScreen = () => {
                 </Card>
             </View>
             <View style={{ flexDirection: "row" }}>
-                <Card style={styles.containerOne} />
-                <Card style={styles.containerTwo} />
-                <Card style={styles.containerThree} />
-                <Card style={styles.containerFour} />
+                <TouchableOpacity>
+                    <Card style={styles.containerOne} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Card style={styles.containerTwo} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Card style={styles.containerThree} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Card style={styles.containerFour} />
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -111,7 +119,7 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
     containerOne: {
-        height: 150,
+        height: 120,
         width: 150,
         marginVertical: -20,
         marginHorizontal: 25,
@@ -122,24 +130,24 @@ const styles = StyleSheet.create({
         width: 170,
     },
     containerTwo: {
-        height: 150,
+        height: 120,
         width: 150,
         marginVertical: -20,
         marginHorizontal: -15,
         backgroundColor: "#FFE761",
     },
     containerThree: {
-        height: 150,
+        height: 120,
         width: 150,
-        marginVertical: 150,
+        marginVertical: 120,
         marginHorizontal: -295,
         backgroundColor: "#FFE761",
     },
     containerFour: {
-        height: 150,
+        height: 120,
         width: 150,
-        marginVertical: 150,
-        marginHorizontal: 305,
+        marginVertical: 120,
+        marginHorizontal: -135,
         backgroundColor: "#FFE761",
     },
     descriptionVoucher: {
