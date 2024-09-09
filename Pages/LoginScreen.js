@@ -9,7 +9,7 @@ import {
     ScrollView,
     TouchableOpacity,
 } from "react-native";
-import { Button, Card, TextInput } from "react-native-paper";
+import { Card, TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
 function LoginScreen() {
@@ -53,9 +53,18 @@ function LoginScreen() {
                             mode="outlined"
                             theme={{ roundness: 20 }}
                         />
-                        <Button mode="elevated" style={styles.submitButton}>
-                            <Text style={styles.signInLabel}> Sign In </Text>
-                        </Button>
+
+                        {/* Updated TouchableOpacity for the Sign In Button */}
+                        <TouchableOpacity
+                            style={styles.submitButton}
+                            onPress={() => {
+                                /* Handle sign in logic */
+                            }}
+                            activeOpacity={0.7} // Apply opacity change on press
+                        >
+                            <Text style={styles.signInLabel}>Sign In</Text>
+                        </TouchableOpacity>
+
                         <View style={styles.accountText}>
                             <TouchableOpacity
                                 onPress={() => navigation.navigate("SignUp")}
@@ -102,6 +111,8 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         backgroundColor: "#424242",
         borderRadius: 10,
+        alignItems: "center", // Center the text inside the button
+        paddingVertical: 12, // Add some padding for better touch area
     },
     scrollContainer: {
         flexGrow: 1,
