@@ -1,12 +1,12 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet } from "react-native";
-import LoginScreen from "./Pages/LoginScreen";
-import SignUpScreen from "./Pages/SignUpScreen";
-import IndexPage from "./Pages/IndexPage";
+import LoginModal from "./Pages/Modals/LoginModal";
+import SignupModal from "./Pages/Modals/SignupModal";
 import Book from "./Pages/Screens/Book";
 import Dashboard from "./Pages/Dashboard";
 import Registration from "./Pages/Registration";
+import LandingPage from "./Pages/LandingPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -18,9 +18,9 @@ export default function App() {
                     headerShown: false,
                 }}
             >
-                <Stack.Screen name="Index" component={IndexPage} />
-                <Stack.Screen name="Login" component={LoginScreen} />
-                <Stack.Screen name="SignUp" component={SignUpScreen} />
+                <Stack.Screen name="LandingPage" component={LandingPage} />
+                <Stack.Screen name="Login" component={LoginModal} />
+                <Stack.Screen name="SignUp" component={SignupModal} />
                 <Stack.Screen name="Book" component={Book} />
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 <Stack.Screen name="Registration" component={Registration} />
