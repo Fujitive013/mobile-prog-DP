@@ -97,6 +97,23 @@ const SignUpModal = ({ visible, onClose }) => {
                             onChangeText={setConfirmPassword}
                         />
                     </View>
+
+                    {/* Password match indicator */}
+                    {password !== "" && confirmPassword !== "" && (
+                        <Text
+                            style={[
+                                styles.passwordMatchIndicator,
+                                {
+                                    color: isPasswordMatch ? "green" : "red",
+                                },
+                            ]}
+                        >
+                            {isPasswordMatch
+                                ? "Passwords match"
+                                : "Passwords do not match"}
+                        </Text>
+                    )}
+
                     <TouchableOpacity
                         style={[
                             styles.submitButton,
@@ -178,5 +195,10 @@ const styles = StyleSheet.create({
         color: "#000000",
         textAlign: "right",
         marginRight: 10,
+    },
+    passwordMatchIndicator: {
+        fontSize: 14,
+        marginBottom: 10,
+        textAlign: "center",
     },
 });
