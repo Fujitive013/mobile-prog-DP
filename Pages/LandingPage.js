@@ -50,6 +50,15 @@ const LandingPage = () => {
                     <Text style={styles.navButtonText}>Registration</Text>
                 </TouchableOpacity>
             </View>
+
+            <View style={styles.navButtons}>
+                <TouchableOpacity
+                    style={styles.navButton}
+                    onPress={() => navigation.navigate("RegistrationModal")}
+                >
+                    <Text style={styles.navButtonText}>Registration Modal</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };

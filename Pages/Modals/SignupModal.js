@@ -9,8 +9,11 @@ import {
 } from "react-native";
 import { Card, TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import the icons
+import { useNavigation } from '@react-navigation/native';
 
 const SignUpModal = ({ visible, onClose }) => {
+    const navigation = useNavigation();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -29,9 +32,9 @@ const SignUpModal = ({ visible, onClose }) => {
             return;
         }
 
+        navigation.navigate('RegistrationModal'); // Navigate to RegistrationModal
+
         // Proceed with sign-up logic here (e.g., API call)
-        // On successful sign-up:
-        Alert.alert("Success", "You have successfully signed up!");
         onClose(); // Close the modal on success
     };
 

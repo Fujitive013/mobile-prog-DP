@@ -7,6 +7,7 @@ import Book from "./Pages/Screens/Book";
 import Dashboard from "./Pages/Dashboard";
 import Registration from "./Pages/Registration";
 import LandingPage from "./Pages/LandingPage";
+import RegistrationModal from "./Pages/Modals/RegistrationModal";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,7 @@ export default function App() {
                 <Stack.Screen name="Book" component={Book} />
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 <Stack.Screen name="Registration" component={Registration} />
+                <Stack.Screen name="RegistrationModal" component={RegistrationModal} />
             </Stack.Navigator>
         </NavigationContainer>
     );
