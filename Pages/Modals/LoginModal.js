@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Modal, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+    Modal,
+    StyleSheet,
+    Text,
+    View,
+    TouchableOpacity,
+    Alert,
+} from "react-native";
 import { Card, TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import the icons
 import { useNavigation } from "@react-navigation/native";
@@ -9,8 +16,17 @@ const LoginModal = ({ visible, onClose }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const isEmailValid = email.includes("@") && email.includes(".");
+
     const handleLogin = () => {
+        if (!isEmailValid) {
+            Alert.alert("Invalid Email", "Please enter a valid email address.");
+            return;
+        }
+
         console.log("Login successful");
+        setEmail("");
+        setPassword("");
         navigation.navigate("Dashboard");
         onClose(); // Close the modal after login
     };
@@ -55,8 +71,15 @@ const LoginModal = ({ visible, onClose }) => {
                             onChangeText={setPassword}
                         />
                     </View>
+
                     <TouchableOpacity
-                        style={styles.submitButton}
+                        style={[
+                            styles.submitButton,
+                            {
+                                opacity: isEmailValid ? 1 : 0.5,
+                            },
+                        ]}
+                        disabled={!isEmailValid} // Disable if email is invalid
                         onPress={handleLogin}
                     >
                         <Text style={styles.submitLabel}>Sign In</Text>
