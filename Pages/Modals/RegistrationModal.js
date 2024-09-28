@@ -5,12 +5,13 @@ import {
     StyleSheet,
     Text,
     View,
-    Alert
+    Alert,
+    TouchableOpacity,
 } from "react-native";
 import { Card, TextInput, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import the icons
 
-const RegistrationModal = ({ visible }) => {
+const RegistrationModal = ({ visible, onClose }) => {
     const navigation = useNavigation();
 
     const [firstName, setFirstName] = useState("");
@@ -37,117 +38,120 @@ const RegistrationModal = ({ visible }) => {
         }
 
         Alert.alert("Success", "You have successfully signed up!");
-        navigation.navigate('Dashboard'); // Navigate to RegistrationModal
+        onClose();
+        navigation.navigate("Dashboard"); // Navigate to RegistrationModal
     };
 
-return (
-    <Modal transparent visible={visible} animationType="slide">
-        <View style={styles.modalContainer}>
-            <Card style={styles.card}>
-                <View>
-                    <Text style={styles.SignUpLabel}>Registration</Text>
-                </View>
-                <Text style={styles.allLabels}>First Name</Text>
-                <View style={styles.inputContainer}>
-                    <Icon
-                        name="email"
-                        size={20}
-                        color="#AFAFAF"
-                        style={styles.icon}
-                    />
-                    <TextInput
-                        placeholder="First Name"
-                        placeholderTextColor="#AFAFAF"
-                        style={styles.inputField}
-                        mode="outlined"
-                        value={firstName}
-                        onChangeText={setFirstName}
-                    />
-                </View>
-                <Text style={styles.allLabels}>Last Name</Text>
-                <View style={styles.inputContainer}>
-                    <Icon
-                        name="email"
-                        size={20}
-                        color="#AFAFAF"
-                        style={styles.icon}
-                    />
-                    <TextInput
-                        placeholder="Last Name"
-                        placeholderTextColor="#AFAFAF"
-                        style={styles.inputField}
-                        mode="outlined"
-                        value={lastName}
-                        onChangeText={setLastName}
-                    />
-                </View>
-                <Text style={styles.allLabels}>Age</Text>
-                <View style={styles.inputContainer}>
-                    <Icon
-                        name="perm-contact-calendar"
-                        size={20}
-                        color="#AFAFAF"
-                        style={styles.icon}
-                    />
-                    <TextInput
-                        placeholder="Age"
-                        placeholderTextColor="#AFAFAF"
-                        style={styles.inputField}
-                        mode="outlined"
-                        value={age}
-                        onChangeText={setAge}
-                    />
-                </View>
-                <Text style={styles.allLabels}>Phone Number</Text>
-                <View style={styles.inputContainer}>
-                    <Icon
-                        name="phone"
-                        size={20}
-                        color="#AFAFAF"
-                        style={styles.icon}
-                    />
-                    <TextInput
-                        placeholder="Phone Number"
-                        placeholderTextColor="#AFAFAF"
-                        style={styles.inputField}
-                        mode="outlined"
-                        value={phoneNumber}
-                        onChangeText={setPhoneNumber}
-                    />
-                </View>
-                <Text style={styles.allLabels}>Address</Text>
-                <View style={styles.inputContainer}>
-                    <Icon
-                        name="location-on"
-                        size={20}
-                        color="#AFAFAF"
-                        style={styles.icon}
-                    />
-                    <TextInput
-                        placeholder="Address"
-                        placeholderTextColor="#AFAFAF"
-                        style={styles.inputField}
-                        mode="outlined"
-                        value={address}
-                        onChangeText={setAddress}
-                    />
-                </View>
-                <Button
-                    mode="elevated"
-                    style={styles.submitButton}
-                    onPress={handleRegister}
-                    textColor="#FFFFFF"
-                >
-                    <Text style={styles.registerLabel}>Continue</Text>
-                </Button>
-            </Card>
-        </View>
-    </Modal>
-);
+    return (
+        <Modal transparent visible={visible} animationType="slide">
+            <View style={styles.modalContainer}>
+                <Card style={styles.card}>
+                    <View>
+                        <Text style={styles.SignUpLabel}>Registration</Text>
+                    </View>
+                    <Text style={styles.allLabels}>First Name</Text>
+                    <View style={styles.inputContainer}>
+                        <Icon
+                            name="email"
+                            size={20}
+                            color="#AFAFAF"
+                            style={styles.icon}
+                        />
+                        <TextInput
+                            placeholder="First Name"
+                            placeholderTextColor="#AFAFAF"
+                            style={styles.inputField}
+                            mode="outlined"
+                            value={firstName}
+                            onChangeText={setFirstName}
+                        />
+                    </View>
+                    <Text style={styles.allLabels}>Last Name</Text>
+                    <View style={styles.inputContainer}>
+                        <Icon
+                            name="email"
+                            size={20}
+                            color="#AFAFAF"
+                            style={styles.icon}
+                        />
+                        <TextInput
+                            placeholder="Last Name"
+                            placeholderTextColor="#AFAFAF"
+                            style={styles.inputField}
+                            mode="outlined"
+                            value={lastName}
+                            onChangeText={setLastName}
+                        />
+                    </View>
+                    <Text style={styles.allLabels}>Age</Text>
+                    <View style={styles.inputContainer}>
+                        <Icon
+                            name="perm-contact-calendar"
+                            size={20}
+                            color="#AFAFAF"
+                            style={styles.icon}
+                        />
+                        <TextInput
+                            placeholder="Age"
+                            placeholderTextColor="#AFAFAF"
+                            style={styles.inputField}
+                            mode="outlined"
+                            value={age}
+                            onChangeText={setAge}
+                        />
+                    </View>
+                    <Text style={styles.allLabels}>Phone Number</Text>
+                    <View style={styles.inputContainer}>
+                        <Icon
+                            name="phone"
+                            size={20}
+                            color="#AFAFAF"
+                            style={styles.icon}
+                        />
+                        <TextInput
+                            placeholder="Phone Number"
+                            placeholderTextColor="#AFAFAF"
+                            style={styles.inputField}
+                            mode="outlined"
+                            value={phoneNumber}
+                            onChangeText={setPhoneNumber}
+                        />
+                    </View>
+                    <Text style={styles.allLabels}>Address</Text>
+                    <View style={styles.inputContainer}>
+                        <Icon
+                            name="location-on"
+                            size={20}
+                            color="#AFAFAF"
+                            style={styles.icon}
+                        />
+                        <TextInput
+                            placeholder="Address"
+                            placeholderTextColor="#AFAFAF"
+                            style={styles.inputField}
+                            mode="outlined"
+                            value={address}
+                            onChangeText={setAddress}
+                        />
+                    </View>
+                    <Button
+                        mode="elevated"
+                        style={styles.submitButton}
+                        onPress={handleRegister}
+                        textColor="#FFFFFF"
+                    >
+                        <Text style={styles.registerLabel}>Continue</Text>
+                    </Button>
+                    <TouchableOpacity onPress={onClose}>
+                        <Text style={styles.closeButton}>Close</Text>
+                    </TouchableOpacity>
+                </Card>
+            </View>
+        </Modal>
+    );
 };
 
 export default RegistrationModal;
-
 
 const styles = StyleSheet.create({
     SignUpLabel: {
@@ -208,7 +212,7 @@ const styles = StyleSheet.create({
     backgroundImage: {
         width: 100,
         height: 100,
-        resizeMode: 'cover',
+        resizeMode: "cover",
         borderRadius: 10,
     },
 });

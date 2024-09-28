@@ -3,11 +3,13 @@ import React, { useState } from "react";
 import SignUpModal from "./Modals/SignupModal";
 import LoginModal from "./Modals/LoginModal";
 import { useNavigation } from "@react-navigation/native";
+import RegistrationModal from "./Modals/RegistrationModal";
 
 const LandingPage = () => {
     const navigation = useNavigation();
     const [isSignUpVisible, setSignUpVisible] = useState(false);
     const [isLoginVisible, setLoginVisible] = useState(false);
+    const [isRegistrationVisible, setRegistrationVisible] = useState(false);
 
     return (
         <View style={styles.container}>
@@ -30,6 +32,13 @@ const LandingPage = () => {
                 >
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.touchableButton}
+                    onPress={() => setRegistrationVisible(true)}
+                >
+                    <Text style={styles.buttonText}>Registration Modal</Text>
+                </TouchableOpacity>
             </View>
 
             <SignUpModal
@@ -42,21 +51,17 @@ const LandingPage = () => {
                 onClose={() => setLoginVisible(false)}
             />
 
+            <RegistrationModal
+                visible={isRegistrationVisible}
+                onClose={() => setRegistrationVisible(false)}
+            />
+
             <View style={styles.navButtons}>
                 <TouchableOpacity
                     style={styles.navButton}
                     onPress={() => navigation.navigate("Registration")}
                 >
                     <Text style={styles.navButtonText}>Registration</Text>
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.navButtons}>
-                <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={() => navigation.navigate("RegistrationModal")}
-                >
-                    <Text style={styles.navButtonText}>Registration Modal</Text>
                 </TouchableOpacity>
             </View>
         </View>
