@@ -18,27 +18,45 @@ const LandingPage = () => {
                 style={styles.backgroundImage}
                 resizeMode="contain"
             />
+            <View>
+                <Text style={[ styles.welcomeText, { alignSelf: 'center', marginTop: 250 }]}>
+                    Hello
+                </Text>
+                <View style= {{alignSelf: 'center'}}>
+                    <Text style={styles.descriptionText}>
+                        Welcome To Moto-dachi,{" "}
+                    </Text>
+                    <Text
+                        style={[
+                            styles.descriptionText
+                        ]}
+                    >
+                        with exceptional prices and{" "}
+                    </Text>
+                    <Text
+                        style={[
+                            styles.descriptionText
+                        ]}
+                    >
+                        top-notch safety-only{" "}
+                    </Text>
+                </View>
+            </View>
 
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
-                    style={styles.touchableButton}
-                    onPress={() => setSignUpVisible(true)}
-                >
-                    <Text style={styles.buttonText}>Sign Up</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.touchableButton}
+                    style={styles.touchableLoginButton}
                     onPress={() => setLoginVisible(true)}
                 >
-                    <Text style={styles.buttonText}>Login</Text>
+                    <Text style={styles.buttonLoginText}>Login</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.touchableSignUpButton}
+                    onPress={() => setSignUpVisible(true)}
+                >
+                    <Text style={styles.buttonSignUpText}>Sign Up</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                    style={styles.touchableButton}
-                    onPress={() => setRegistrationVisible(true)}
-                >
-                    <Text style={styles.buttonText}>Registration Modal</Text>
-                </TouchableOpacity>
             </View>
 
             <SignUpModal
@@ -55,15 +73,6 @@ const LandingPage = () => {
                 visible={isRegistrationVisible}
                 onClose={() => setRegistrationVisible(false)}
             />
-
-            <View style={styles.navButtons}>
-                <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={() => navigation.navigate("Registration")}
-                >
-                    <Text style={styles.navButtonText}>Registration</Text>
-                </TouchableOpacity>
-            </View>
         </View>
     );
 };
@@ -71,14 +80,17 @@ const LandingPage = () => {
 export default LandingPage;
 
 const styles = StyleSheet.create({
+    descriptionText: {
+        fontSize: 16,
+        color: '#888888',
+        textAlign: "center"
+    },
     container: {
         flex: 1,
         backgroundColor: "#F6F6F6",
         justifyContent: "center",
         alignItems: "center",
         padding: 20,
-        marginBottom: -170, // ambot ngano negative ni hahaha
-        // pag i positive nako kay makulangan ang margin wtf
     },
     backgroundImage: {
         position: "absolute",
@@ -89,21 +101,20 @@ const styles = StyleSheet.create({
     },
     welcomeText: {
         fontSize: 32,
-        marginVertical: 20,
+        marginVertical: 10,
         fontWeight: "bold",
-        color: "#2C3E50",
+        color: "#181818",
         textAlign: "center",
     },
     buttonContainer: {
-        marginTop: 30,
-        width: "100%",
+        width: "80%",
         justifyContent: "center",
-        height: 150,
+        marginTop: 50
     },
-    touchableButton: {
+    touchableLoginButton: {
         backgroundColor: "#3498DB",
-        paddingVertical: 18,
-        borderRadius: 8,
+        paddingVertical: 12,
+        borderRadius: 30,
         marginVertical: 10,
         alignItems: "center",
         shadowColor: "#000",
@@ -115,8 +126,28 @@ const styles = StyleSheet.create({
         shadowRadius: 3.5,
         elevation: 5,
     },
-    buttonText: {
+    touchableSignUpButton: {
+        backgroundColor: "#ffffff",
+        paddingVertical: 12,
+        borderRadius: 30,
+        marginVertical: 10,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 3.5,
+        elevation: 5,
+    },
+    buttonLoginText: {
         color: "#ffffff",
+        fontSize: 20,
+        fontWeight: "600",
+    },
+    buttonSignUpText: {
+        color: "#3498DB",
         fontSize: 20,
         fontWeight: "600",
     },
