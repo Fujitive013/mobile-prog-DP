@@ -8,15 +8,14 @@ import {
     Alert,
 } from "react-native";
 import { Card, TextInput } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Import the icons
-import { useNavigation } from '@react-navigation/native';
+import Icon from "react-native-vector-icons/MaterialIcons";
+import RegistrationModal from "./RegistrationModal";
 
 const SignUpModal = ({ visible, onClose }) => {
-    const navigation = useNavigation();
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [isRegistrationVisible, setRegistrationVisible] = useState(false);
 
     const isPasswordMatch = password === confirmPassword && password !== "";
     const isEmailValid = email.includes("@") && email.includes(".");
@@ -31,111 +30,125 @@ const SignUpModal = ({ visible, onClose }) => {
             Alert.alert("Password Mismatch", "Passwords do not match.");
             return;
         }
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
 
-        navigation.navigate('RegistrationModal'); // Navigate to RegistrationModal
+        onClose();
 
-        // Proceed with sign-up logic here (e.g., API call)
-        onClose(); // Close the modal on success
+        setRegistrationVisible(true);
     };
 
     return (
-        <Modal transparent visible={visible} animationType="slide">
-            <View style={styles.modalContainer}>
-                <Card style={styles.card}>
-                    <View>
-                        <Text style={styles.SignUpLabel}>Sign Up</Text>
-                    </View>
-                    <Text style={styles.emailLabel}>Email</Text>
-                    <View style={styles.inputContainer}>
-                        <Icon
-                            name="email"
-                            size={20}
-                            color="#AFAFAF"
-                            style={styles.icon}
-                        />
-                        <TextInput
-                            placeholder="Email"
-                            placeholderTextColor="#AFAFAF"
-                            style={styles.inputField}
-                            mode="outlined"
-                            value={email}
-                            onChangeText={setEmail}
-                        />
-                    </View>
-                    <Text style={styles.passwordLabel}>Password</Text>
-                    <View style={styles.inputContainer}>
-                        <Icon
-                            name="lock"
-                            size={20}
-                            color="#AFAFAF"
-                            style={styles.icon}
-                        />
-                        <TextInput
-                            placeholder="Password"
-                            placeholderTextColor="#AFAFAF"
-                            style={styles.inputField}
-                            secureTextEntry
-                            mode="outlined"
-                            value={password}
-                            onChangeText={setPassword}
-                        />
-                    </View>
-                    <Text style={styles.confirmPasswordLabel}>
-                        Confirm Password
-                    </Text>
-                    <View style={styles.inputContainer}>
-                        <Icon
-                            name="lock"
-                            size={20}
-                            color="#AFAFAF"
-                            style={styles.icon}
-                        />
-                        <TextInput
-                            placeholder="Confirm Password"
-                            placeholderTextColor="#AFAFAF"
-                            style={styles.inputField}
-                            secureTextEntry
-                            mode="outlined"
-                            value={confirmPassword}
-                            onChangeText={setConfirmPassword}
-                        />
-                    </View>
+        <>
+            <Modal transparent visible={visible} animationType="slide">
+                <View style={styles.modalContainer}>
+                    <Card style={styles.card}>
+                        <View>
+                            <Text style={styles.SignUpLabel}>Sign Up</Text>
+                        </View>
+                        <Text style={styles.emailLabel}>Email</Text>
+                        <View style={styles.inputContainer}>
+                            <Icon
+                                name="email"
+                                size={20}
+                                color="#AFAFAF"
+                                style={styles.icon}
+                            />
+                            <TextInput
+                                placeholder="Email"
+                                placeholderTextColor="#AFAFAF"
+                                style={styles.inputField}
+                                mode="outlined"
+                                value={email}
+                                onChangeText={setEmail}
+                            />
+                        </View>
+                        <Text style={styles.passwordLabel}>Password</Text>
+                        <View style={styles.inputContainer}>
+                            <Icon
+                                name="lock"
+                                size={20}
+                                color="#AFAFAF"
+                                style={styles.icon}
+                            />
+                            <TextInput
+                                placeholder="Password"
+                                placeholderTextColor="#AFAFAF"
+                                style={styles.inputField}
+                                secureTextEntry
+                                mode="outlined"
+                                value={password}
+                                onChangeText={setPassword}
+                            />
+                        </View>
+                        <Text style={styles.confirmPasswordLabel}>
+                            Confirm Password
+                        </Text>
+                        <View style={styles.inputContainer}>
+                            <Icon
+                                name="lock"
+                                size={20}
+                                color="#AFAFAF"
+                                style={styles.icon}
+                            />
+                            <TextInput
+                                placeholder="Confirm Password"
+                                placeholderTextColor="#AFAFAF"
+                                style={styles.inputField}
+                                secureTextEntry
+                                mode="outlined"
+                                value={confirmPassword}
+                                onChangeText={setConfirmPassword}
+                            />
+                        </View>
 
-                    {/* Password match indicator */}
-                    {password !== "" && confirmPassword !== "" && (
-                        <Text
+                        {/* Password match indicator */}
+                        {password !== "" && confirmPassword !== "" && (
+                            <Text
+                                style={[
+                                    styles.passwordMatchIndicator,
+                                    {
+                                        color: isPasswordMatch
+                                            ? "green"
+                                            : "red",
+                                    },
+                                ]}
+                            >
+                                {isPasswordMatch
+                                    ? "Passwords match"
+                                    : "Passwords do not match"}
+                            </Text>
+                        )}
+
+                        <TouchableOpacity
                             style={[
-                                styles.passwordMatchIndicator,
+                                styles.submitButton,
                                 {
-                                    color: isPasswordMatch ? "green" : "red",
+                                    opacity:
+                                        isPasswordMatch && isEmailValid
+                                            ? 1
+                                            : 0.5,
                                 },
                             ]}
+                            disabled={!isPasswordMatch || !isEmailValid} // Disable if not valid
+                            onPress={handleSignUp} // Handle sign up
                         >
-                            {isPasswordMatch
-                                ? "Passwords match"
-                                : "Passwords do not match"}
-                        </Text>
-                    )}
+                            <Text style={styles.submitLabel}>Sign Up</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={onClose}>
+                            <Text style={styles.closeButton}>Close</Text>
+                        </TouchableOpacity>
+                    </Card>
+                </View>
+            </Modal>
 
-                    <TouchableOpacity
-                        style={[
-                            styles.submitButton,
-                            {
-                                opacity:
-                                    isPasswordMatch && isEmailValid ? 1 : 0.5,
-                            },
-                        ]}
-                        disabled={!isPasswordMatch || !isEmailValid} // Disable if not valid
-                        onPress={handleSignUp} // Handle sign up
-                    >
-                        <Text style={styles.submitLabel}>Sign Up</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={onClose}>
-                        <Text style={styles.closeButton}>Close</Text>
-                    </TouchableOpacity>
-                </Card>
-            </View>
-        </Modal>
+            {/* Registration Modal */}
+            <RegistrationModal
+                visible={isRegistrationVisible}
+                onClose={() => setRegistrationVisible(false)}
+            />
+        </>
     );
 };
 
