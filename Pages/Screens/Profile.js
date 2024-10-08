@@ -1,73 +1,84 @@
-import { StyleSheet, Text, View, Switch, Image } from "react-native";
-import React, { useState } from 'react';
-import { Card } from "react-native-paper";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import React from "react";
+import Icon from "react-native-vector-icons/MaterialIcons"; // Import Material Icons
 
 const Profile = () => {
-
-    const [isEnabled, setIsEnabled] = useState(false);
-
-    const toggleSwitch = () => {
-        alert("Under development");
-        setIsEnabled(false); // always set isEnabled to false
+    // Sample user data
+    const user = {
+        name: "Axel Paredes",
+        email: "axelparedes@email.com",
+        phoneNumber: "+1234567890",
+        birthDate: "January 1, 1990",
+        address: "Villanueva, Misamis Oriental",
+        gender: "Male",
+        photo: "https://via.placeholder.com/100", // Sample photo URL
     };
 
     return (
-        <View style={styles.mainContainer}>
-            <Card style={styles.subContainer}>
-                <Card style={styles.profileContainer}/>
-                <View style={styles.namePhoneContainer}>
-                    <Text style={styles.nameLabel}>
-                        Ivan Emmanuel A. Dadacay
-                    </Text>
-                    <Text style={styles.phoneLabel}>
-                        +63 935-1611-635
-                    </Text>
+        <View style={styles.container}>
+            <View style={styles.profileInfo}>
+                <Image
+                    source={{ uri: user.photo }}
+                    style={styles.profileImage}
+                />
+                <Text style={styles.userName}>{user.name}</Text>
+            </View>
+
+            <View style={styles.detailsContainer}>
+                <View style={styles.detailItem}>
+                    <View style={styles.iconLabelContainer}>
+                        <Icon name="email" size={24} color="#000" />
+                        <Text style={styles.label}>Email</Text>
+                    </View>
+                    <View style={styles.outputContainer}>
+                        <Text style={styles.value}>{user.email}</Text>
+                    </View>
                 </View>
-                <Card style={styles.accountContainer}>
-                    <Text style={styles.accountLabel}>
-                        Account
-                    </Text>
-                    <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'space-between'  }}>
-                        <Text style={styles.labelStyle}>
-                            Gender
-                        </Text>
-                        <Text style={styles.infoLabel}>
-                            Male
-                        </Text>
+
+                <View style={styles.detailItem}>
+                    <View style={styles.iconLabelContainer}>
+                        <Icon name="phone" size={24} color="#000" />
+                        <Text style={styles.label}>Phone</Text>
                     </View>
-                    <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#000', justifyContent: 'space-between' }}>
-                        <Text style={styles.labelStyle}>
-                            Birthday
-                        </Text>
-                        <Text style={styles.infoLabel}>
-                            April 15, 2004
-                        </Text>
+                    <View style={styles.outputContainer}>
+                        <Text style={styles.value}>{user.phoneNumber}</Text>
                     </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Text style={styles.labelStyle}>
-                            Location
-                        </Text>
-                        <Text style={styles.infoLabel}>
-                            Cagayan
-                        </Text>
-                    </View>
-                </Card>
-            </Card>
-            <Card style={{ width: "90%", height: "10%", backgroundColor: "#FFFFFF", borderRadius: 20, marginVertical: "100%", alignSelf: 'center' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Image
-                    source={{ uri: 'https://img.icons8.com/?size=100&id=118497&format=png&color=000000' }}
-                    style={{ width: 65, height: 65 }}
-                    />
-                    <Text style={{fontSize: 17, marginBottom: 20}}>Facebook</Text>
-                    <Text style={{fontSize: 17, marginTop: 20, marginLeft: -78, opacity: 0.5}}> DISABLED </Text>
-                    <Switch styles={styles.facebookSwitch}
-                        onValueChange={toggleSwitch}
-                        value={isEnabled}
-                        style={{ marginLeft: 110, transform: [{ scale: 1.5 }] }}
-                    />
                 </View>
-            </Card>
+
+                <View style={styles.detailItem}>
+                    <View style={styles.iconLabelContainer}>
+                        <Icon name="calendar-today" size={24} color="#000" />
+                        <Text style={styles.label}>Birthdate</Text>
+                    </View>
+                    <View style={styles.outputContainer}>
+                        <Text style={styles.value}>{user.birthDate}</Text>
+                    </View>
+                </View>
+
+                <View style={styles.detailItem}>
+                    <View style={styles.iconLabelContainer}>
+                        <Icon name="home" size={24} color="#000" />
+                        <Text style={styles.label}>Address</Text>
+                    </View>
+                    <View style={styles.outputContainer}>
+                        <Text style={styles.value}>{user.address}</Text>
+                    </View>
+                </View>
+
+                <View style={styles.detailItem}>
+                    <View style={styles.iconLabelContainer}>
+                        <Icon name="wc" size={24} color="#000" />
+                        <Text style={styles.label}>Gender</Text>
+                    </View>
+                    <View style={styles.outputContainer}>
+                        <Text style={styles.value}>{user.gender}</Text>
+                    </View>
+                </View>
+            </View>
+
+            <TouchableOpacity style={styles.logoutButton}>
+                <Text style={styles.logoutButtonText}>Logout</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -75,71 +86,73 @@ const Profile = () => {
 export default Profile;
 
 const styles = StyleSheet.create({
-    infoLabel:{
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginVertical: 5,
-        width: 100,
-        color: "#2B2929"
-    },
-    labelStyle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginVertical: 5,
-        marginHorizontal: 10,
-        width: 100,
-        color: "#2B2929"
-    },
-    accountLabel: {
-        fontSize: 23,
-        fontWeight: 'bold',
-        marginHorizontal: 10,
-        marginVertical: 15,
-        color: "#2B2929"
-    },
-    accountContainer:{
-        backgroundColor: "#F5F5F5",
-        borderRadius: 30,
-        borderWidth: 1,
-        width: "90%",
-        alignSelf: 'center',
-        height: "105%",
-        opacity: 0.8,
-        marginVertical: 130,
-        color: "#2B2929"
-    },
-    phoneLabel: {
-        textAlign: 'center',
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: "#2B2929"
-    },
-    nameLabel: {
-        textAlign: 'center',
-        fontSize: 25,
-        fontWeight: 'bold',
-        color: "#2B2929"
-    },
-    namePhoneContainer: {
-        marginVertical: -110,
-    },
-    profileContainer: {
-        backgroundColor: "#F5F5F5",
-        width: "43%",
-        height: "80%",
-        borderRadius: 100,
-        borderWidth: 1,
-        alignSelf: 'center',
-        marginVertical: "30%"
-    },
-    subContainer: {
-        backgroundColor: "#FFFFFF",
-        height: "30%",
-        borderRadius: 30,
-        borderWidth: 1,
-    },
-    mainContainer: {
+    container: {
         flex: 1,
-        backgroundColor: "#FFDC2E"
+        padding: 20,
+        justifyContent: "center",
+        backgroundColor: "#F7F9FC",
+    },
+    profileInfo: {
+        alignItems: "center",
+        marginBottom: 0,
+        paddingBottom: 20,
+    },
+    profileImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: "#000",
+    },
+    userName: {
+        fontSize: 24,
+        fontWeight: "bold",
+        color: "#2C3E50",
+    },
+    detailsContainer: {
+        marginBottom: 20,
+    },
+    detailItem: {
+        marginBottom: 20,
+        borderBottomWidth: 3,
+        borderBottomColor: "#E1E1E1",
+    },
+    iconLabelContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    outputContainer: {
+        marginTop: 5,
+        paddingLeft: 30,
+        paddingBottom: 5,
+    },
+    label: {
+        fontSize: 16,
+        color: "#34495E",
+        marginLeft: 10,
+    },
+    value: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#7F8C8D",
+    },
+    logoutButton: {
+        backgroundColor: "#F6F6F6",
+        paddingVertical: 15,
+        borderRadius: 30,
+        marginVertical: -10,
+        alignItems: "center",
+        justifyContent: "center", // Center content vertically
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 3.5,
+        elevation: 5,
+        width: "50%",
+        alignSelf: "center", // Center the button horizontally
     },
 });

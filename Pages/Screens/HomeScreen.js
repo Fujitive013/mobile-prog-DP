@@ -22,7 +22,7 @@ const HomeScreen = () => {
                                     <Text style={{ color: "#FFFFFF" }}>
                                         Moto
                                     </Text>
-                                    <Text style={{ color: "#FFDC2E" }}>
+                                    <Text style={{ color: "#3498DB" }}>
                                         dachi
                                     </Text>
                                 </Text>
@@ -152,25 +152,25 @@ const styles = StyleSheet.create({
         height: 120,
         width: 150,
         margin: 5,
-        backgroundColor: "#FFE761",
+        backgroundColor: "#87CEEB",
     },
     containerTwo: {
         height: 120,
         width: 150,
         margin: 5,
-        backgroundColor: "#FFE761",
+        backgroundColor: "#87CEEB",
     },
     containerThree: {
         height: 120,
         width: 150,
         margin: 5,
-        backgroundColor: "#FFE761",
+        backgroundColor: "#87CEEB",
     },
     containerFour: {
         height: 120,
         width: 150,
         margin: 5,
-        backgroundColor: "#FFE761",
+        backgroundColor: "#87CEEB",
     },
     descriptionMission: {
         fontSize: 11,
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
         fontSize: 17,
     },
     buttonContainer: {
-        backgroundColor: "#FFDC2E",
+        backgroundColor: "#87CEEB",
         marginVertical: 20,
         borderRadius: 20,
         borderWidth: 1,
