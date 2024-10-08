@@ -7,39 +7,45 @@ import {
     View,
     Alert,
     TouchableOpacity,
+    Platform,
 } from "react-native";
 import { Card, TextInput, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import the icons
+import DateTimePicker from "@react-native-community/datetimepicker"; // Import the DateTimePicker
 
 const RegistrationModal = ({ visible, onClose }) => {
     const navigation = useNavigation();
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [age, setAge] = useState("");
+    const [birthDate, setBirthDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const [address, setAddress] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
 
     const handleRegister = () => {
-        // Basic validation
         if (
             firstName === "" ||
             lastName === "" ||
-            age === "" ||
+            !birthDate ||
             address === "" ||
             phoneNumber === ""
         ) {
             Alert.alert("Missing Information", "Please fill out all fields.");
             return;
         }
-        if (isNaN(age)) {
-            Alert.alert("Invalid Age", "Please enter a valid numeric age.");
-            return;
-        }
 
         Alert.alert("Success", "You have successfully signed up!");
         onClose();
-        navigation.navigate("Dashboard"); // Navigate to RegistrationModal
+        navigation.navigate("Dashboard");
+    };
+
+    const onChangeDate = (event, selectedDate) => {
+        if (event.type === "set") {
+            const currentDate = selectedDate || birthDate;
+            setBirthDate(currentDate);
+        }
+        setShowDatePicker(false); // Close picker after date selection
     };
 
     return (
@@ -52,7 +58,7 @@ const RegistrationModal = ({ visible, onClose }) => {
                     <Text style={styles.allLabels}>First Name</Text>
                     <View style={styles.inputContainer}>
                         <Icon
-                            name="email"
+                            name="person"
                             size={20}
                             color="#AFAFAF"
                             style={styles.icon}
@@ -69,7 +75,7 @@ const RegistrationModal = ({ visible, onClose }) => {
                     <Text style={styles.allLabels}>Last Name</Text>
                     <View style={styles.inputContainer}>
                         <Icon
-                            name="email"
+                            name="person"
                             size={20}
                             color="#AFAFAF"
                             style={styles.icon}
@@ -83,7 +89,7 @@ const RegistrationModal = ({ visible, onClose }) => {
                             onChangeText={setLastName}
                         />
                     </View>
-                    <Text style={styles.allLabels}>Age</Text>
+                    <Text style={styles.allLabels}>Birthdate</Text>
                     <View style={styles.inputContainer}>
                         <Icon
                             name="perm-contact-calendar"
@@ -91,15 +97,25 @@ const RegistrationModal = ({ visible, onClose }) => {
                             color="#AFAFAF"
                             style={styles.icon}
                         />
-                        <TextInput
-                            placeholder="Age"
-                            placeholderTextColor="#AFAFAF"
-                            style={styles.inputField}
-                            mode="outlined"
-                            value={age}
-                            onChangeText={setAge}
-                        />
+                        <TouchableOpacity
+                            onPress={() => setShowDatePicker(true)}
+                            style={styles.dateContainer}
+                        >
+                            <Text style={styles.dateText}>
+                                {birthDate
+                                    ? birthDate.toLocaleDateString()
+                                    : "Select Date"}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={birthDate}
+                            mode="date"
+                            display="default"
+                            onChange={onChangeDate}
+                        />
+                    )}
                     <Text style={styles.allLabels}>Phone Number</Text>
                     <View style={styles.inputContainer}>
                         <Icon
@@ -181,6 +197,24 @@ const styles = StyleSheet.create({
     inputField: {
         flex: 1,
         backgroundColor: "#F9F9F9",
+        paddingVertical: 0,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: "#E0E0E0",
+    },
+    dateContainer: {
+        flex: 1,
+        backgroundColor: "#F9F9F9",
+        paddingVertical: 20, // Add vertical padding
+        paddingHorizontal: 10, // Add horizontal padding
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: "#E0E0E0",
+        justifyContent: "center",
+    },
+    dateText: {
+        color: "#000",
     },
     submitButton: {
         backgroundColor: "#424242",
@@ -198,21 +232,5 @@ const styles = StyleSheet.create({
         color: "#000000",
         textAlign: "right",
         marginRight: 10,
-    },
-    passwordMatchIndicator: {
-        fontSize: 14,
-        marginBottom: 10,
-        textAlign: "center",
-    },
-    submitButton: {
-        marginVertical: 20,
-        backgroundColor: "#424242",
-        borderRadius: 10,
-    },
-    backgroundImage: {
-        width: 100,
-        height: 100,
-        resizeMode: "cover",
-        borderRadius: 10,
     },
 });
