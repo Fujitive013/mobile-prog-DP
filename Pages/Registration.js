@@ -40,6 +40,8 @@ function RegistrationScreen() {
         }
 
         console.log("Registration successful!");
+        Alert.alert("Success", "You have successfully signed up!");
+        onClose(); // Close the modal on success
         // Add registration logic here
     };
 

@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
         marginVertical: -40,
         width: 330,
         height: 350,
-        backgroundColor: "#FFE761",
+        backgroundColor: "#87CEEB",
     },
     descriptionLabel: {
         textAlign: "center",
