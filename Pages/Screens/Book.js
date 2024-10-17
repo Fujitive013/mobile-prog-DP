@@ -117,19 +117,18 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     container: {
-        flexDirection: "column", // Stack elements vertically
-        justifyContent: "flex-start", // Move elements to the top
-        alignItems: "center", // Center elements horizontally
+        flexDirection: "column",
+        justifyContent: "flex-start", 
+        alignItems: "center",
         backgroundColor: "#F2F0EF",
         height: "100%",
     },
     topRow: {
-        // Add styles for the new wrapper View
-        flexDirection: "row", // Align elements in a row
-        alignItems: "center", // Center elements vertically
+        flexDirection: "row",
+        alignItems: "center", 
     },
     containerTitle: {
-        marginLeft: 10, // Add some margin to the left of the text
+        marginLeft: 10,
     },
     titleLabel: {
         fontSize: 30,

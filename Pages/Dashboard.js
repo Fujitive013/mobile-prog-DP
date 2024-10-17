@@ -34,7 +34,6 @@ const Dashboard = () => {
                         iconName = focused ? "settings" : "settings-outline";
                     }
 
-                    // Return the Ionicons component with the selected icon
                     return <Icon name={iconName} size={size} color={color} />;
                 },
                 tabBarActiveTintColor: "#3498DB",
