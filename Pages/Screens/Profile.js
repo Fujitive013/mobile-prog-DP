@@ -11,7 +11,7 @@ const Profile = () => {
         birthDate: "January 1, 1990",
         address: "Villanueva, Misamis Oriental",
         gender: "Male",
-        photo: "https://via.placeholder.com/100", // Sample photo URL
+        photo: "Images/img_placeholder_1024x768-768x576.jpg", // Sample photo URL
     };
 
     return (

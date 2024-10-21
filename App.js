@@ -3,9 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet } from "react-native";
 import LoginModal from "./Pages/Modals/LoginModal";
 import SignupModal from "./Pages/Modals/SignupModal";
-import Book from "./Pages/Screens/Book";
 import Dashboard from "./Pages/Dashboard";
-import Registration from "./Pages/Registration";
 import LandingPage from "./Pages/LandingPage";
 import RegistrationModal from "./Pages/Modals/RegistrationModal";
 
@@ -22,10 +20,8 @@ export default function App() {
                 <Stack.Screen name="LandingPage" component={LandingPage} />
                 <Stack.Screen name="Login" component={LoginModal} />
                 <Stack.Screen name="SignUp" component={SignupModal} />
-                <Stack.Screen name="Book" component={Book} />
                 <Stack.Screen name="Dashboard" component={Dashboard} />
-                <Stack.Screen name="Registration" component={Registration} />
-                <Stack.Screen name="RegistrationModal" component={RegistrationModal} />
+                <Stack.Screen name="RegistrationModal" component={RegistrationModal}/>
             </Stack.Navigator>
         </NavigationContainer>
     );

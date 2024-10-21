@@ -38,15 +38,6 @@ const Settings = () => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.SettingsButton}>
                     <Icon
-                        name="contacts"
-                        size={24}
-                        color="#000"
-                        style={styles.icon}
-                    />
-                    <Text style={styles.ButtonText}>Contacts</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.SettingsButton}>
-                    <Icon
                         name="help-outline"
                         size={24}
                         color="#000"

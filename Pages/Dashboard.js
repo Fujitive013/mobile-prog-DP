@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons"; // Import icons for tabs below
-import Book from "./Screens/Book";
+import Booking from "./Screens/Booking";
 import Profile from "./Screens/Profile";
 import HomeScreen from "./Screens/HomeScreen";
 import Settings from "./Screens/Settings";
@@ -34,7 +34,6 @@ const Dashboard = () => {
                         iconName = focused ? "settings" : "settings-outline";
                     }
 
-                    // Return the Ionicons component with the selected icon
                     return <Icon name={iconName} size={size} color={color} />;
                 },
                 tabBarActiveTintColor: "#3498DB",
@@ -50,7 +49,7 @@ const Dashboard = () => {
             <Tab.Screen
                 name={book}
                 options={{ headerShown: false }}
-                component={Book}
+                component={Booking}
             />
             <Tab.Screen
                 name={profile}
