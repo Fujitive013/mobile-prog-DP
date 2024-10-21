@@ -45,7 +45,7 @@ const RegistrationModal = ({ visible, onClose }) => {
             const currentDate = selectedDate || birthDate;
             setBirthDate(currentDate);
         }
-        setShowDatePicker(false); // Close picker after date selection
+        setShowDatePicker(false);
     };
 
     return (

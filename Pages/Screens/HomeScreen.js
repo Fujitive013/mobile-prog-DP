@@ -1,150 +1,166 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import * as Font from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import * as Font from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
 const HomeScreens = () => {
-  const [fontLoaded, setFontLoaded] = useState(false);
+    const [fontLoaded, setFontLoaded] = useState(false);
 
-  const fetchFonts = async () => {
-    await Font.loadAsync({
-      'PlusJakartaSans-Regular': require('../../assets/fonts/PlusJakartaSans-VariableFont_wght.ttf'),
-      'Jakarta-Bold': require('../../assets/fonts/PlusJakartaSans-Bold.ttf'), // Ensure this path is correct
-    });
-  };
-
-  useEffect(() => {
-    const loadFonts = async () => {
-      try {
-        await SplashScreen.preventAutoHideAsync();
-        await fetchFonts();
-        setFontLoaded(true);
-      } catch (error) {
-        console.error('Error loading fonts:', error);
-      } finally {
-        await SplashScreen.hideAsync();
-      }
+    const fetchFonts = async () => {
+        await Font.loadAsync({
+            "PlusJakartaSans-Regular": require("../../assets/fonts/PlusJakartaSans-VariableFont_wght.ttf"),
+            "Jakarta-Bold": require("../../assets/fonts/PlusJakartaSans-Bold.ttf"), // Ensure this path is correct
+        });
     };
 
-    loadFonts();
-  }, []);
+    useEffect(() => {
+        const loadFonts = async () => {
+            try {
+                await SplashScreen.preventAutoHideAsync();
+                await fetchFonts();
+                setFontLoaded(true);
+            } catch (error) {
+                console.error("Error loading fonts:", error);
+            } finally {
+                await SplashScreen.hideAsync();
+            }
+        };
 
-  if (!fontLoaded) {
-    return null; // Return null while loading
-  }
+        loadFonts();
+    }, []);
 
-  return (
-    <View style={styles.container}>
-      <View>
-        <Image source={require("../../Images/Motor.png")} style={{ width: '100%', height: 210 }} />
-        <Text style={styles.titleText}>
-          Motodachi
-        </Text>
-      </View>
-      <View style={styles.descriptionContainer}>
-        <View style={styles.centeredTextContainer}>
-          <Text style={styles.descriptionText}>Exceptional prices and</Text>
-          <Text style={styles.descriptionText}>top-notch safety-</Text>
-          <Text style={styles.descriptionText}>only with Motodachi</Text>
-        </View>
-      </View>
-      <View style={{ alignSelf: 'center' }}>
-        <TouchableOpacity style={styles.buttonContainer}>
-          <Text style={styles.bookText}>BOOK NOW</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.voucherMissionContainer}>
-        <View style={styles.voucherContainer}>
-          <TouchableOpacity style={styles.vouchersubContainer}>
+    if (!fontLoaded) {
+        return null; // Return null while loading
+    }
+
+    return (
+        <View style={styles.container}>
             <View>
-              <Text style={styles.voucherText}>Vouchers</Text>
-              <Text style={styles.voucherDescription}>Claim before they're gone</Text>
+                <Image
+                    source={require("../../Images/Banner.jpg")}
+                    style={{ width: "100%", height: 210 }}
+                />
             </View>
-            <Image source={require('../../Images/Voucher.png')} style={styles.voucherImage} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.voucherContainer}>
-          <TouchableOpacity style={styles.vouchersubContainer}>
-            <View>
-              <Text style={styles.voucherText}>Missions</Text>
-              <Text style={styles.voucherDescription}>Earn rewards for this tasks</Text>
+            <View style={styles.descriptionContainer}>
+                <View style={styles.centeredTextContainer}>
+                    <Text style={styles.descriptionText}>
+                        Exceptional prices and
+                    </Text>
+                    <Text style={styles.descriptionText}>
+                        top-notch safety-
+                    </Text>
+                    <Text style={styles.descriptionText}>
+                        only with Motodachi
+                    </Text>
+                </View>
             </View>
-            <Image source={require('../../Images/Missions.jpg')} style={styles.voucherImage} />
-          </TouchableOpacity>
+            <View style={{ alignSelf: "center" }}>
+                <TouchableOpacity style={styles.buttonContainer}>
+                    <Text style={styles.bookText}>BOOK NOW</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.voucherMissionContainer}>
+                <View style={styles.voucherContainer}>
+                    <TouchableOpacity style={styles.vouchersubContainer}>
+                        <View>
+                            <Text style={styles.voucherText}>Vouchers</Text>
+                            <Text style={styles.voucherDescription}>
+                                Claim before they're gone
+                            </Text>
+                        </View>
+                        <Image
+                            source={require("../../Images/gift-voucher.png")}
+                            style={styles.voucherImage}
+                        />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.voucherContainer}>
+                    <TouchableOpacity style={styles.vouchersubContainer}>
+                        <View>
+                            <Text style={styles.voucherText}>Missions</Text>
+                            <Text style={styles.voucherDescription}>
+                                Earn rewards for this tasks
+                            </Text>
+                        </View>
+                        <Image
+                            source={require("../../Images/mountain.png")}
+                            style={styles.voucherImage}
+                        />
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
-      </View>
-    </View>
-  );
+    );
 };
 
 export default HomeScreens;
 
 const styles = StyleSheet.create({
-  voucherImage: {
-    marginLeft: 10,
-    width: 100,
-    height: 60,
-    borderRadius: 12,
-  },
-  voucherDescription: {
-    fontSize: 14, // Fix the property name to 'fontSize'
-    fontFamily: 'PlusJakartaSans-Regular', // Use fontFamily instead of fontWeight
-    color: '#407A9E',
-  },
-  voucherText: {
-    fontSize: 16,
-    fontFamily: 'Jakarta-Bold',
-  },
-  container: {
-    backgroundColor: "#FFFFFF",
-    height: '100%',
-  },
-  vouchersubContainer: {
-    flexDirection: 'row',
-    alignSelf: 'center',
-  },
-  voucherContainer: {
-    height: 90,
-    width: 300,
-    borderRadius: 12,
-    backgroundColor: "#F2F5FA",
-    elevation: 0.2,
-    justifyContent: 'center',
-    bottom: 5,
-    margin: 5,
-  },
-  voucherMissionContainer: {
-    marginVertical: 20,
-    alignItems: 'center',
-  },
-  bookText: {
-    alignSelf: 'center',
-    color: "#FFFFFF",
-  },
-  buttonContainer: {
-    backgroundColor: '#3399DB',
-    justifyContent: 'center',
-    height: 50,
-    borderRadius: 30,
-    width: 280,
-  },
-  centeredTextContainer: {
-    alignSelf: 'center',
-  },
-  descriptionContainer: {
-    marginVertical: 20,
-  },
-  descriptionText: {
-    textAlign: 'justify',
-    fontSize: 29,
-    fontFamily: 'Jakarta-Bold',
-  },
-  titleText: {
-    position: 'absolute',
-    top: 170,
-    left: 10,
-    fontSize: 26,
-    color: '#747474',
-    fontFamily: 'Jakarta-Bold',
-  },
+    voucherImage: {
+        marginLeft: 10,
+        width: 100,
+        height: 60,
+        borderRadius: 12,
+    },
+    voucherDescription: {
+        fontSize: 14,
+        fontFamily: "PlusJakartaSans-Regular",
+        color: "#407A9E",
+    },
+    voucherText: {
+        fontSize: 16,
+        fontFamily: "Jakarta-Bold",
+    },
+    container: {
+        backgroundColor: "#FFFFFF",
+        height: "100%",
+    },
+    vouchersubContainer: {
+        flexDirection: "row",
+        alignSelf: "center",
+    },
+    voucherContainer: {
+        height: 90,
+        width: 300,
+        borderRadius: 12,
+        backgroundColor: "#F2F5FA",
+        elevation: 0.2,
+        justifyContent: "center",
+        marginBottom: 15,
+    },
+    voucherMissionContainer: {
+        marginVertical: 20,
+        alignItems: "center",
+    },
+    bookText: {
+        alignSelf: "center",
+        color: "#FFFFFF",
+    },
+    buttonContainer: {
+        backgroundColor: "#3399DB",
+        justifyContent: "center",
+        height: 50,
+        borderRadius: 30,
+        width: 280,
+        marginBottom: 15,
+    },
+    centeredTextContainer: {
+        alignSelf: "center",
+    },
+    descriptionContainer: {
+        marginVertical: 20,
+    },
+    descriptionText: {
+        textAlign: "justify",
+        fontSize: 29,
+        fontFamily: "Jakarta-Bold",
+    },
+    titleText: {
+        position: "absolute",
+        top: 170,
+        left: 10,
+        fontSize: 26,
+        color: "#747474",
+        fontFamily: "Jakarta-Bold",
+    },
 });
