@@ -23,7 +23,7 @@ export default function App() {
         Alert.alert(
             "Confirm Ride",
             "Are you sure you want to confirm this ride?",
-            [
+            [ 
                 {
                     text: "Cancel",
                     onPress: () => console.log("Ride not confirmed"),
