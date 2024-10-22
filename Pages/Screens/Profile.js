@@ -11,14 +11,13 @@ const Profile = () => {
         birthDate: "January 1, 1990",
         address: "Villanueva, Misamis Oriental",
         gender: "Male",
-        photo: "https://via.placeholder.com/100", // Sample photo URL
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.profileInfo}>
                 <Image
-                    source={{ uri: user.photo }}
+                    source={require('../../Images/axel.jpg')} // ibutang lang imo image diri xel
                     style={styles.profileImage}
                 />
                 <Text style={styles.userName}>{user.name}</Text>
@@ -106,12 +105,12 @@ const styles = StyleSheet.create({
         borderColor: "#000",
     },
     userName: {
-        fontSize: 24,
+        fontSize: 18, // Changed to 15
         fontWeight: "bold",
         color: "#2C3E50",
     },
     detailsContainer: {
-        marginBottom: 20,
+        marginBottom: 10,
     },
     detailItem: {
         marginBottom: 20,
@@ -128,18 +127,18 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
     },
     label: {
-        fontSize: 16,
+        fontSize: 15, // Changed to 15
         color: "#34495E",
         marginLeft: 10,
     },
     value: {
-        fontSize: 16,
+        fontSize: 15, // Changed to 15
         fontWeight: "600",
         color: "#7F8C8D",
     },
     logoutButton: {
         backgroundColor: "#F6F6F6",
-        paddingVertical: 15,
+        paddingVertical: 10,
         borderRadius: 30,
         marginVertical: -10,
         alignItems: "center",
