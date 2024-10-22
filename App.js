@@ -6,6 +6,12 @@ import SignupModal from "./Pages/Modals/SignupModal";
 import Dashboard from "./Pages/Dashboard";
 import LandingPage from "./Pages/LandingPage";
 import RegistrationModal from "./Pages/Modals/RegistrationModal";
+import ConfirmedBooking from "./Pages/Screens/Settings Sub Pages/ConfirmedBooking";
+import Booked from './Pages/Screens/Settings Sub Pages/Booked';
+import HelpSupport from './Pages/Screens/Settings Sub Pages/HelpSupport';
+import Settings from "./Pages/Screens/Settings";
+import Notification from './Pages/Screens/Settings Sub Pages/Notifications'
+import Privacy from './Pages/Screens/Settings Sub Pages/Privacy';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +28,12 @@ export default function App() {
                 <Stack.Screen name="SignUp" component={SignupModal} />
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 <Stack.Screen name="RegistrationModal" component={RegistrationModal}/>
+                <Stack.Screen name="ConfirmedBooking" component={ConfirmedBooking} />
+                <Stack.Screen name="Booked" component={Booked} />
+                <Stack.Screen name="HelpSupport" component={HelpSupport} />
+                <Stack.Screen name="Settings" component={Settings} />
+                <Stack.Screen name="Notification" component={Notification} />
+                <Stack.Screen name="Privacy" component={Privacy} />
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -2,9 +2,15 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from "react";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { useNavigation } from '@react-navigation/native'; // Import the hook
 
 const HomeScreens = () => {
     const [fontLoaded, setFontLoaded] = useState(false);
+    const navigation = useNavigation();
+
+    const handleConfirm = () => {
+        navigation.navigate('Dashboard', { screen: 'Book' }); // Navigate to Booking.js
+    };
 
     const fetchFonts = async () => {
         await Font.loadAsync({
@@ -55,7 +61,7 @@ const HomeScreens = () => {
                 </View>
             </View>
             <View style={{ alignSelf: "center" }}>
-                <TouchableOpacity style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.buttonContainer} onPress={handleConfirm}>
                     <Text style={styles.bookText}>BOOK NOW</Text>
                 </TouchableOpacity>
             </View>
@@ -129,7 +135,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     voucherMissionContainer: {
-        marginVertical: 20,
+        marginVertical: 10,
         alignItems: "center",
     },
     bookText: {
@@ -148,7 +154,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     descriptionContainer: {
-        marginVertical: 20,
+        marginVertical: 10,
     },
     descriptionText: {
         textAlign: "justify",
