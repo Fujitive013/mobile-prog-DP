@@ -1,8 +1,15 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for outline icons
+import { useNavigation } from "@react-navigation/native";
 
 const Profile = () => {
+    const navigation = useNavigation();
+
+    const handleLogout = () => {
+        navigation.navigate('LandingPage')
+    }
+
     // Sample user data
     const user = {
         name: "Axel Paredes",
@@ -75,7 +82,7 @@ const Profile = () => {
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.logoutButton}>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Text style={styles.logoutButtonText}>Logout</Text>
             </TouchableOpacity>
         </View>
