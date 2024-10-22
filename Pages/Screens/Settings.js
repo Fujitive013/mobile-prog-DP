@@ -6,6 +6,10 @@ import { useNavigation } from '@react-navigation/native';
 export default function SettingsScreen() {
   const navigation = useNavigation();
 
+  const profile = () => {
+    navigation.navigate('Profile')
+  }
+
   const notification = () => {
     navigation.navigate('Notification')
   }
@@ -22,7 +26,7 @@ export default function SettingsScreen() {
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Settings</Text>
       <View style={styles.optionsContainer}>
-        <TouchableOpacity style={styles.option}>
+        <TouchableOpacity style={styles.option} onPress={profile}>
           <Ionicons name="person-outline" size={24} color="black" style={styles.icon} />
           <Text style={styles.optionText}>Profile Information</Text>
           <Ionicons name="chevron-forward" size={24} color="black" />

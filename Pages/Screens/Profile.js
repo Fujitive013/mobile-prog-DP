@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Import Material Icons
+import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for outline icons
 
 const Profile = () => {
     // Sample user data
@@ -17,7 +17,7 @@ const Profile = () => {
         <View style={styles.container}>
             <View style={styles.profileInfo}>
                 <Image
-                    source={require('../../Images/axel.jpg')} // ibutang lang imo image diri xel
+                    source={require('../../Images/axel.jpg')} // Replace with your image path
                     style={styles.profileImage}
                 />
                 <Text style={styles.userName}>{user.name}</Text>
@@ -26,7 +26,7 @@ const Profile = () => {
             <View style={styles.detailsContainer}>
                 <View style={styles.detailItem}>
                     <View style={styles.iconLabelContainer}>
-                        <Icon name="email" size={24} color="#000" />
+                        <Ionicons name="mail-outline" size={24} color="#000" />
                         <Text style={styles.label}>Email</Text>
                     </View>
                     <View style={styles.outputContainer}>
@@ -36,7 +36,7 @@ const Profile = () => {
 
                 <View style={styles.detailItem}>
                     <View style={styles.iconLabelContainer}>
-                        <Icon name="phone" size={24} color="#000" />
+                        <Ionicons name="call-outline" size={24} color="#000" />
                         <Text style={styles.label}>Phone</Text>
                     </View>
                     <View style={styles.outputContainer}>
@@ -46,7 +46,7 @@ const Profile = () => {
 
                 <View style={styles.detailItem}>
                     <View style={styles.iconLabelContainer}>
-                        <Icon name="calendar-today" size={24} color="#000" />
+                        <Ionicons name="calendar-outline" size={24} color="#000" />
                         <Text style={styles.label}>Birthdate</Text>
                     </View>
                     <View style={styles.outputContainer}>
@@ -56,7 +56,7 @@ const Profile = () => {
 
                 <View style={styles.detailItem}>
                     <View style={styles.iconLabelContainer}>
-                        <Icon name="home" size={24} color="#000" />
+                        <Ionicons name="location-outline" size={24} color="#000" />
                         <Text style={styles.label}>Address</Text>
                     </View>
                     <View style={styles.outputContainer}>
@@ -66,7 +66,7 @@ const Profile = () => {
 
                 <View style={styles.detailItem}>
                     <View style={styles.iconLabelContainer}>
-                        <Icon name="wc" size={24} color="#000" />
+                        <Ionicons name="person-outline" size={24} color="#000" />
                         <Text style={styles.label}>Gender</Text>
                     </View>
                     <View style={styles.outputContainer}>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         borderColor: "#000",
     },
     userName: {
-        fontSize: 18, // Changed to 15
+        fontSize: 15,
         fontWeight: "bold",
         color: "#2C3E50",
     },
@@ -127,12 +127,12 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
     },
     label: {
-        fontSize: 15, // Changed to 15
+        fontSize: 15,
         color: "#34495E",
         marginLeft: 10,
     },
     value: {
-        fontSize: 15, // Changed to 15
+        fontSize: 13,
         fontWeight: "600",
         color: "#7F8C8D",
     },
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         marginVertical: -10,
         alignItems: "center",
-        justifyContent: "center", // Center content vertically
+        justifyContent: "center",
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -152,6 +152,6 @@ const styles = StyleSheet.create({
         shadowRadius: 3.5,
         elevation: 5,
         width: "50%",
-        alignSelf: "center", // Center the button horizontally
+        alignSelf: "center",
     },
 });
