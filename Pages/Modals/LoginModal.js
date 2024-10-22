@@ -28,7 +28,7 @@ const LoginModal = ({ visible, onClose }) => {
         setEmail("");
         setPassword("");
         navigation.navigate("Dashboard");
-        onClose(); // Close the modal after login
+        onClose(); 
     };
 
     return (
