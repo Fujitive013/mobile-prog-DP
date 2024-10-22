@@ -6,6 +6,9 @@ import SignupModal from "./Pages/Modals/SignupModal";
 import Dashboard from "./Pages/Dashboard";
 import LandingPage from "./Pages/LandingPage";
 import RegistrationModal from "./Pages/Modals/RegistrationModal";
+import ConfirmedBooking from "./Pages/Screens/Settings Sub Pages/ConfirmedBooking";
+import Booked from './Pages/Screens/Settings Sub Pages/Booked';
+import HomeScreens from "./Pages/Screens/HomeScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +25,9 @@ export default function App() {
                 <Stack.Screen name="SignUp" component={SignupModal} />
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 <Stack.Screen name="RegistrationModal" component={RegistrationModal}/>
+                <Stack.Screen name="ConfirmedBooking" component={ConfirmedBooking} />
+                <Stack.Screen name="Booked" component={Booked} />
+                <Stack.Screen name="HomeScreens" component={HomeScreens} />
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     voucherMissionContainer: {
-        marginVertical: 20,
+        marginVertical: 10,
         alignItems: "center",
     },
     bookText: {
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     descriptionContainer: {
-        marginVertical: 20,
+        marginVertical: 10,
     },
     descriptionText: {
         textAlign: "justify",
