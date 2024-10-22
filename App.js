@@ -11,6 +11,9 @@ import Booked from './Pages/Screens/Settings Sub Pages/Booked';
 import HelpSupport from './Pages/Screens/Settings Sub Pages/HelpSupport';
 import Settings from "./Pages/Screens/Settings";
 import Notification from './Pages/Screens/Settings Sub Pages/Notifications'
+import ChatSupport from './Pages/Screens/Settings Sub Pages/ChatSupport';
+import CallUs from './Pages/Screens/Settings Sub Pages/CallUs';
+import Email from './Pages/Screens/Settings Sub Pages/Email';
 import Privacy from './Pages/Screens/Settings Sub Pages/Privacy';
 
 const Stack = createNativeStackNavigator();
@@ -33,7 +36,10 @@ export default function App() {
                 <Stack.Screen name="HelpSupport" component={HelpSupport} />
                 <Stack.Screen name="Settings" component={Settings} />
                 <Stack.Screen name="Notification" component={Notification} />
-                <Stack.Screen name="Privacy" component={Privacy} />
+                <Stack.Screen name="ChatSupport" component={ChatSupport}/>
+                <Stack.Screen name="CallUs" component={CallUs}/>
+                <Stack.Screen name="Email" component={Email}/>
+                <Stack.Screen name="Privacy" component={Privacy}/>
             </Stack.Navigator>
         </NavigationContainer>
     );
