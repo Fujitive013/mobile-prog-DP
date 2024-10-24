@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 export default function ChatSupportScreen() {
   const [message, setMessage] = useState('');
+  const navigation = useNavigation();
 
   const handleSend = () => {
     // Implement send message logic here
     console.log('Sending message:', message);
     setMessage('');
   };
+
+  const back = () => {
+    navigation.navigate('Settings')
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -18,7 +24,7 @@ export default function ChatSupportScreen() {
         style={styles.container}
       >
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton}>
+          <TouchableOpacity style={styles.backButton} onPress={back}>
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Settings</Text>

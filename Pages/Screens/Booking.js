@@ -3,39 +3,20 @@ import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, Button, 
 import MapView, { Marker, Polyline } from "react-native-maps";
 import axios from 'axios';
 import * as Location from 'expo-location';
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons'; // Add icon library
-import haversine from 'haversine'; // Import haversine for distance calculation
-import * as Speech from 'expo-speech'; // Import the speech module
-import styles from '../../Styles/Booking'; // Import your styles here
-import { useNavigation } from '@react-navigation/native'; // Import the hook
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import haversine from 'haversine';
+import * as Speech from 'expo-speech';
+import { useNavigation } from '@react-navigation/native';
 
 export default function App() {
   const navigation = useNavigation();
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [currentAddress, setCurrentAddress] = useState('Fetching location...');
-  const [destination, setDestination] = useState(null);  // Initially empty destination
-  const [destinationCoords, setDestinationCoords] = useState(null); // Store destination coordinates
-  const [fare, setFare] = useState(null); // State for fare
+  const [destination, setDestination] = useState(null);
+  const [destinationCoords, setDestinationCoords] = useState(null);
+  const [fare, setFare] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
-
-  const handleConfirmRide = () => {
-        Alert.alert(
-            "Confirm Ride",
-            "Are you sure you want to confirm this ride?",
-            [ 
-                {
-                    text: "Cancel",
-                    onPress: () => console.log("Ride not confirmed"),
-                    style: "cancel"
-                },
-                {
-                    text: "OK",
-                    onPress: () => navigation.navigate('ConfirmedBooking', { fare }) // Navigate if confirmed
-                }
-            ]
-        );
-    };
 
   const [mapRegion, setMapRegion] = useState({
     latitude: 37.78825,
@@ -49,6 +30,24 @@ export default function App() {
     longitude: -122.4324,
   });
 
+  const handleConfirmRide = () => {
+    Alert.alert(
+      "Confirm Ride",
+      "Are you sure you want to confirm this ride?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Ride not confirmed"),
+          style: "cancel"
+        },
+        {
+          text: "OK",
+          onPress: () => navigation.navigate('ConfirmedBooking', { fare })
+        }
+      ]
+    );
+  };
+
   const userLocation = async () => {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -60,7 +59,6 @@ export default function App() {
       let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
       const { latitude, longitude } = location.coords;
 
-      // Update the map region based on the current location
       setMapRegion({
         latitude: latitude,
         longitude: longitude,
@@ -68,19 +66,17 @@ export default function App() {
         longitudeDelta: 0.0421,
       });
 
-      // Update current location coordinates for the marker
       setCurrentCoords({ latitude, longitude });
 
-      // Reverse geocoding to get address from latitude and longitude
       let addressResponse = await Location.reverseGeocodeAsync({
         latitude: latitude,
         longitude: longitude,
       });
 
-      // Extract the address (city, region, etc.)
       if (addressResponse.length > 0) {
         const address = addressResponse[0];
-        setCurrentAddress(`${address.city}, ${address.region}`);
+        const detailedAddress = `${address.street || ''}, ${address.name || ''}, ${address.district || ''}, ${address.city || ''}, ${address.region || ''}, ${address.postalCode || ''}, ${address.country || ''}`;
+        setCurrentAddress(detailedAddress);
       }
     } catch (error) {
       console.log('Error fetching location: ', error);
@@ -94,13 +90,12 @@ export default function App() {
 
   const handleInputChange = async (input) => {
     setQuery(input);
-
     if (input.length > 2) {
       try {
         const response = await axios.get('https://maps.gomaps.pro/maps/api/place/autocomplete/json', {
           params: {
             input: input,
-            key: 'AlzaSy4K5kA7hcxUL4UzwGodXFs2gp4Hnqg56OU', // Replace with your API key
+            key: 'AlzaSyAkLKzv7MYrCtLPG2WFzYA1el9jnc_O84r',
             components: 'country:ph',
           },
         });
@@ -119,63 +114,27 @@ export default function App() {
     }
   };
 
-  const decodePolyline = (encoded) => {
-    let poly = [];
-    let index = 0, len = encoded.length;
-    let lat = 0, lng = 0;
-
-    while (index < len) {
-        let b, shift = 0, result = 0;
-        do {
-            b = encoded.charCodeAt(index++) - 63;
-            result |= (b & 0x1f) << shift;
-            shift += 5;
-        } while (b >= 0x20);
-        const dlat = (result >> 1) ^ (-(result & 1));
-        lat += dlat;
-
-        shift = 0;
-        result = 0;
-        do {
-            b = encoded.charCodeAt(index++) - 63;
-            result |= (b & 0x1f) << shift;
-            shift += 5;
-        } while (b >= 0x20);
-        const dlng = (result >> 1) ^ (-(result & 1));
-        lng += dlng;
-
-        poly.push({ latitude: (lat / 1E5), longitude: (lng / 1E5) });
-    }
-    return poly;
-  };
-
   const handleSuggestionPress = async (description) => {
-    setQuery(description);    // Set the input to the selected suggestion
-    setDestination(description); // Set the destination with the selected suggestion
-    setSuggestions([]); // Clear suggestions
+    setQuery(description);
+    setDestination(description);
+    setSuggestions([]);
 
-    // Speak the destination address using Expo's Speech API
     Speech.speak(`Destination set to ${description}`);
 
-    // Fetch geocode for the selected location
     const geocode = await fetchGeocode(description);
 
     if (geocode) {
-      // Update map region to move to the selected location
       setMapRegion({
         latitude: geocode.latitude,
         longitude: geocode.longitude,
-        latitudeDelta: 0.01, // Zoom into the selected location
+        latitudeDelta: 0.01,
         longitudeDelta: 0.01,
       });
 
-      // Update destination coordinates for the marker
       setDestinationCoords(geocode);
 
-      // Fetch directions after getting destination coordinates
       await fetchDirections(currentCoords, geocode);
 
-      // Calculate the fare based on the distance
       const distance = haversine(currentCoords, geocode, { unit: 'km' });
       calculateFare(distance);
     }
@@ -186,7 +145,7 @@ export default function App() {
       const response = await axios.get('https://maps.gomaps.pro/maps/api/geocode/json', {
         params: {
           address: address,
-          key: 'AlzaSy4K5kA7hcxUL4UzwGodXFs2gp4Hnqg56OU', // Replace with your API key
+          key: 'AlzaSyAkLKzv7MYrCtLPG2WFzYA1el9jnc_O84r',
         },
       });
 
@@ -209,36 +168,62 @@ export default function App() {
         params: {
           origin: `${origin.latitude},${origin.longitude}`,
           destination: `${destination.latitude},${destination.longitude}`,
-          key: 'AlzaSy4K5kA7hcxUL4UzwGodXFs2gp4Hnqg56OU', // Replace with your API key
+          key: 'AlzaSyAkLKzv7MYrCtLPG2WFzYA1el9jnc_O84r',
         },
       });
 
-      console.log('Directions API Response:', response.data);
-
       if (response.data.routes.length > 0) {
-        // Decode the overview polyline to get the route coordinates
         const polyline = response.data.routes[0].overview_polyline.points;
-        const points = decodePolyline(polyline); // Decode the polyline string
-        
-        setRouteCoordinates(points); // Set the route coordinates
+        const points = decodePolyline(polyline);
+        setRouteCoordinates(points);
       }
     } catch (error) {
-        console.error('Error fetching directions:', error);
+      console.error('Error fetching directions:', error);
     }
+  };
+
+  const decodePolyline = (encoded) => {
+    let poly = [];
+    let index = 0, len = encoded.length;
+    let lat = 0, lng = 0;
+
+    while (index < len) {
+      let b, shift = 0, result = 0;
+      do {
+        b = encoded.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      const dlat = (result >> 1) ^ (-(result & 1));
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = encoded.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      const dlng = (result >> 1) ^ (-(result & 1));
+      lng += dlng;
+
+      poly.push({ latitude: (lat / 1E5), longitude: (lng / 1E5) });
+    }
+    return poly;
   };
 
   const calculateFare = (distance) => {
     let calculatedFare = 0;
 
     if (distance <= 2) {
-      calculatedFare = 50; // Base fare
+      calculatedFare = 50;
     } else if (distance <= 7) {
       calculatedFare = 50 + (distance - 2) * 10;
     } else {
       calculatedFare = 50 + (7 - 2) * 10 + (distance - 7) * 15;
     }
 
-    setFare(calculatedFare.toFixed(2)); // Set fare with 2 decimal points
+    setFare(calculatedFare.toFixed(2));
   };
 
   return (
@@ -248,13 +233,12 @@ export default function App() {
         region={mapRegion}
         mapType='standard'
       >
-        {/* Marker for Current Location */}
         <Marker
           coordinate={currentCoords}
           title="Your Location"
+          pinColor="#1a91d6"
         />
 
-        {/* Marker for Destination */}
         {destinationCoords && (
           <Marker
             coordinate={destinationCoords}
@@ -263,78 +247,162 @@ export default function App() {
           />
         )}
 
-        {/* Draw the route line */}
         {routeCoordinates.length > 0 && (
           <Polyline
             coordinates={routeCoordinates}
-            strokeColor="#1a91d6" // Light blue color
-            strokeWidth={2} // Width of the line
+            strokeColor="#1a91d6"
+            strokeWidth={4}
           />
         )}
       </MapView>
 
       <View style={styles.locationInfo}>
         <View style={styles.locationContainer}>
-            {/* Display the Current Location */}
-            <View style={styles.locationsubContainer}>
-                <View style={styles.locationRow}>
-                    <View style={styles.circle} />
-                    <Text style={styles.currentLocation}>Current Location</Text>
-                </View>
-                <Text style={styles.currentLoc}>{currentAddress} {"\n"}</Text>
-            </View>
+          <View style={styles.locationRow}>
+            <View style={styles.circle} />
+            <Text style={styles.currentLocation}>Current Location</Text>
+          </View>
+          <Text style={styles.currentLoc}>{currentAddress}</Text>
 
-            {/* Display the selected Destination only if set */}
-            {destination && (
-                <>
-                    <View style={styles.locationRow}>
-                        <View style={styles.circle} />
-                        <Text style={styles.destinationLocation}>Destination</Text>
-                    </View>
-                    <Text style={styles.destinationLoc}>{destination}</Text>
-                </>
-            )}
-        </View>
-      </View>
-
-      {/* Fare Display */}
-      {fare && (
-        <View style={styles.fareContainer}>
-          <Text style={styles.fareText}>Estimated Fare: ₱{fare}</Text>
-        </View>
-      )}
-
-      {/* Confirm Button */}
-      {fare && ( // Only show button if fare is calculated
-          <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmRide}>
-              <Text style={styles.confirmText}>CONFIRM RIDE</Text>
-          </TouchableOpacity>
-      )}
-      
-      <View style={styles.searchContainerWrapper}>
-        <View style={styles.searchContainer}>
-          <FontAwesome name="search" size={17} color="gray" style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Type a location"
-            value={query}
-            onChangeText={handleInputChange}
-          />
-        </View>
-
-        {/* Suggestions List */}
-        <FlatList
-          data={suggestions}
-          keyExtractor={(item) => item.place_id}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleSuggestionPress(item.description)}>
-              <Text style={styles.item}>{item.description}</Text>
-            </TouchableOpacity>
+          {destination && (
+            <>
+              <View style={styles.locationRow}>
+                <View style={styles.square} />
+                <Text style={styles.destinationLabel}>Destination</Text>
+              </View>
+              <Text style={styles.destination}>{destination}</Text>
+            </>
           )}
+        </View>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Search destination..."
+          onChangeText={handleInputChange}
+          value={query}
         />
+
+        {suggestions.length > 0 && (
+          <FlatList
+            data={suggestions}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => handleSuggestionPress(item.description)}
+                style={styles.suggestionItem}
+              >
+                <Text>{item.description}</Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item.place_id}
+            style={styles.suggestionList}
+          />
+        )}
+
+        {fare && (
+          <View style={styles.fareContainer}>
+            <Text style={styles.fareText}>Estimated Fare: ₱{fare}</Text>
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={handleConfirmRide}
+            >
+              <Text style={styles.confirmButtonText}>Confirm Ride</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      
-      <Button title="Get Location" onPress={userLocation} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  locationInfo: {
+    width: '100%',
+    backgroundColor: '#ffffff',
+    padding: 15,  // Reduced padding
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    elevation: 8,
+  },
+  locationContainer: {
+    marginBottom: 15,  // Reduced margin
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 3,  // Reduced margin
+  },
+  circle: {
+    width: 8,  // Reduced size
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#1a91d6',
+    marginRight: 8,  // Reduced margin
+  },
+  square: {
+    width: 8,  // Reduced size
+    height: 8,
+    backgroundColor: '#0fa859',
+    marginRight: 8,  // Reduced margin
+  },
+  currentLocation: {
+    fontWeight: 'bold',
+    fontSize: 14,  // Reduced font size
+  },
+  currentLoc: {
+    fontSize: 12,  // Reduced font size
+    color: '#555',
+  },
+  destinationLabel: {
+    fontWeight: 'bold',
+    fontSize: 14,  // Reduced font size
+  },
+  destination: {
+    fontSize: 12,  // Reduced font size
+    color: '#555',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    padding: 8,  // Reduced padding
+    borderRadius: 8,
+    fontSize: 14,  // Reduced font size
+    marginBottom: 8,  // Reduced margin
+  },
+  suggestionList: {
+    maxHeight: 120,  // Reduced max height
+  },
+  suggestionItem: {
+    paddingVertical: 8,  // Reduced padding
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+  },
+  fareContainer: {
+    marginTop: 8,  // Reduced margin
+    alignItems: 'center',
+  },
+  confirmButton: {
+    backgroundColor: '#956AF1',
+    padding: 10,  // Reduced padding
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  confirmButtonText: {
+    color: '#fff',
+    fontSize: 14,  // Reduced font size
+    fontWeight: 'bold',
+  },
+  fareText: {
+    fontSize: 16,  // Reduced font size
+    fontWeight: 'bold',
+    marginBottom: 8,  // Reduced margin
+  },
+});

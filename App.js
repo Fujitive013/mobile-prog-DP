@@ -15,6 +15,7 @@ import ChatSupport from './Pages/Screens/Settings Sub Pages/ChatSupport';
 import CallUs from './Pages/Screens/Settings Sub Pages/CallUs';
 import Email from './Pages/Screens/Settings Sub Pages/Email';
 import Privacy from './Pages/Screens/Settings Sub Pages/Privacy';
+import GcashPayment from "./Pages/Screens/Settings Sub Pages/Gcash/GcashPayment";
 
 const Stack = createNativeStackNavigator();
 
@@ -40,6 +41,7 @@ export default function App() {
                 <Stack.Screen name="CallUs" component={CallUs}/>
                 <Stack.Screen name="Email" component={Email}/>
                 <Stack.Screen name="Privacy" component={Privacy}/>
+                <Stack.Screen name="GcashPayment" component={GcashPayment}/>
             </Stack.Navigator>
         </NavigationContainer>
     );
