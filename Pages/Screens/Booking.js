@@ -362,7 +362,6 @@ const styles = StyleSheet.create({
     },
     locationInfo: {
         width: "100%",
-        height: "45%",
         backgroundColor: "#ffffff",
         paddingVertical: 20,
         paddingHorizontal: 7.5,
