@@ -10,6 +10,19 @@ export default function SettingsScreen() {
         navigation.navigate('Dashboard', screen= 'settings');
     }
 
+    const chatSupport = () => {
+        navigation.navigate('ChatSupport');
+    }
+
+    const callUs = () => {
+        navigation.navigate('CallUs');
+    }
+
+    const email = () => {
+        navigation.navigate('Email');
+    }
+
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -21,31 +34,25 @@ export default function SettingsScreen() {
 
       <View style={styles.content}>
         <View style={styles.sectionHeader}>
-          <Ionicons name="headset-outline" size={24} color="black" style={styles.sectionIcon} />
+          <Ionicons name="headset-outline" size={24} color="black" style={styles.sectionIcon}/>
           <Text style={styles.sectionTitle}>Help Support</Text>
         </View>
 
-        <TouchableOpacity style={styles.optionButton}>
+        <TouchableOpacity style={styles.optionButton} onPress={chatSupport}>
           <Ionicons name="chatbubbles-outline" size={24} color="black" style={styles.optionIcon} />
           <Text style={styles.optionText}>Chat Support</Text>
           <Ionicons name="chevron-forward" size={24} color="black" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton}>
+        <TouchableOpacity style={styles.optionButton} onPress={callUs}>
           <Ionicons name="call-outline" size={24} color="black" style={styles.optionIcon} />
           <Text style={styles.optionText}>Call us</Text>
           <Ionicons name="chevron-forward" size={24} color="black" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton}>
+        <TouchableOpacity style={styles.optionButton} onPress={email}>
           <Ionicons name="mail-outline" size={24} color="black" style={styles.optionIcon} />
           <Text style={styles.optionText}>Send us an Email</Text>
-          <Ionicons name="chevron-forward" size={24} color="black" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.optionButton}>
-          <Ionicons name="help-circle-outline" size={24} color="black" style={styles.optionIcon} />
-          <Text style={styles.optionText}>FAQs</Text>
           <Ionicons name="chevron-forward" size={24} color="black" />
         </TouchableOpacity>
       </View>

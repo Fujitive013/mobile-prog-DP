@@ -10,9 +10,17 @@ export default function ConfirmedBooking() {
   const route = useRoute();
   const fare = route.params?.fare || 0;
 
+  const handleGcash = () => {
+    navigation.navigate('GcashPayment', { fare, paymentMethod });
+  };
+
   const handleConfirm = () => {
-    // Navigate to Booked.js and pass the fare
-    navigation.navigate('Booked', { fare, paymentMethod });
+    if (paymentMethod === 'Gcash') {
+      handleGcash(); // Navigate to GcashPayment if Gcash is selected
+    } else {
+      // Navigate to Booked.js and pass the fare if "Upon Arrival" is selected
+      navigation.navigate('Booked', { fare, paymentMethod });
+    }
   };
 
   return (

@@ -8,6 +8,14 @@ const HomeScreens = () => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const navigation = useNavigation();
 
+    const handleMissions = () => {
+        navigation.navigate('MissionsScreen')
+    }
+
+    const handleVoucher = () => {
+        navigation.navigate('VoucherScreen')
+    }
+
     const handleConfirm = () => {
         navigation.navigate('Dashboard', { screen: 'Book' }); // Navigate to Booking.js
     };
@@ -67,9 +75,9 @@ const HomeScreens = () => {
             </View>
             <View style={styles.voucherMissionContainer}>
                 <View style={styles.voucherContainer}>
-                    <TouchableOpacity style={styles.vouchersubContainer}>
+                    <TouchableOpacity style={styles.vouchersubContainer} onPress={handleVoucher}>
                         <View>
-                            <Text style={styles.voucherText}>Vouchers</Text>
+                            <Text style={styles.voucherText} onPress={handleConfirm}>Vouchers</Text>
                             <Text style={styles.voucherDescription}>
                                 Claim before they're gone
                             </Text>
@@ -81,7 +89,7 @@ const HomeScreens = () => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.voucherContainer}>
-                    <TouchableOpacity style={styles.vouchersubContainer}>
+                    <TouchableOpacity style={styles.vouchersubContainer} onPress={handleMissions}>
                         <View>
                             <Text style={styles.voucherText}>Missions</Text>
                             <Text style={styles.voucherDescription}>

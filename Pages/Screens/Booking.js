@@ -1,340 +1,469 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, Button, Alert } from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+    View,
+    TextInput,
+    FlatList,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    Button,
+    Alert,
+} from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
-import axios from 'axios';
-import * as Location from 'expo-location';
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons'; // Add icon library
-import haversine from 'haversine'; // Import haversine for distance calculation
-import * as Speech from 'expo-speech'; // Import the speech module
-import styles from '../../Styles/Booking'; // Import your styles here
-import { useNavigation } from '@react-navigation/native'; // Import the hook
+import axios from "axios";
+import * as Location from "expo-location";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import haversine from "haversine";
+import * as Speech from "expo-speech";
+import { useNavigation } from "@react-navigation/native";
 
 export default function App() {
-  const navigation = useNavigation();
-  const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [currentAddress, setCurrentAddress] = useState('Fetching location...');
-  const [destination, setDestination] = useState(null);  // Initially empty destination
-  const [destinationCoords, setDestinationCoords] = useState(null); // Store destination coordinates
-  const [fare, setFare] = useState(null); // State for fare
-  const [routeCoordinates, setRouteCoordinates] = useState([]);
+    const navigation = useNavigation();
+    const [query, setQuery] = useState("");
+    const [suggestions, setSuggestions] = useState([]);
+    const [currentAddress, setCurrentAddress] = useState(
+        "Fetching location..."
+    );
+    const [destination, setDestination] = useState(null);
+    const [destinationCoords, setDestinationCoords] = useState(null);
+    const [fare, setFare] = useState(null);
+    const [routeCoordinates, setRouteCoordinates] = useState([]);
 
-  const handleConfirmRide = () => {
+    const [mapRegion, setMapRegion] = useState({
+        latitude: 37.78825,
+        longitude: -122.4324,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+    });
+
+    const [currentCoords, setCurrentCoords] = useState({
+        latitude: 37.78825,
+        longitude: -122.4324,
+    });
+
+    const handleConfirmRide = () => {
         Alert.alert(
             "Confirm Ride",
             "Are you sure you want to confirm this ride?",
-            [ 
+            [
                 {
                     text: "Cancel",
                     onPress: () => console.log("Ride not confirmed"),
-                    style: "cancel"
+                    style: "cancel",
                 },
                 {
                     text: "OK",
-                    onPress: () => navigation.navigate('ConfirmedBooking', { fare }) // Navigate if confirmed
-                }
+                    onPress: () =>
+                        navigation.navigate("ConfirmedBooking", { fare }),
+                },
             ]
         );
     };
 
-  const [mapRegion, setMapRegion] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+    const userLocation = async () => {
+        try {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== "granted") {
+                alert("Permission to access location was denied");
+                return;
+            }
 
-  const [currentCoords, setCurrentCoords] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-  });
+            let location = await Location.getCurrentPositionAsync({
+                enableHighAccuracy: true,
+            });
+            const { latitude, longitude } = location.coords;
 
-  const userLocation = async () => {
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Permission to access location was denied');
-        return;
-      }
+            setMapRegion({
+                latitude: latitude,
+                longitude: longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+            });
 
-      let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-      const { latitude, longitude } = location.coords;
+            setCurrentCoords({ latitude, longitude });
 
-      // Update the map region based on the current location
-      setMapRegion({
-        latitude: latitude,
-        longitude: longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      });
+            let addressResponse = await Location.reverseGeocodeAsync({
+                latitude: latitude,
+                longitude: longitude,
+            });
 
-      // Update current location coordinates for the marker
-      setCurrentCoords({ latitude, longitude });
-
-      // Reverse geocoding to get address from latitude and longitude
-      let addressResponse = await Location.reverseGeocodeAsync({
-        latitude: latitude,
-        longitude: longitude,
-      });
-
-      // Extract the address (city, region, etc.)
-      if (addressResponse.length > 0) {
-        const address = addressResponse[0];
-        setCurrentAddress(`${address.city}, ${address.region}`);
-      }
-    } catch (error) {
-      console.log('Error fetching location: ', error);
-      setCurrentAddress('Unable to fetch location');
-    }
-  };
-
-  useEffect(() => {
-    userLocation();
-  }, []);
-
-  const handleInputChange = async (input) => {
-    setQuery(input);
-
-    if (input.length > 2) {
-      try {
-        const response = await axios.get('https://maps.gomaps.pro/maps/api/place/autocomplete/json', {
-          params: {
-            input: input,
-            key: 'AlzaSy4K5kA7hcxUL4UzwGodXFs2gp4Hnqg56OU', // Replace with your API key
-            components: 'country:ph',
-          },
-        });
-
-        if (response.data.predictions) {
-          setSuggestions(response.data.predictions);
-        } else {
-          setSuggestions([]);
+            if (addressResponse.length > 0) {
+                const address = addressResponse[0];
+                const detailedAddress = `${address.street || ""}, ${
+                    address.name || ""
+                }, ${address.district || ""}, ${address.city || ""}, ${
+                    address.region || ""
+                }, ${address.postalCode || ""}, ${address.country || ""}`;
+                setCurrentAddress(detailedAddress);
+            }
+        } catch (error) {
+            console.log("Error fetching location: ", error);
+            setCurrentAddress("Unable to fetch location");
         }
-      } catch (error) {
-        console.error('Error fetching autocomplete data:', error);
+    };
+
+    useEffect(() => {
+        userLocation();
+    }, []);
+
+    const handleInputChange = async (input) => {
+        setQuery(input);
+        if (input.length > 2) {
+            try {
+                const response = await axios.get(
+                    "https://maps.gomaps.pro/maps/api/place/autocomplete/json",
+                    {
+                        params: {
+                            input: input,
+                            key: "AlzaSyAkLKzv7MYrCtLPG2WFzYA1el9jnc_O84r",
+                            components: "country:ph",
+                        },
+                    }
+                );
+
+                if (response.data.predictions) {
+                    setSuggestions(response.data.predictions);
+                } else {
+                    setSuggestions([]);
+                }
+            } catch (error) {
+                console.error("Error fetching autocomplete data:", error);
+                setSuggestions([]);
+            }
+        } else {
+            setSuggestions([]);
+        }
+    };
+
+    const handleSuggestionPress = async (description) => {
+        setQuery(description);
+        setDestination(description);
         setSuggestions([]);
-      }
-    } else {
-      setSuggestions([]);
-    }
-  };
 
-  const decodePolyline = (encoded) => {
-    let poly = [];
-    let index = 0, len = encoded.length;
-    let lat = 0, lng = 0;
+        Speech.speak(`Destination set to ${description}`);
 
-    while (index < len) {
-        let b, shift = 0, result = 0;
-        do {
-            b = encoded.charCodeAt(index++) - 63;
-            result |= (b & 0x1f) << shift;
-            shift += 5;
-        } while (b >= 0x20);
-        const dlat = (result >> 1) ^ (-(result & 1));
-        lat += dlat;
+        const geocode = await fetchGeocode(description);
 
-        shift = 0;
-        result = 0;
-        do {
-            b = encoded.charCodeAt(index++) - 63;
-            result |= (b & 0x1f) << shift;
-            shift += 5;
-        } while (b >= 0x20);
-        const dlng = (result >> 1) ^ (-(result & 1));
-        lng += dlng;
+        if (geocode) {
+            setMapRegion({
+                latitude: geocode.latitude,
+                longitude: geocode.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+            });
 
-        poly.push({ latitude: (lat / 1E5), longitude: (lng / 1E5) });
-    }
-    return poly;
-  };
+            setDestinationCoords(geocode);
 
-  const handleSuggestionPress = async (description) => {
-    setQuery(description);    // Set the input to the selected suggestion
-    setDestination(description); // Set the destination with the selected suggestion
-    setSuggestions([]); // Clear suggestions
+            await fetchDirections(currentCoords, geocode);
 
-    // Speak the destination address using Expo's Speech API
-    Speech.speak(`Destination set to ${description}`);
+            const distance = haversine(currentCoords, geocode, { unit: "km" });
+            calculateFare(distance);
+        }
+    };
 
-    // Fetch geocode for the selected location
-    const geocode = await fetchGeocode(description);
+    const fetchGeocode = async (address) => {
+        try {
+            const response = await axios.get(
+                "https://maps.gomaps.pro/maps/api/geocode/json",
+                {
+                    params: {
+                        address: address,
+                        key: "AlzaSyAkLKzv7MYrCtLPG2WFzYA1el9jnc_O84r",
+                    },
+                }
+            );
 
-    if (geocode) {
-      // Update map region to move to the selected location
-      setMapRegion({
-        latitude: geocode.latitude,
-        longitude: geocode.longitude,
-        latitudeDelta: 0.01, // Zoom into the selected location
-        longitudeDelta: 0.01,
-      });
+            if (response.data.results.length > 0) {
+                const { lat, lng } = response.data.results[0].geometry.location;
+                return { latitude: lat, longitude: lng };
+            } else {
+                console.error("No results found for this address");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching geocode:", error);
+            return null;
+        }
+    };
 
-      // Update destination coordinates for the marker
-      setDestinationCoords(geocode);
+    const fetchDirections = async (origin, destination) => {
+        try {
+            const response = await axios.get(
+                "https://maps.gomaps.pro/maps/api/directions/json",
+                {
+                    params: {
+                        origin: `${origin.latitude},${origin.longitude}`,
+                        destination: `${destination.latitude},${destination.longitude}`,
+                        key: "AlzaSyAkLKzv7MYrCtLPG2WFzYA1el9jnc_O84r",
+                    },
+                }
+            );
 
-      // Fetch directions after getting destination coordinates
-      await fetchDirections(currentCoords, geocode);
+            if (response.data.routes.length > 0) {
+                const polyline =
+                    response.data.routes[0].overview_polyline.points;
+                const points = decodePolyline(polyline);
+                setRouteCoordinates(points);
+            }
+        } catch (error) {
+            console.error("Error fetching directions:", error);
+        }
+    };
 
-      // Calculate the fare based on the distance
-      const distance = haversine(currentCoords, geocode, { unit: 'km' });
-      calculateFare(distance);
-    }
-  };
+    const decodePolyline = (encoded) => {
+        let poly = [];
+        let index = 0,
+            len = encoded.length;
+        let lat = 0,
+            lng = 0;
 
-  const fetchGeocode = async (address) => {
-    try {
-      const response = await axios.get('https://maps.gomaps.pro/maps/api/geocode/json', {
-        params: {
-          address: address,
-          key: 'AlzaSy4K5kA7hcxUL4UzwGodXFs2gp4Hnqg56OU', // Replace with your API key
-        },
-      });
+        while (index < len) {
+            let b,
+                shift = 0,
+                result = 0;
+            do {
+                b = encoded.charCodeAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            const dlat = (result >> 1) ^ -(result & 1);
+            lat += dlat;
 
-      if (response.data.results.length > 0) {
-        const { lat, lng } = response.data.results[0].geometry.location;
-        return { latitude: lat, longitude: lng };
-      } else {
-        console.error('No results found for this address');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error fetching geocode:', error);
-      return null;
-    }
-  };
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charCodeAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            const dlng = (result >> 1) ^ -(result & 1);
+            lng += dlng;
 
-  const fetchDirections = async (origin, destination) => {
-    try {
-      const response = await axios.get('https://maps.gomaps.pro/maps/api/directions/json', {
-        params: {
-          origin: `${origin.latitude},${origin.longitude}`,
-          destination: `${destination.latitude},${destination.longitude}`,
-          key: 'AlzaSy4K5kA7hcxUL4UzwGodXFs2gp4Hnqg56OU', // Replace with your API key
-        },
-      });
+            poly.push({ latitude: lat / 1e5, longitude: lng / 1e5 });
+        }
+        return poly;
+    };
 
-      console.log('Directions API Response:', response.data);
+    const calculateFare = (distance) => {
+        let calculatedFare = 0;
 
-      if (response.data.routes.length > 0) {
-        // Decode the overview polyline to get the route coordinates
-        const polyline = response.data.routes[0].overview_polyline.points;
-        const points = decodePolyline(polyline); // Decode the polyline string
-        
-        setRouteCoordinates(points); // Set the route coordinates
-      }
-    } catch (error) {
-        console.error('Error fetching directions:', error);
-    }
-  };
+        if (distance <= 2) {
+            calculatedFare = 50;
+        } else if (distance <= 7) {
+            calculatedFare = 50 + (distance - 2) * 10;
+        } else {
+            calculatedFare = 50 + (7 - 2) * 10 + (distance - 7) * 15;
+        }
 
-  const calculateFare = (distance) => {
-    let calculatedFare = 0;
+        setFare(calculatedFare.toFixed(2));
+    };
 
-    if (distance <= 2) {
-      calculatedFare = 50; // Base fare
-    } else if (distance <= 7) {
-      calculatedFare = 50 + (distance - 2) * 10;
-    } else {
-      calculatedFare = 50 + (7 - 2) * 10 + (distance - 7) * 15;
-    }
+    return (
+        <View style={styles.container}>
+            <MapView style={styles.map} region={mapRegion} mapType="standard">
+                <Marker
+                    coordinate={currentCoords}
+                    title="Your Location"
+                    pinColor="#1a91d6"
+                />
 
-    setFare(calculatedFare.toFixed(2)); // Set fare with 2 decimal points
-  };
+                {destinationCoords && (
+                    <Marker
+                        coordinate={destinationCoords}
+                        title="Destination"
+                        pinColor="#0fa859"
+                    />
+                )}
 
-  return (
-    <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        region={mapRegion}
-        mapType='standard'
-      >
-        {/* Marker for Current Location */}
-        <Marker
-          coordinate={currentCoords}
-          title="Your Location"
-        />
+                {routeCoordinates.length > 0 && (
+                    <Polyline
+                        coordinates={routeCoordinates}
+                        strokeColor="#1a91d6"
+                        strokeWidth={4}
+                    />
+                )}
+            </MapView>
 
-        {/* Marker for Destination */}
-        {destinationCoords && (
-          <Marker
-            coordinate={destinationCoords}
-            title="Destination"
-            pinColor="#0fa859"
-          />
-        )}
-
-        {/* Draw the route line */}
-        {routeCoordinates.length > 0 && (
-          <Polyline
-            coordinates={routeCoordinates}
-            strokeColor="#1a91d6" // Light blue color
-            strokeWidth={2} // Width of the line
-          />
-        )}
-      </MapView>
-
-      <View style={styles.locationInfo}>
-        <View style={styles.locationContainer}>
-            {/* Display the Current Location */}
-            <View style={styles.locationsubContainer}>
-                <View style={styles.locationRow}>
-                    <View style={styles.circle} />
-                    <Text style={styles.currentLocation}>Current Location</Text>
-                </View>
-                <Text style={styles.currentLoc}>{currentAddress} {"\n"}</Text>
-            </View>
-
-            {/* Display the selected Destination only if set */}
-            {destination && (
-                <>
-                    <View style={styles.locationRow}>
-                        <View style={styles.circle} />
-                        <Text style={styles.destinationLocation}>Destination</Text>
+            <View style={styles.locationInfo}>
+                <View style={styles.LocDesContainer}>
+                    <View style={styles.locationContainer}>
+                        <View style={styles.locationRow}>
+                            <View style={styles.circle} />
+                            <Text style={styles.currentLocation}>
+                                Current Location
+                            </Text>
+                        </View>
+                        <Text style={styles.currentLoc}>{currentAddress}</Text>
                     </View>
-                    <Text style={styles.destinationLoc}>{destination}</Text>
-                </>
-            )}
-        </View>
-      </View>
+                    <View style={styles.DestinationContainer}>
+                        <View style={styles.destinationRow}>
+                            <View style={styles.square} />
+                            <Text style={styles.destinationLabel}>
+                                Destination
+                            </Text>
+                        </View>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Search destination..."
+                            onChangeText={handleInputChange}
+                            value={query}
+                        />
 
-      {/* Fare Display */}
-      {fare && (
-        <View style={styles.fareContainer}>
-          <Text style={styles.fareText}>Estimated Fare: ₱{fare}</Text>
-        </View>
-      )}
+                        {suggestions.length > 0 && (
+                            <FlatList
+                                data={suggestions}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            handleSuggestionPress(
+                                                item.description
+                                            )
+                                        }
+                                        style={styles.suggestionItem}
+                                    >
+                                        <Text>{item.description}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                keyExtractor={(item) => item.place_id}
+                                style={styles.suggestionList}
+                            />
+                        )}
+                    </View>
+                </View>
 
-      {/* Confirm Button */}
-      {fare && ( // Only show button if fare is calculated
-          <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmRide}>
-              <Text style={styles.confirmText}>CONFIRM RIDE</Text>
-          </TouchableOpacity>
-      )}
-      
-      <View style={styles.searchContainerWrapper}>
-        <View style={styles.searchContainer}>
-          <FontAwesome name="search" size={17} color="gray" style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Type a location"
-            value={query}
-            onChangeText={handleInputChange}
-          />
+                {fare && (
+                    <View style={styles.fareContainer}>
+                        <Text style={styles.fareText}>
+                            Estimated Fare: ₱{fare}
+                        </Text>
+                        <TouchableOpacity
+                            style={styles.confirmButton}
+                            onPress={handleConfirmRide}
+                        >
+                            <Text style={styles.confirmButtonText}>
+                                Confirm Ride
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
+            </View>
         </View>
-
-        {/* Suggestions List */}
-        <FlatList
-          data={suggestions}
-          keyExtractor={(item) => item.place_id}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleSuggestionPress(item.description)}>
-              <Text style={styles.item}>{item.description}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
-      
-      <Button title="Get Location" onPress={userLocation} />
-    </View>
-  );
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: "flex-end",
+        alignItems: "center",
+    },
+    map: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    locationInfo: {
+        width: "100%",
+        height: "45%",
+        backgroundColor: "#ffffff",
+        paddingVertical: 20,
+        paddingHorizontal: 7.5,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        elevation: 8,
+    },
+    locationContainer: {
+        paddingVertical: 15,
+        paddingHorizontal: 15,
+        borderWidth: 2.5,
+        borderColor: "#E5E4E2",
+        borderBottomWidth: 0,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+    },
+    LocDesContainer: {
+        padding: 5,
+    },
+    DestinationContainer: {
+        paddingBottom: 10,
+        paddingHorizontal: 15,
+        borderWidth: 2.5,
+        borderColor: "#E5E4E2",
+        borderTopWidth: 0,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+    },
+    locationRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 3,
+    },
+    circle: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: "#1a91d6",
+        marginRight: 8,
+    },
+    square: {
+        width: 8,
+        height: 8,
+        backgroundColor: "#0fa859",
+        marginRight: 8,
+    },
+    destinationRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 8,
+    },
+    currentLocation: {
+        fontWeight: "bold",
+        fontSize: 14,
+    },
+    currentLoc: {
+        fontSize: 12,
+        color: "#555",
+        paddingBottom: 10,
+        borderBottomWidth: 1,
+        borderColor: "black",
+    },
+    destinationLabel: {
+        fontWeight: "bold",
+        fontSize: 14,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "#ddd",
+        padding: 8,
+        borderRadius: 8,
+        fontSize: 14,
+        marginBottom: 8,
+    },
+    suggestionList: {
+        maxHeight: 120,
+    },
+    suggestionItem: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderBottomWidth: 1,
+        borderColor: "#eee",
+    },
+    fareContainer: {
+        marginTop: 8,
+        alignItems: "center",
+    },
+    confirmButton: {
+        backgroundColor: "#956AF1",
+        padding: 10,
+        borderRadius: 8,
+        alignItems: "center",
+    },
+    confirmButtonText: {
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: "bold",
+    },
+    fareText: {
+        fontSize: 16,
+        fontWeight: "bold",
+        marginBottom: 8,
+    },
+});
