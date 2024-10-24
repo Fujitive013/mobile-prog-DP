@@ -341,7 +341,7 @@ export default function App() {
                             onPress={handleConfirmRide}
                         >
                             <Text style={styles.confirmButtonText}>
-                                Confirm Ride
+                                Confirm
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -368,28 +368,22 @@ const styles = StyleSheet.create({
         paddingHorizontal: 7.5,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        elevation: 8,
     },
     locationContainer: {
         paddingVertical: 15,
         paddingHorizontal: 15,
-        borderWidth: 2.5,
-        borderColor: "#E5E4E2",
-        borderBottomWidth: 0,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
     },
     LocDesContainer: {
+        backgroundColor: "#f5f5f5",
         padding: 5,
+        borderRadius: 20,
+        paddingHorizontal: 10,
+        marginHorizontal: 10,
+        elevation: 10,
     },
     DestinationContainer: {
         paddingBottom: 10,
         paddingHorizontal: 15,
-        borderWidth: 2.5,
-        borderColor: "#E5E4E2",
-        borderTopWidth: 0,
-        borderBottomLeftRadius: 20,
-        borderBottomRightRadius: 20,
     },
     locationRow: {
         flexDirection: "row",
@@ -432,6 +426,7 @@ const styles = StyleSheet.create({
     input: {
         borderWidth: 1,
         borderColor: "#ddd",
+        backgroundColor: "#f4f3ff",
         padding: 8,
         borderRadius: 8,
         fontSize: 14,
@@ -447,7 +442,7 @@ const styles = StyleSheet.create({
         borderColor: "#eee",
     },
     fareContainer: {
-        marginTop: 8,
+        marginTop: 25,
         alignItems: "center",
     },
     confirmButton: {
@@ -455,6 +450,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 8,
         alignItems: "center",
+        width: "25%",
     },
     confirmButtonText: {
         color: "#fff",
