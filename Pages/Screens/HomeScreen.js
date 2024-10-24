@@ -69,7 +69,7 @@ const HomeScreens = () => {
                 <View style={styles.voucherContainer}>
                     <TouchableOpacity style={styles.vouchersubContainer}>
                         <View>
-                            <Text style={styles.voucherText}>Vouchers</Text>
+                            <Text style={styles.voucherText} onPress={handleConfirm}>Vouchers</Text>
                             <Text style={styles.voucherDescription}>
                                 Claim before they're gone
                             </Text>
