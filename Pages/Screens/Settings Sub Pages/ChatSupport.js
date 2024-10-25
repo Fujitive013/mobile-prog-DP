@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 export default function ChatSupportScreen() {
   const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [presetQuestions, setPresetQuestions] = useState([
+    { text: "What does Motodachi do?", response: "Motodachi is a service that helps you get home or to work faster with convenient, reliable rides." },
+    { text: "What is your pricing?", response: "Our pricing starts at 50 pesos for the first kilometer and adds 10 pesos per additional kilometer." },
+    { text: "Contact Number", response: "Our contact number is +639 123 4567 789." },
+  ]);
   const navigation = useNavigation();
 
-  const handleSend = () => {
-    // Implement send message logic here
-    console.log('Sending message:', message);
-    setMessage('');
+  const addMessage = (response, index) => {
+    setMessages(prevMessages => [...prevMessages, { text: response, sender: 'agent' }]);
+    setPresetQuestions(prevQuestions => prevQuestions.filter((_, i) => i !== index));
   };
 
   const back = () => {
-    navigation.navigate('Settings')
-  }
+    navigation.navigate('HelpSupport');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -35,16 +41,31 @@ export default function ChatSupportScreen() {
           <Text style={styles.chatSupportTitle}>Chat Support</Text>
         </View>
 
-        <View style={styles.messageContainer}>
-          <View style={styles.agentMessage}>
-            <View style={styles.agentAvatar}>
-              <Ionicons name="person" size={24} color="white" />
+        <ScrollView style={styles.messageContainer}>
+          {messages.map((msg, index) => (
+            <View key={index} style={msg.sender === 'user' ? styles.userMessage : styles.agentMessage}>
+              {msg.sender === 'agent' && (
+                <View style={styles.agentAvatar}>
+                  <Ionicons name="person" size={24} color="white" />
+                </View>
+              )}
+              <View style={msg.sender === 'agent' ? styles.messageContentAgent : styles.messageContentUser}>
+                {msg.sender === 'agent' && (
+                  <Text style={styles.agentName}>Support Agent</Text>
+                )}
+                <Text style={styles.messageText}>{msg.text}</Text>
+              </View>
             </View>
-            <View style={styles.messageContent}>
-              <Text style={styles.agentName}>Support Agent</Text>
-              <Text style={styles.messageText}>Hello, How may I help you?</Text>
-            </View>
-          </View>
+          ))}
+          {loading && <ActivityIndicator size="small" color="#007AFF" style={styles.loadingIndicator} />}
+        </ScrollView>
+
+        <View style={styles.presetContainer}>
+          {presetQuestions.map((question, index) => (
+            <TouchableOpacity key={index} style={styles.presetButton} onPress={() => addMessage(question.response, index)}>
+              <Text style={styles.presetText}>{question.text}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
         <View style={styles.inputContainer}>
@@ -55,7 +76,7 @@ export default function ChatSupportScreen() {
               value={message}
               onChangeText={setMessage}
             />
-            <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
+            <TouchableOpacity onPress={() => addMessage(message)} style={styles.sendButton}>
               <Ionicons name="send" size={24} color="#007AFF" />
             </TouchableOpacity>
           </View>
@@ -66,87 +87,118 @@ export default function ChatSupportScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F2F2F7',
-    marginVertical: 10,
-    marginHorizontal: 5,
+  container: { 
+    flex: 1, 
+    backgroundColor: '#F2F2F7', 
+    top: 15,
   },
-  header: {
-    flexDirection: 'row',
+  header: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    padding: 16, 
+    borderBottomWidth: 1, 
+    borderBottomColor: '#E5E5EA' 
+  },
+  backButton: { 
+    marginRight: 16 
+  },
+  headerTitle: { 
+    fontSize: 17, 
+    fontWeight: '600' 
+  },
+  chatSupportHeader: { 
+    flexDirection: 'row', 
     alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA',
+    padding: 16 
   },
-  backButton: {
-    marginRight: 16,
+  chatSupportTitle: { 
+    fontSize: 20, 
+    fontWeight: '600', 
+    marginLeft: 8 
   },
-  headerTitle: {
-    fontSize: 17,
+  messageContainer: { 
+    flex: 1, 
+    padding: 16 
+  },
+  userMessage: { 
+    flexDirection: 'row', 
+    justifyContent: 'flex-end', 
+    marginBottom: 16 
+  },
+  agentMessage: { 
+    flexDirection: 'row', 
+    marginBottom: 16
+  },
+  agentAvatar: { 
+    width: 40, 
+    height: 40, 
+    borderRadius: 20, 
+    backgroundColor: '#007AFF', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    marginRight: 12
+  },
+  messageContentAgent: { 
+    backgroundColor: 'white', 
+    borderRadius: 20, 
+    padding: 12, 
+    maxWidth: '70%'
+  },
+  messageContentUser: { 
+    backgroundColor: '#007AFF', 
+    borderRadius: 20, 
+    padding: 12, 
+    maxWidth: '70%', 
+    color: 'white' 
+  },
+  messageText: { 
+    fontSize: 16, 
+    color: 'black' 
+  },
+  agentName: { 
+    fontSize: 14, 
     fontWeight: '600',
+    marginBottom: 4, 
+    color: '#8E8E93' 
   },
-  chatSupportHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
+  presetContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
   },
-  chatSupportTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-  messageContainer: {
-    flex: 1,
-    padding: 16,
-  },
-  agentMessage: {
-    flexDirection: 'row',
-    marginBottom: 16,
-  },
-  agentAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  presetButton: {
     backgroundColor: '#007AFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-    marginVertical: 15,
-  },
-  messageContent: {
-    backgroundColor: 'white',
     borderRadius: 20,
-    padding: 12,
-    maxWidth: '70%',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginVertical: 5,
+    alignItems: 'center',
   },
-  agentName: {
+  presetText: {
+    color: 'white',
     fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
-    color: '#8E8E93',
+    fontWeight: '500',
   },
-  messageText: {
-    fontSize: 16,
+  inputContainer: { 
+    padding: 16, 
+    borderTopWidth: 1, 
+    borderTopColor: '#E5E5EA' 
   },
-  inputContainer: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E5EA',
+  inputWrapper: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: 'white', 
+    borderRadius: 20, 
+    paddingHorizontal: 12
+   },
+  input: { 
+    flex: 1, 
+    height: 40, 
+    fontSize: 16 
   },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    paddingHorizontal: 12,
+  sendButton: { 
+    padding: 8 
   },
-  input: {
-    flex: 1,
-    height: 40,
-    fontSize: 16,
-  },
-  sendButton: {
-    padding: 8,
+  loadingIndicator: { 
+    marginVertical: 10 
   },
 });

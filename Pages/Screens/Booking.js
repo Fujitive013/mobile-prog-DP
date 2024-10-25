@@ -12,7 +12,6 @@ import {
 import MapView, { Marker, Polyline } from "react-native-maps";
 import axios from "axios";
 import * as Location from "expo-location";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import haversine from "haversine";
 import * as Speech from "expo-speech";
 import { useNavigation } from "@react-navigation/native";
@@ -257,10 +256,15 @@ export default function App() {
 
         setFare(calculatedFare.toFixed(2));
     };
+    
 
     return (
         <View style={styles.container}>
-            <MapView style={styles.map} region={mapRegion} mapType="standard">
+            <MapView
+                style={styles.map}
+                region={mapRegion}
+                mapType="standard"
+            >
                 <Marker
                     coordinate={currentCoords}
                     title="Your Location"
