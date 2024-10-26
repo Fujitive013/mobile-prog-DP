@@ -10,8 +10,8 @@ import {
     Platform,
 } from "react-native";
 import { Card, TextInput } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Import the icons
-import DateTimePicker from "@react-native-community/datetimepicker"; // Import the DateTimePicker
+import Icon from "react-native-vector-icons/MaterialIcons";
+import DateTimePicker from "@react-native-community/datetimepicker"; 
 
 const RegistrationModal = ({ visible, onClose }) => {
     const navigation = useNavigation();
@@ -205,8 +205,8 @@ const styles = StyleSheet.create({
     dateContainer: {
         flex: 1,
         backgroundColor: "#F9F9F9",
-        paddingVertical: 20, // Add vertical padding
-        paddingHorizontal: 10, // Add horizontal padding
+        paddingVertical: 20, 
+        paddingHorizontal: 10, 
         borderRadius: 5,
         borderWidth: 1,
         borderColor: "#E0E0E0",

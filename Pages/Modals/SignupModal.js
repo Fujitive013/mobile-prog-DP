@@ -42,12 +42,17 @@ const SignUpModal = ({ visible, onClose }) => {
             setEmail("");
             setPassword("");
             setConfirmPassword("");
+            setRegistrationVisible(false); // Ensure registration modal is closed
         }
     }, [visible]);
 
     return (
         <>
-            <Modal transparent visible={visible} animationType="slide">
+            <Modal
+                transparent
+                visible={visible && !isRegistrationVisible}
+                animationType="slide"
+            >
                 <View style={styles.modalContainer}>
                     <Card style={styles.card}>
                         <View>
@@ -150,7 +155,10 @@ const SignUpModal = ({ visible, onClose }) => {
             {/* Registration Modal */}
             <RegistrationModal
                 visible={isRegistrationVisible}
-                onClose={() => setRegistrationVisible(false)}
+                onClose={() => {
+                    setRegistrationVisible(false);
+                    onClose(); // Close the signup modal when registration is closed
+                }}
                 email={email}
                 password={password}
             />
