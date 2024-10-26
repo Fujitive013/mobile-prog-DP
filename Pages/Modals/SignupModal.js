@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Modal,
     StyleSheet,
@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Card, TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import PropTypes from "prop-types";
 import RegistrationModal from "./RegistrationModal";
 
 const SignUpModal = ({ visible, onClose }) => {
@@ -18,26 +19,31 @@ const SignUpModal = ({ visible, onClose }) => {
     const [isRegistrationVisible, setRegistrationVisible] = useState(false);
 
     const isPasswordMatch = password === confirmPassword && password !== "";
-    const isEmailValid = email.includes("@") && email.includes(".");
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); // Basic email validation
 
     const handleSignUp = () => {
+        if (!isPasswordMatch) {
+            Alert.alert("Password Mismatch", "Passwords do not match.");
+            return;
+        }
+
         if (!isEmailValid) {
             Alert.alert("Invalid Email", "Please enter a valid email address.");
             return;
         }
 
-        if (!isPasswordMatch) {
-            Alert.alert("Password Mismatch", "Passwords do not match.");
-            return;
-        }
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-
-        onClose();
-
+        // Store email and password for the registration modal
         setRegistrationVisible(true);
     };
+
+    useEffect(() => {
+        if (!visible) {
+            // Reset states when modal is closed
+            setEmail("");
+            setPassword("");
+            setConfirmPassword("");
+        }
+    }, [visible]);
 
     return (
         <>
@@ -62,6 +68,7 @@ const SignUpModal = ({ visible, onClose }) => {
                                 mode="outlined"
                                 value={email}
                                 onChangeText={setEmail}
+                                accessibilityLabel="Email input"
                             />
                         </View>
                         <Text style={styles.passwordLabel}>Password</Text>
@@ -80,6 +87,7 @@ const SignUpModal = ({ visible, onClose }) => {
                                 mode="outlined"
                                 value={password}
                                 onChangeText={setPassword}
+                                accessibilityLabel="Password input"
                             />
                         </View>
                         <Text style={styles.confirmPasswordLabel}>
@@ -100,6 +108,7 @@ const SignUpModal = ({ visible, onClose }) => {
                                 mode="outlined"
                                 value={confirmPassword}
                                 onChangeText={setConfirmPassword}
+                                accessibilityLabel="Confirm Password input"
                             />
                         </View>
 
@@ -124,15 +133,10 @@ const SignUpModal = ({ visible, onClose }) => {
                         <TouchableOpacity
                             style={[
                                 styles.submitButton,
-                                {
-                                    opacity:
-                                        isPasswordMatch && isEmailValid
-                                            ? 1
-                                            : 0.5,
-                                },
+                                { opacity: isPasswordMatch ? 1 : 0.5 },
                             ]}
                             disabled={!isPasswordMatch || !isEmailValid} // Disable if not valid
-                            onPress={handleSignUp} // Handle sign up
+                            onPress={handleSignUp}
                         >
                             <Text style={styles.submitLabel}>Sign Up</Text>
                         </TouchableOpacity>
@@ -147,9 +151,16 @@ const SignUpModal = ({ visible, onClose }) => {
             <RegistrationModal
                 visible={isRegistrationVisible}
                 onClose={() => setRegistrationVisible(false)}
+                email={email}
+                password={password}
             />
         </>
     );
+};
+
+SignUpModal.propTypes = {
+    visible: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
 };
 
 export default SignUpModal;

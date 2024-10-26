@@ -10,25 +10,41 @@ import {
 import { Card, TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import the icons
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginModal = ({ visible, onClose }) => {
     const navigation = useNavigation();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const isEmailValid = email.includes("@") && email.includes(".");
 
-    const handleLogin = () => {
-        if (!isEmailValid) {
-            Alert.alert("Invalid Email", "Please enter a valid email address.");
-            return;
+    const handleLogin = async () => {
+        try {
+            const response = await fetch("http://192.168.18.10:5000/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }), // Send email and password
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Store the token in AsyncStorage
+                await AsyncStorage.setItem("token", data.token);
+                console.log("Login successful:", data.token);
+                setEmail("");
+                setPassword("");
+                navigation.navigate("Dashboard"); // Navigate to Dashboard
+                onClose(); // Close the modal after login
+            } else {
+                Alert.alert("Login failed", data.error);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            Alert.alert("Error", "Something went wrong. Please try again.");
         }
-
-        console.log("Login successful");
-        setEmail("");
-        setPassword("");
-        navigation.navigate("Dashboard");
-        onClose(); // Close the modal after login
     };
 
     return (
@@ -75,11 +91,11 @@ const LoginModal = ({ visible, onClose }) => {
                     <TouchableOpacity
                         style={[
                             styles.submitButton,
-                            {
-                                opacity: isEmailValid ? 1 : 0.5,
-                            },
+                            // {
+                            //     opacity: isEmailValid ? 1 : 0.5,
+                            // },
                         ]}
-                        disabled={!isEmailValid} // Disable if email is invalid
+                        //disabled={!isEmailValid} // Disable if email is invalid
                         onPress={handleLogin}
                     >
                         <Text style={styles.submitLabel}>Sign In</Text>

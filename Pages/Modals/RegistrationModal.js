@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     Platform,
 } from "react-native";
-import { Card, TextInput, Button } from "react-native-paper";
+import { Card, TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import the icons
 import DateTimePicker from "@react-native-community/datetimepicker"; // Import the DateTimePicker
 
@@ -45,7 +45,7 @@ const RegistrationModal = ({ visible, onClose }) => {
             const currentDate = selectedDate || birthDate;
             setBirthDate(currentDate);
         }
-        setShowDatePicker(false); // Close picker after date selection
+        setShowDatePicker(false);
     };
 
     return (
@@ -150,14 +150,13 @@ const RegistrationModal = ({ visible, onClose }) => {
                             onChangeText={setAddress}
                         />
                     </View>
-                    <Button
-                        mode="elevated"
+                    <TouchableOpacity
                         style={styles.submitButton}
                         onPress={handleRegister}
-                        textColor="#FFFFFF"
+                        activeOpacity={0.8}
                     >
                         <Text style={styles.registerLabel}>Continue</Text>
-                    </Button>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={onClose}>
                         <Text style={styles.closeButton}>Close</Text>
                     </TouchableOpacity>
@@ -223,6 +222,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 20,
         marginTop: 10,
+    },
+    registerLabel: {
+        color: "#FFFFFF",
+        fontSize: 16,
+        marginVertical: 5,
     },
     allLabels: {
         fontSize: 16,

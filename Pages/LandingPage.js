@@ -10,6 +10,15 @@ const LandingPage = () => {
     const [isSignUpVisible, setSignUpVisible] = useState(false);
     const [isLoginVisible, setLoginVisible] = useState(false);
     const [isRegistrationVisible, setRegistrationVisible] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleSignUp = (email, password) => {
+        setEmail(email);
+        setPassword(password);
+        setSignUpVisible(false);
+        setRegistrationVisible(true); // Show the registration modal
+    };
 
     return (
         <View style={styles.container}>
@@ -19,25 +28,22 @@ const LandingPage = () => {
                 resizeMode="contain"
             />
             <View>
-                <Text style={[ styles.welcomeText, { alignSelf: 'center', marginTop: 250 }]}>
+                <Text
+                    style={[
+                        styles.welcomeText,
+                        { alignSelf: "center", marginTop: 250 },
+                    ]}
+                >
                     Hello
                 </Text>
-                <View style= {{alignSelf: 'center'}}>
+                <View style={{ alignSelf: "center" }}>
                     <Text style={styles.descriptionText}>
                         Welcome To Moto-dachi,{" "}
                     </Text>
-                    <Text
-                        style={[
-                            styles.descriptionText
-                        ]}
-                    >
+                    <Text style={[styles.descriptionText]}>
                         with exceptional prices and{" "}
                     </Text>
-                    <Text
-                        style={[
-                            styles.descriptionText
-                        ]}
-                    >
+                    <Text style={[styles.descriptionText]}>
                         top-notch safety-only{" "}
                     </Text>
                 </View>
@@ -56,12 +62,12 @@ const LandingPage = () => {
                 >
                     <Text style={styles.buttonSignUpText}>Sign Up</Text>
                 </TouchableOpacity>
-
             </View>
 
             <SignUpModal
                 visible={isSignUpVisible}
                 onClose={() => setSignUpVisible(false)}
+                onSignUp={handleSignUp} // Pass the handleSignUp function
             />
 
             <LoginModal
@@ -72,6 +78,8 @@ const LandingPage = () => {
             <RegistrationModal
                 visible={isRegistrationVisible}
                 onClose={() => setRegistrationVisible(false)}
+                email={email} // Pass email to RegistrationModal
+                password={password} // Pass password to RegistrationModal
             />
         </View>
     );
@@ -82,8 +90,8 @@ export default LandingPage;
 const styles = StyleSheet.create({
     descriptionText: {
         fontSize: 16,
-        color: '#888888',
-        textAlign: "center"
+        color: "#888888",
+        textAlign: "center",
     },
     container: {
         flex: 1,
@@ -109,7 +117,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: "80%",
         justifyContent: "center",
-        marginTop: 50
+        marginTop: 50,
     },
     touchableLoginButton: {
         backgroundColor: "#3498DB",
