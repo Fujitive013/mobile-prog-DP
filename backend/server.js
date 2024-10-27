@@ -30,7 +30,7 @@ app.use(
             mongoUrl: mongoURI,
             collectionName: "sessions",
             ttl: 3600, // Session expiration time in seconds (1 hour)
-            autoRemove: "native", // Automatically remove expired sessions
+            autoRemove: "native",
         }),
         cookie: { maxAge: 180 * 60 * 1000 }, // Session expiry in milliseconds
     })
@@ -56,7 +56,7 @@ app.post("/users", async (req, res) => {
             password: hashedPassword,
         });
 
-        await newUser.save(); // Save user to database
+        await newUser.save(); 
         res.status(201).json({ message: "User created successfully" });
     } catch (err) {
         console.log("Error creating user:", err);
@@ -125,7 +125,7 @@ app.post("/logout", (req, res) => {
         if (err) {
             return res.status(500).json({ error: "Failed to log out" });
         }
-        res.clearCookie("connect.sid"); // Clear the session cookie
+        res.clearCookie("connect.sid"); 
         res.json({ message: "Logged out successfully" });
     });
 });

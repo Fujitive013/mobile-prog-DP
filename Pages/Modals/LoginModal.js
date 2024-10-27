@@ -8,7 +8,7 @@ import {
     Alert,
 } from "react-native";
 import { Card, TextInput } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Import the icons
+import Icon from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -17,7 +17,6 @@ const LoginModal = ({ visible, onClose }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    
     const handleLogin = async () => {
         try {
             const response = await fetch("http://192.168.18.10:5000/login", {
@@ -31,13 +30,12 @@ const LoginModal = ({ visible, onClose }) => {
             const data = await response.json();
 
             if (response.ok) {
-                // Store the token in AsyncStorage
                 await AsyncStorage.setItem("token", data.token);
                 console.log("Login successful:", data.token);
                 setEmail("");
                 setPassword("");
-                navigation.navigate("Dashboard"); // Navigate to Dashboard
-                onClose(); // Close the modal after login
+                navigation.navigate("Dashboard");
+                onClose();
             } else {
                 Alert.alert("Login failed", data.error);
             }
@@ -89,13 +87,7 @@ const LoginModal = ({ visible, onClose }) => {
                     </View>
 
                     <TouchableOpacity
-                        style={[
-                            styles.submitButton,
-                            // {
-                            //     opacity: isEmailValid ? 1 : 0.5,
-                            // },
-                        ]}
-                        //disabled={!isEmailValid} // Disable if email is invalid
+                        style={[styles.submitButton]}
                         onPress={handleLogin}
                     >
                         <Text style={styles.submitLabel}>Sign In</Text>

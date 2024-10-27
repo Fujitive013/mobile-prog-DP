@@ -20,7 +20,7 @@ const SignUpModal = ({ visible, onClose }) => {
     const [isRegistrationVisible, setRegistrationVisible] = useState(false);
 
     const isPasswordMatch = password === confirmPassword && password !== "";
-    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); // Basic email validation
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); 
 
     const handleSignUp = async () => {
         if (!isPasswordMatch) {
@@ -34,14 +34,12 @@ const SignUpModal = ({ visible, onClose }) => {
         }
 
         try {
-            // Store email and password in AsyncStorage
             await AsyncStorage.setItem(
                 "userData",
                 JSON.stringify({ email, password })
             );
             console.log("User data stored in AsyncStorage");
 
-            // Move to registration modal after saving data
             setRegistrationVisible(true);
         } catch (error) {
             console.error("Error storing user data:", error);
@@ -51,7 +49,6 @@ const SignUpModal = ({ visible, onClose }) => {
 
     useEffect(() => {
         if (!visible) {
-            // Reset states when modal is closed
             setEmail("");
             setPassword("");
             setConfirmPassword("");
@@ -160,12 +157,11 @@ const SignUpModal = ({ visible, onClose }) => {
                 </View>
             </Modal>
 
-            {/* Registration Modal */}
             <RegistrationModal
                 visible={isRegistrationVisible}
                 onClose={() => setRegistrationVisible(false)}
-                email={email} // Pass email directly
-                password={password} // Pass password directly
+                email={email} // Pass email 
+                password={password} // Pass password 
             />
         </>
     );
