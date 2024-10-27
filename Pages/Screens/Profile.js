@@ -1,33 +1,88 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
-import React from "react";
-import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for outline icons
+import {
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    TouchableOpacity,
+    ActivityIndicator,
+} from "react-native";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
+
 
 const Profile = () => {
     const navigation = useNavigation();
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const handleLogout = () => {
-        navigation.navigate('LandingPage')
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(
+                    "http://192.168.18.10:5000/user/details",
+                    {
+                        withCredentials: true,
+                    }
+                );
+                console.log("Fetched User Data:", response.data); // Log fetched data
+                setUser(response.data.user); // Access the user property
+            } catch (error) {
+                console.log("Failed to fetch user data:", error);
+                navigation.navigate("LandingPage"); // Navigate if unauthorized
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchUserData();
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            await axios.post(
+                "http://192.168.18.10:5000/logout",
+                {},
+                {
+                    withCredentials: true,
+                }
+            );
+            navigation.navigate("LandingPage");
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
+
+    // Format date function outside of useEffect
+    const formatDate = (dateString) => {
+        const options = { year: "numeric", month: "long", day: "numeric" }; // Customize options as needed
+        const date = new Date(dateString);
+        return date.toLocaleDateString(undefined, options); // Returns date in the user's locale
+    };
+
+    if (loading) {
+        return <ActivityIndicator size="large" color="#0000ff" />;
     }
 
-    // Sample user data
-    const user = {
-        name: "Axel Paredes",
-        email: "axelparedes@email.com",
-        phoneNumber: "+1234567890",
-        birthDate: "January 1, 1990",
-        address: "Villanueva, Misamis Oriental",
-        gender: "Male",
-    };
+    if (!user) {
+        return <Text>No user data available.</Text>;
+    }
+
+    // Format the birthdate here
+    const formattedBirthdate = user?.birthdate
+        ? formatDate(user.birthdate)
+        : "Not provided";
 
     return (
         <View style={styles.container}>
             <View style={styles.profileInfo}>
                 <Image
-                    source={require('../../Images/axel.jpg')} // Replace with your image path
+                    source={require("../../Images/axel.jpg")}
                     style={styles.profileImage}
                 />
-                <Text style={styles.userName}>{user.name}</Text>
+                <Text style={styles.userName}>
+                    {user?.first_name} {user?.last_name}
+                </Text>
             </View>
 
             <View style={styles.detailsContainer}>
@@ -37,7 +92,7 @@ const Profile = () => {
                         <Text style={styles.label}>Email</Text>
                     </View>
                     <View style={styles.outputContainer}>
-                        <Text style={styles.value}>{user.email}</Text>
+                        <Text style={styles.value}>{user?.email}</Text>
                     </View>
                 </View>
 
@@ -47,42 +102,59 @@ const Profile = () => {
                         <Text style={styles.label}>Phone</Text>
                     </View>
                     <View style={styles.outputContainer}>
-                        <Text style={styles.value}>{user.phoneNumber}</Text>
+                        <Text style={styles.value}>{user?.phone}</Text>
                     </View>
                 </View>
 
                 <View style={styles.detailItem}>
                     <View style={styles.iconLabelContainer}>
-                        <Ionicons name="calendar-outline" size={24} color="#000" />
+                        <Ionicons
+                            name="calendar-outline"
+                            size={24}
+                            color="#000"
+                        />
                         <Text style={styles.label}>Birthdate</Text>
                     </View>
                     <View style={styles.outputContainer}>
-                        <Text style={styles.value}>{user.birthDate}</Text>
+                        <Text style={styles.value}>{formattedBirthdate}</Text>
                     </View>
                 </View>
 
                 <View style={styles.detailItem}>
                     <View style={styles.iconLabelContainer}>
-                        <Ionicons name="location-outline" size={24} color="#000" />
+                        <Ionicons
+                            name="location-outline"
+                            size={24}
+                            color="#000"
+                        />
                         <Text style={styles.label}>Address</Text>
                     </View>
                     <View style={styles.outputContainer}>
-                        <Text style={styles.value}>{user.address}</Text>
+                        <Text style={styles.value}>
+                            {user?.address || "Not provided"}
+                        </Text>
                     </View>
                 </View>
 
                 <View style={styles.detailItem}>
                     <View style={styles.iconLabelContainer}>
-                        <Ionicons name="person-outline" size={24} color="#000" />
+                        <Ionicons
+                            name="person-outline"
+                            size={24}
+                            color="#000"
+                        />
                         <Text style={styles.label}>Gender</Text>
                     </View>
                     <View style={styles.outputContainer}>
-                        <Text style={styles.value}>{user.gender}</Text>
+                        <Text style={styles.value}>{user?.gender}</Text>
                     </View>
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <TouchableOpacity
+                style={styles.logoutButton}
+                onPress={handleLogout}
+            >
                 <Text style={styles.logoutButtonText}>Logout</Text>
             </TouchableOpacity>
         </View>
@@ -160,5 +232,10 @@ const styles = StyleSheet.create({
         elevation: 5,
         width: "50%",
         alignSelf: "center",
+    },
+    logoutButtonText: {
+        color: "#000",
+        fontSize: 15,
+        fontWeight: "bold",
     },
 });

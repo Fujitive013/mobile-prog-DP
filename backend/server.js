@@ -3,17 +3,15 @@ require("dotenv").config({ path: "../.env" });
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
-const MongoStore = require("connect-mongo"); // For storing session in MongoDB
+const MongoStore = require("connect-mongo");
 const User = require("./models/User");
 const jwt = require("jsonwebtoken");
 
 const app = express();
-const PORT = process.env.PORT || 5000; // Use PORT from .env or default to 5000
+const PORT = process.env.PORT || 5000;
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
-
-// MongoDB connection string from environment variable
 const mongoURI = process.env.MONGO_URI;
 
 // Connect to MongoDB
@@ -25,14 +23,15 @@ mongoose
 // Session Middleware Setup
 app.use(
     session({
-        secret: process.env.SESSION_SECRET || "default_secret", // Use session secret from .env
+        secret: process.env.SESSION_SECRET || "default_secret",
         resave: false,
         saveUninitialized: false,
         store: MongoStore.create({
             mongoUrl: mongoURI,
             collectionName: "sessions",
+            ttl: 3600, // Session expiration time in seconds (1 hour)
+            autoRemove: "native", // Automatically remove expired sessions
         }),
-
         cookie: { maxAge: 180 * 60 * 1000 }, // Session expiry in milliseconds
     })
 );
@@ -45,63 +44,82 @@ app.post("/users", async (req, res) => {
         req.body;
 
     try {
-        const hashedPassword = await bcrypt.hash(password, 10); // Hash password with a salt rounds of 10
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = new User({
-            first_name: firstName, // Change to match schema
-            last_name: lastName, // Change to match schema
+            first_name: firstName,
+            last_name: lastName,
             email,
             phone,
-            birthdate: birthDate, // Change to match schema
+            birthdate: birthDate,
             gender,
-            password: hashedPassword, // Store hashed password
+            password: hashedPassword,
         });
 
         await newUser.save(); // Save user to database
         res.status(201).json({ message: "User created successfully" });
     } catch (err) {
-        console.log("Error creating user:", err); // Log full error for debugging
+        console.log("Error creating user:", err);
         res.status(400).json({ error: "Error creating user." });
     }
 });
 
-// User Login Route
+// Login
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ error: "Invalid email or password" });
         }
 
-        // Compare the provided password with the hashed password in the database
+        // Verify the password
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(400).json({ error: "Invalid email or password" });
         }
-
-        // Store user ID in session
-        req.session.userId = user._id; // Start a session for the user
-
+        req.session.userId = user._id;
+        req.session.user = {
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            phone: user.phone,
+            birthdate: user.birthdate,
+            gender: user.gender,
+        };
+        req.session.createdAt = new Date();
         // Optionally generate a JWT token
         const token = jwt.sign(
             { id: user._id },
             process.env.JWT_SECRET || "default_jwt_secret",
-            {
-                expiresIn: "1h",
-            }
+            { expiresIn: "1h" }
         );
 
-        res.json({ token, message: "Login successful" }); // Send token and message
+        res.json({
+            token,
+            message: "Login successful",
+            user: req.session.user,
+            createdAt: req.session.createdAt,
+        });
     } catch (error) {
+        console.error("Server error during login:", error);
         res.status(500).json({
             error: "Server error. Please try again later.",
         });
     }
 });
 
-// Logout Route
+// Profile
+app.get("/user/details", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+    res.json({ user: req.session.user });
+});
+
+// Logout
 app.post("/logout", (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -112,7 +130,6 @@ app.post("/logout", (req, res) => {
     });
 });
 
-// Start the server
 app.listen(PORT, () => {
     console.log(`Server running on http://192.168.18.10:${PORT}`);
 });

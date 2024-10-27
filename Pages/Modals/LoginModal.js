@@ -17,7 +17,7 @@ const LoginModal = ({ visible, onClose }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-
+    
     const handleLogin = async () => {
         try {
             const response = await fetch("http://192.168.18.10:5000/login", {
