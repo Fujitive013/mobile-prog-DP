@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Modal,
     StyleSheet,
@@ -7,43 +7,74 @@ import {
     View,
     Alert,
     TouchableOpacity,
-    Platform,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Card, TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import DateTimePicker from "@react-native-community/datetimepicker"; 
+import DateTimePicker from "@react-native-community/datetimepicker";
 
-const RegistrationModal = ({ visible, onClose }) => {
-    const navigation = useNavigation();
-
+const RegistrationModal = ({ visible, onClose, email, password }) => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [gender, setGender] = useState("");
     const [birthDate, setBirthDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [address, setAddress] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
 
-    const handleRegister = () => {
-        if (
-            firstName === "" ||
-            lastName === "" ||
-            !birthDate ||
-            address === "" ||
-            phoneNumber === ""
-        ) {
-            Alert.alert("Missing Information", "Please fill out all fields.");
+    // Assign email and password to state
+    const [userEmail, setUserEmail] = useState(email);
+    const [userPassword, setUserPassword] = useState(password);
+
+    useEffect(() => {
+        setUserEmail(email);
+        setUserPassword(password);
+    }, [email, password]);
+
+    const handleRegister = async () => {
+        if (!firstName || !lastName || !phoneNumber || !birthDate || !gender) {
+            Alert.alert("Incomplete Data", "Please fill out all fields.");
             return;
         }
 
-        Alert.alert("Success", "You have successfully signed up!");
-        onClose();
-        navigation.navigate("Dashboard");
+        const payload = {
+            firstName,
+            lastName,
+            email: userEmail,
+            phone: phoneNumber,
+            birthDate: birthDate.toISOString(),
+            gender,
+            password: userPassword,
+        };
+
+        try {
+            const response = await fetch("http://192.168.18.10:5000/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                Alert.alert("Success", "User Registered Successfully!");
+                onClose();
+            } else {
+                Alert.alert(
+                    "Error",
+                    result.error || "Failed to register user."
+                );
+            }
+        } catch (error) {
+            console.log("Error during registration:", error);
+            Alert.alert("Error", "An error occurred during registration.");
+        }
     };
 
     const onChangeDate = (event, selectedDate) => {
         if (event.type === "set") {
-            const currentDate = selectedDate || birthDate;
-            setBirthDate(currentDate);
+            setBirthDate(selectedDate || birthDate);
         }
         setShowDatePicker(false);
     };
@@ -52,9 +83,9 @@ const RegistrationModal = ({ visible, onClose }) => {
         <Modal transparent visible={visible} animationType="slide">
             <View style={styles.modalContainer}>
                 <Card style={styles.card}>
-                    <View>
-                        <Text style={styles.SignUpLabel}>Registration</Text>
-                    </View>
+                    <Text style={styles.SignUpLabel}>Registration</Text>
+
+                    {/* First Name */}
                     <Text style={styles.allLabels}>First Name</Text>
                     <View style={styles.inputContainer}>
                         <Icon
@@ -72,6 +103,8 @@ const RegistrationModal = ({ visible, onClose }) => {
                             onChangeText={setFirstName}
                         />
                     </View>
+
+                    {/* Last Name */}
                     <Text style={styles.allLabels}>Last Name</Text>
                     <View style={styles.inputContainer}>
                         <Icon
@@ -89,6 +122,27 @@ const RegistrationModal = ({ visible, onClose }) => {
                             onChangeText={setLastName}
                         />
                     </View>
+
+                    {/* Gender */}
+                    <Text style={styles.allLabels}>Gender</Text>
+                    <View style={styles.inputContainer}>
+                        <Icon
+                            name="wc"
+                            size={20}
+                            color="#AFAFAF"
+                            style={styles.icon}
+                        />
+                        <TextInput
+                            placeholder="Gender"
+                            placeholderTextColor="#AFAFAF"
+                            style={styles.inputField}
+                            mode="outlined"
+                            value={gender}
+                            onChangeText={setGender}
+                        />
+                    </View>
+
+                    {/* Birthdate */}
                     <Text style={styles.allLabels}>Birthdate</Text>
                     <View style={styles.inputContainer}>
                         <Icon
@@ -116,6 +170,8 @@ const RegistrationModal = ({ visible, onClose }) => {
                             onChange={onChangeDate}
                         />
                     )}
+
+                    {/* Phone Number */}
                     <Text style={styles.allLabels}>Phone Number</Text>
                     <View style={styles.inputContainer}>
                         <Icon
@@ -133,23 +189,7 @@ const RegistrationModal = ({ visible, onClose }) => {
                             onChangeText={setPhoneNumber}
                         />
                     </View>
-                    <Text style={styles.allLabels}>Address</Text>
-                    <View style={styles.inputContainer}>
-                        <Icon
-                            name="location-on"
-                            size={20}
-                            color="#AFAFAF"
-                            style={styles.icon}
-                        />
-                        <TextInput
-                            placeholder="Address"
-                            placeholderTextColor="#AFAFAF"
-                            style={styles.inputField}
-                            mode="outlined"
-                            value={address}
-                            onChangeText={setAddress}
-                        />
-                    </View>
+
                     <TouchableOpacity
                         style={styles.submitButton}
                         onPress={handleRegister}
@@ -169,30 +209,20 @@ const RegistrationModal = ({ visible, onClose }) => {
 export default RegistrationModal;
 
 const styles = StyleSheet.create({
-    SignUpLabel: {
-        fontSize: 30,
-        marginBottom: 20,
-        textAlign: "center",
-    },
+    SignUpLabel: { fontSize: 30, marginBottom: 20, textAlign: "center" },
     modalContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "rgba(0,0,0,0.5)",
     },
-    card: {
-        width: "90%",
-        padding: 20,
-        borderRadius: 20,
-    },
+    card: { width: "90%", padding: 20, borderRadius: 20 },
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 10,
     },
-    icon: {
-        marginRight: 10,
-    },
+    icon: { marginRight: 10 },
     inputField: {
         flex: 1,
         backgroundColor: "#F9F9F9",
@@ -205,16 +235,14 @@ const styles = StyleSheet.create({
     dateContainer: {
         flex: 1,
         backgroundColor: "#F9F9F9",
-        paddingVertical: 20, 
-        paddingHorizontal: 10, 
+        paddingVertical: 10,
+        paddingHorizontal: 10,
         borderRadius: 5,
         borderWidth: 1,
         borderColor: "#E0E0E0",
         justifyContent: "center",
     },
-    dateText: {
-        color: "#000",
-    },
+    dateText: { color: "#000" },
     submitButton: {
         backgroundColor: "#424242",
         borderRadius: 10,
@@ -223,18 +251,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         marginTop: 10,
     },
-    registerLabel: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        marginVertical: 5,
-    },
-    allLabels: {
-        fontSize: 16,
-        marginBottom: 5,
-    },
+    registerLabel: { color: "#FFFFFF", fontSize: 16, marginVertical: 5 },
+    allLabels: { fontSize: 16, marginBottom: 5 },
     closeButton: {
         color: "#000000",
         textAlign: "right",
-        marginRight: 10,
+        marginTop: 10,
+        fontSize: 16,
     },
 });

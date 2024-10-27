@@ -11,6 +11,7 @@ import { Card, TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import PropTypes from "prop-types";
 import RegistrationModal from "./RegistrationModal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignUpModal = ({ visible, onClose }) => {
     const [email, setEmail] = useState("");
@@ -21,7 +22,7 @@ const SignUpModal = ({ visible, onClose }) => {
     const isPasswordMatch = password === confirmPassword && password !== "";
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); // Basic email validation
 
-    const handleSignUp = () => {
+    const handleSignUp = async () => {
         if (!isPasswordMatch) {
             Alert.alert("Password Mismatch", "Passwords do not match.");
             return;
@@ -32,8 +33,20 @@ const SignUpModal = ({ visible, onClose }) => {
             return;
         }
 
-        // Store email and password for the registration modal
-        setRegistrationVisible(true);
+        try {
+            // Store email and password in AsyncStorage
+            await AsyncStorage.setItem(
+                "userData",
+                JSON.stringify({ email, password })
+            );
+            console.log("User data stored in AsyncStorage");
+
+            // Move to registration modal after saving data
+            setRegistrationVisible(true);
+        } catch (error) {
+            console.error("Error storing user data:", error);
+            Alert.alert("Error", "Failed to store user data.");
+        }
     };
 
     useEffect(() => {
@@ -42,17 +55,12 @@ const SignUpModal = ({ visible, onClose }) => {
             setEmail("");
             setPassword("");
             setConfirmPassword("");
-            setRegistrationVisible(false); // Ensure registration modal is closed
         }
     }, [visible]);
 
     return (
         <>
-            <Modal
-                transparent
-                visible={visible && !isRegistrationVisible}
-                animationType="slide"
-            >
+            <Modal transparent visible={visible} animationType="slide">
                 <View style={styles.modalContainer}>
                     <Card style={styles.card}>
                         <View>
@@ -155,12 +163,9 @@ const SignUpModal = ({ visible, onClose }) => {
             {/* Registration Modal */}
             <RegistrationModal
                 visible={isRegistrationVisible}
-                onClose={() => {
-                    setRegistrationVisible(false);
-                    onClose(); // Close the signup modal when registration is closed
-                }}
-                email={email}
-                password={password}
+                onClose={() => setRegistrationVisible(false)}
+                email={email} // Pass email directly
+                password={password} // Pass password directly
             />
         </>
     );

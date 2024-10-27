@@ -38,14 +38,29 @@ app.use(
 );
 
 // User Registration Route
+const bcrypt = require("bcrypt");
+
 app.post("/users", async (req, res) => {
-    const { name, email, password } = req.body;
+    const { firstName, lastName, email, phone, birthDate, gender, password } =
+        req.body;
 
     try {
-        const newUser = new User({ name, email, password }); // Store password directly (not secure)
+        const hashedPassword = await bcrypt.hash(password, 10); // Hash password with a salt rounds of 10
+
+        const newUser = new User({
+            first_name: firstName, // Change to match schema
+            last_name: lastName, // Change to match schema
+            email,
+            phone,
+            birthdate: birthDate, // Change to match schema
+            gender,
+            password: hashedPassword, // Store hashed password
+        });
+
         await newUser.save(); // Save user to database
         res.status(201).json({ message: "User created successfully" });
     } catch (err) {
+        console.log("Error creating user:", err); // Log full error for debugging
         res.status(400).json({ error: "Error creating user." });
     }
 });
@@ -60,7 +75,9 @@ app.post("/login", async (req, res) => {
             return res.status(400).json({ error: "Invalid email or password" });
         }
 
-        if (user.password !== password) {
+        // Compare the provided password with the hashed password in the database
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
             return res.status(400).json({ error: "Invalid email or password" });
         }
 
