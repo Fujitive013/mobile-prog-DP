@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from '@react-native-picker/picker';
 import { Card, TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -47,7 +48,7 @@ const RegistrationModal = ({ visible, onClose, email, password }) => {
         };
 
         try {
-            const response = await fetch("http://192.168.18.10:5000/users", {
+            const response = await fetch("http://192.168.1.2:5000/users", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -132,14 +133,15 @@ const RegistrationModal = ({ visible, onClose, email, password }) => {
                             color="#AFAFAF"
                             style={styles.icon}
                         />
-                        <TextInput
-                            placeholder="Gender"
-                            placeholderTextColor="#AFAFAF"
+                        <Picker
+                            selectedValue={gender}
+                            onValueChange={(value) => setGender(value)}
                             style={styles.inputField}
-                            mode="outlined"
-                            value={gender}
-                            onChangeText={setGender}
-                        />
+                        >
+                            <Picker.Item label="Select Gender" value="" color="#AFAFAF" />
+                            <Picker.Item label="Male" value="Male" />
+                            <Picker.Item label="Female" value="Female" />
+                        </Picker>
                     </View>
 
                     {/* Birthdate */}

@@ -19,7 +19,7 @@ const LoginModal = ({ visible, onClose }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch("http://192.168.18.10:5000/login", {
+            const response = await fetch("http://192.168.1.2:5000/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

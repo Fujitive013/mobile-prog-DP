@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "../.env" });
+require("dotenv").config({ path: ".env" });
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -24,7 +24,7 @@ mongoose
 app.use(
     session({
         secret: process.env.SESSION_SECRET || "default_secret",
-        resave: false,
+        resave: false,  
         saveUninitialized: false,
         store: MongoStore.create({
             mongoUrl: mongoURI,
@@ -131,5 +131,5 @@ app.post("/logout", (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server running on http://192.168.18.10:${PORT}`);
+    console.log(`Server running on http://192.168.1.2:${PORT}`);
 });
