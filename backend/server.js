@@ -6,9 +6,9 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const User = require("./models/User");
 const jwt = require("jsonwebtoken");
-
 const app = express();
-const PORT = process.env.PORT || 5000;
+
+const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 5000;
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
@@ -56,7 +56,7 @@ app.post("/users", async (req, res) => {
             password: hashedPassword,
         });
 
-        await newUser.save(); 
+        await newUser.save();
         res.status(201).json({ message: "User created successfully" });
     } catch (err) {
         console.log("Error creating user:", err);
@@ -125,11 +125,23 @@ app.post("/logout", (req, res) => {
         if (err) {
             return res.status(500).json({ error: "Failed to log out" });
         }
-        res.clearCookie("connect.sid"); 
+        res.clearCookie("connect.sid");
         res.json({ message: "Logged out successfully" });
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://192.168.18.10:${PORT}`);
-});
+const startServer = (port) => {
+    const server = app.listen(port, "0.0.0.0", () => {
+        console.log(`Server running on http://0.0.0.0:${port}`);
+    });
+    server.on("error", (err) => {
+        if (err.code === "EADDRINUSE") {
+            console.log(`Port ${port} is in use, trying next port...`);
+            startServer(port + 1);
+        } else {
+            console.error("Server error:", err);
+        }
+    });
+};
+
+startServer(DEFAULT_PORT);
