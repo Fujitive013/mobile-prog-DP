@@ -28,8 +28,10 @@ const LoginModal = ({ visible, onClose }) => {
             });
 
             const data = await response.json();
+            console.log("Server response:", data);
 
             if (response.ok) {
+                // Safely store token and user_role
                 await AsyncStorage.setItem("token", data.token);
                 console.log("Login successful:", data.token);
                 setEmail("");
@@ -37,9 +39,14 @@ const LoginModal = ({ visible, onClose }) => {
                 navigation.navigate("Dashboard");
                 onClose();
             } else {
-                Alert.alert("Login failed", data.error);
+                // Handle server-side validation errors
+                Alert.alert(
+                    "Login failed",
+                    data.error || "Invalid credentials."
+                );
             }
         } catch (error) {
+            // Catch network or unexpected errors
             console.error("Error:", error);
             Alert.alert("Error", "Something went wrong. Please try again.");
         }

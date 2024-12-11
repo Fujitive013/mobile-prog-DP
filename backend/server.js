@@ -40,8 +40,16 @@ app.use(
 const bcrypt = require("bcrypt");
 
 app.post("/users", async (req, res) => {
-    const { firstName, lastName, email, phone, birthDate, gender, password } =
-        req.body;
+    const {
+        firstName,
+        lastName,
+        email,
+        phone,
+        birthDate,
+        gender,
+        password,
+        user_role,
+    } = req.body;
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -54,6 +62,7 @@ app.post("/users", async (req, res) => {
             birthdate: birthDate,
             gender,
             password: hashedPassword,
+            user_role,
         });
 
         await newUser.save();
@@ -88,6 +97,7 @@ app.post("/login", async (req, res) => {
             phone: user.phone,
             birthdate: user.birthdate,
             gender: user.gender,
+            user_role: user.user_role,
         };
         req.session.createdAt = new Date();
         // Optionally generate a JWT token
