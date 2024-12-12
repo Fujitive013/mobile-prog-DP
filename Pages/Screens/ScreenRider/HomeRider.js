@@ -19,7 +19,17 @@ const HomeRider = () => {
     });
 
     useEffect(() => {
+        // Initial fetch
         fetchPendingBookings();
+
+        // Set up polling interval
+        const pollInterval = setInterval(() => {
+            fetchPendingBookings();
+        }, 3000); // Poll every 3 seconds
+
+        return () => {
+            clearInterval(pollInterval);
+        };
     }, []);
 
     const acceptRide = async (request) => {
@@ -27,6 +37,11 @@ const HomeRider = () => {
             // Update booking status to accepted
             await axios.put(`http://192.168.1.3:5000/bookings/${request.id}`, { status: 'accepted' });
             
+            // Remove from pending requests locally
+            setPendingRequests(prev => 
+                prev.filter(booking => booking.id !== request.id)
+            );
+
             // Navigate to BookRider screen with ride details
             navigation.navigate('DashboardDriver', {
                 screen: 'Book',
@@ -45,22 +60,33 @@ const HomeRider = () => {
         }
     };
 
-
     const fetchPendingBookings = async () => {
         try {
             const response = await axios.get('http://192.168.1.3:5000/bookings?status=pending');
             const formattedRequests = response.data.map(booking => ({
                 id: booking._id,
-                passengerName: "passenger", // You'll need to fetch user details separately
+                passengerName: "passenger",
                 pickupLocation: booking.currentAddress,
                 destination: booking.destination,
                 fare: booking.fare,
-                timeRequested: "Just now", // You may want to format the timestamp
+                timeRequested: "Just now",
                 status: booking.status,
                 payment_status: booking.payment_status,
                 payment_method: booking.payment_method
             }));
-            setPendingRequests(formattedRequests);
+            
+            // Compare with current state and only update if there are changes
+            setPendingRequests(prev => {
+                const prevIds = new Set(prev.map(r => r.id));
+                const newIds = new Set(formattedRequests.map(r => r.id));
+                
+                // Check if arrays are different
+                if (prevIds.size !== newIds.size || 
+                    !Array.from(prevIds).every(id => newIds.has(id))) {
+                    return formattedRequests;
+                }
+                return prev;
+            });
         } catch (error) {
             console.error('Error fetching pending bookings:', error);
         }
