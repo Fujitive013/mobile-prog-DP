@@ -35,9 +35,46 @@ const RegistrationModal = ({ visible, onClose }) => {
             return;
         }
 
+<<<<<<< Updated upstream
         Alert.alert("Success", "You have successfully signed up!");
         onClose();
         navigation.navigate("Dashboard");
+=======
+        const payload = {
+            firstName,
+            lastName,
+            email: userEmail,
+            phone: phoneNumber,
+            birthDate: birthDate.toISOString(),
+            gender,
+            password: userPassword,
+        };
+
+        try {
+            const response = await fetch("http://192.168.1.3:5000/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                Alert.alert("Success", "User Registered Successfully!");
+                onClose();
+            } else {
+                Alert.alert(
+                    "Error",
+                    result.error || "Failed to register user."
+                );
+            }
+        } catch (error) {
+            console.log("Error during registration:", error);
+            Alert.alert("Error", "An error occurred during registration.");
+        }
+>>>>>>> Stashed changes
     };
 
     const onChangeDate = (event, selectedDate) => {

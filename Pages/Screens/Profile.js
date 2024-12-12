@@ -6,8 +6,55 @@ import { useNavigation } from "@react-navigation/native";
 const Profile = () => {
     const navigation = useNavigation();
 
+<<<<<<< Updated upstream
     const handleLogout = () => {
         navigation.navigate('LandingPage')
+=======
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(
+                    "http://192.168.1.3:5000/user/details",
+                    {
+                        withCredentials: true,
+                    }
+                );
+                console.log("Fetched User Data:", response.data); // Log fetched data
+                setUser(response.data.user); // Access the user property
+            } catch (error) {
+                console.log("Failed to fetch user data:", error);
+                navigation.navigate("LandingPage"); // Navigate if unauthorized
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchUserData();
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            await axios.post(
+                "http://192.168.1.3:5000/logout",
+                {},
+                {
+                    withCredentials: true,
+                }
+            );
+            navigation.navigate("LandingPage");
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
+
+    const formatDate = (dateString) => {
+        const options = { year: "numeric", month: "long", day: "numeric" };
+        const date = new Date(dateString);
+        return date.toLocaleDateString(undefined, options);
+    };
+
+    if (loading) {
+        return <ActivityIndicator size="large" color="#0000ff" />;
+>>>>>>> Stashed changes
     }
 
     // Sample user data

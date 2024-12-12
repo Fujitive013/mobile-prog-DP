@@ -10,10 +10,40 @@ export default function ConfirmedBooking() {
   const route = useRoute();
   const fare = route.params?.fare || 0;
 
+<<<<<<< Updated upstream
   const handleConfirm = () => {
     // Navigate to Booked.js and pass the fare
     navigation.navigate('Booked', { fare, paymentMethod });
   };
+=======
+    const handleConfirm = async () => {
+        if (paymentMethod === "Gcash") {
+            navigation.navigate("GcashPayment", {
+                fare,
+                destination,
+                currentAddress,
+            });
+        } else {
+            const paymentStatus = "pending";
+            try {
+                console.log("Sending request with data:", {
+                    fare,
+                    destination,
+                    currentAddress,
+                    paymentMethod,
+                    paymentStatus,
+                });
+                const response = await axios.post(
+                    "http://192.168.1.3:5000/user/booking",
+                    {
+                        fare,
+                        destination,
+                        payment_status: paymentStatus,
+                        currentAddress,
+                        payment_method: paymentMethod,
+                    }
+                );
+>>>>>>> Stashed changes
 
   return (
     <SafeAreaView style={styles.container}>

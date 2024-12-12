@@ -10,18 +10,61 @@ import {
 import { Card, TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import the icons
 import { useNavigation } from "@react-navigation/native";
+<<<<<<< Updated upstream
+=======
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+>>>>>>> Stashed changes
 
 const LoginModal = ({ visible, onClose }) => {
     const navigation = useNavigation();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+<<<<<<< Updated upstream
     const isEmailValid = email.includes("@") && email.includes(".");
 
     const handleLogin = () => {
         if (!isEmailValid) {
             Alert.alert("Invalid Email", "Please enter a valid email address.");
             return;
+=======
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post(
+                "http://192.168.1.3:5000/login",
+                { email, password },
+                { withCredentials: true }
+            );
+
+            console.log("Server response:", response.data);
+
+            if (response.status === 200) {
+                // Store token in AsyncStorage
+                await AsyncStorage.setItem("token", response.data.token);
+                console.log("Token stored:", response.data.token);
+
+                const userRole = response.data.user.user_role;
+                console.log("Login successful, user role:", userRole);
+                
+                setEmail("");
+                setPassword("");
+
+                // Navigate based on user role without storing it
+                if (userRole === "passenger") {
+                    navigation.navigate("Dashboard");
+                } else if (userRole === "driver") {
+                    navigation.navigate("DashboardDriver");
+                }
+                onClose();
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            Alert.alert(
+                "Login failed",
+                error.response?.data?.error || "Invalid credentials."
+            );
+>>>>>>> Stashed changes
         }
 
         console.log("Login successful");
