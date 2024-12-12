@@ -11,7 +11,6 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 
-
 const Profile = () => {
     const navigation = useNavigation();
     const [user, setUser] = useState(null);
@@ -54,7 +53,7 @@ const Profile = () => {
     };
 
     const formatDate = (dateString) => {
-        const options = { year: "numeric", month: "long", day: "numeric" }; 
+        const options = { year: "numeric", month: "long", day: "numeric" };
         const date = new Date(dateString);
         return date.toLocaleDateString(undefined, options);
     };
