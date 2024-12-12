@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const User = require("./models/User");
+const Booking = require("./models/Booking"); // Import the Booking model
 const jwt = require("jsonwebtoken");
 const app = express();
 
@@ -138,6 +139,42 @@ app.post("/logout", (req, res) => {
         res.clearCookie("connect.sid");
         res.json({ message: "Logged out successfully" });
     });
+});
+
+// Booking Route
+app.post("/user/booking", async (req, res) => {
+    const {
+        payment_status,
+        payment_method,
+        fare,
+        currentAddress,
+        destination,
+    } = req.body;
+
+    if (!req.session.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    try {
+        const newBooking = new Booking({
+            user_id: req.session.userId,
+            status: "pending", // You can change the status as needed
+            payment_status,
+            payment_method,
+            fare,
+            currentAddress,
+            destination,
+        });
+
+        await newBooking.save();
+        res.status(201).json({
+            message: "Booking created successfully",
+            booking: newBooking,
+        });
+    } catch (err) {
+        console.error("Error creating booking:", err);
+        res.status(400).json({ error: "Error creating booking." });
+    }
 });
 
 const startServer = (port) => {

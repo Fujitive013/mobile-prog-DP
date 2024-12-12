@@ -1,16 +1,19 @@
 const mongoose = require("mongoose");
 
-// Define the booking schema
 const bookingSchema = new mongoose.Schema({
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    ride_id: { type: mongoose.Schema.Types.ObjectId, ref: "Ride", required: true },
-    status: { type: String, enum: ["pending", "confirmed", "cancelled"], default: "pending" },
-    booking_time: { type: Date, default: Date.now },
-    payment_status: { type: String, enum: ["paid", "unpaid"], default: "unpaid" },
-    payment_method: { type: String, enum: ["cash", "card"], default: "cash" },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
+    status: { type: String, required: true, default: "pending" },
+    payment_status: { type: String, required: true },
+    payment_method: { type: String, required: true },
+    fare: { type: Number, required: true },
+    currentAddress: { type: String, required: true },
+    destination: { type: String, required: true },
 });
 
-// Create the Booking model
-const Booking = mongoose.model("Booking", bookingSchema, "bookings");
+const Booking = mongoose.model("Booking", bookingSchema);
 
 module.exports = Booking;

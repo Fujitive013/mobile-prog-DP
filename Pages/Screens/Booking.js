@@ -53,7 +53,11 @@ export default function App() {
                 {
                     text: "OK",
                     onPress: () =>
-                        navigation.navigate("ConfirmedBooking", { fare }),
+                        navigation.navigate("ConfirmedBooking", {
+                            fare,
+                            destination,
+                            currentAddress,
+                        }),
                 },
             ]
         );
@@ -114,7 +118,7 @@ export default function App() {
                     {
                         params: {
                             input: input,
-                            key: "AlzaSyAkLKzv7MYrCtLPG2WFzYA1el9jnc_O84r",
+                            key: "AlzaSyLTUh72_4b820AsslVkWmMWfiYm0Ltf2aE",
                             components: "country:ph",
                         },
                     }
@@ -167,7 +171,7 @@ export default function App() {
                 {
                     params: {
                         address: address,
-                        key: "AlzaSyAkLKzv7MYrCtLPG2WFzYA1el9jnc_O84r",
+                        key: "AlzaSyLTUh72_4b820AsslVkWmMWfiYm0Ltf2aE",
                     },
                 }
             );
@@ -193,7 +197,7 @@ export default function App() {
                     params: {
                         origin: `${origin.latitude},${origin.longitude}`,
                         destination: `${destination.latitude},${destination.longitude}`,
-                        key: "AlzaSyAkLKzv7MYrCtLPG2WFzYA1el9jnc_O84r",
+                        key: "AlzaSyLTUh72_4b820AsslVkWmMWfiYm0Ltf2aE",
                     },
                 }
             );
@@ -256,15 +260,10 @@ export default function App() {
 
         setFare(calculatedFare.toFixed(2));
     };
-    
 
     return (
         <View style={styles.container}>
-            <MapView
-                style={styles.map}
-                region={mapRegion}
-                mapType="standard"
-            >
+            <MapView style={styles.map} region={mapRegion} mapType="standard">
                 <Marker
                     coordinate={currentCoords}
                     title="Your Location"
