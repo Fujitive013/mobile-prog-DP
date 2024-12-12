@@ -12,7 +12,12 @@ const BookRider = () => {
     const [errorMsg, setErrorMsg] = useState(null);
     const [pickupCoords, setPickupCoords] = useState(null);
     const [destinationCoords, setDestinationCoords] = useState(null);
-    const [mapRegion, setMapRegion] = useState(null);
+    const [mapRegion, setMapRegion] = useState({
+        latitude: 8.4542, // Cagayan de Oro coordinates
+        longitude: 124.6319,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+    });
     const [routeToPickup, setRouteToPickup] = useState([]);
     const [routeToDestination, setRouteToDestination] = useState([]);
 
@@ -79,24 +84,27 @@ const BookRider = () => {
             let currentLocation = await Location.getCurrentPositionAsync({});
             setLocation(currentLocation);
 
-            try {
-                const pickupGeocode = await Location.geocodeAsync(rideDetails.pickupLocation);
-                if (pickupGeocode.length > 0) {
-                    setPickupCoords({
-                        latitude: pickupGeocode[0].latitude,
-                        longitude: pickupGeocode[0].longitude,
-                    });
-                }
+            // Only proceed with geocoding if there are ride details
+            if (rideDetails) {
+                try {
+                    const pickupGeocode = await Location.geocodeAsync(rideDetails.pickupLocation);
+                    if (pickupGeocode.length > 0) {
+                        setPickupCoords({
+                            latitude: pickupGeocode[0].latitude,
+                            longitude: pickupGeocode[0].longitude,
+                        });
+                    }
 
-                const destinationGeocode = await Location.geocodeAsync(rideDetails.destination);
-                if (destinationGeocode.length > 0) {
-                    setDestinationCoords({
-                        latitude: destinationGeocode[0].latitude,
-                        longitude: destinationGeocode[0].longitude,
-                    });
+                    const destinationGeocode = await Location.geocodeAsync(rideDetails.destination);
+                    if (destinationGeocode.length > 0) {
+                        setDestinationCoords({
+                            latitude: destinationGeocode[0].latitude,
+                            longitude: destinationGeocode[0].longitude,
+                        });
+                    }
+                } catch (error) {
+                    console.error('Geocoding error:', error);
                 }
-            } catch (error) {
-                console.error('Geocoding error:', error);
             }
         })();
     }, [rideDetails]);
@@ -119,11 +127,13 @@ const BookRider = () => {
             }
         };
 
-        fetchRoutes();
-    }, [location, pickupCoords, destinationCoords]);
+        if (rideDetails) {
+            fetchRoutes();
+        }
+    }, [location, pickupCoords, destinationCoords, rideDetails]);
 
     useEffect(() => {
-        if (pickupCoords && destinationCoords) {
+        if (rideDetails && pickupCoords && destinationCoords) {
             const midLat = (pickupCoords.latitude + destinationCoords.latitude) / 2;
             const midLng = (pickupCoords.longitude + destinationCoords.longitude) / 2;
 
@@ -137,31 +147,33 @@ const BookRider = () => {
                 longitudeDelta: Math.max(lngDelta, 0.0421),
             });
         }
-    }, [pickupCoords, destinationCoords]);
+    }, [pickupCoords, destinationCoords, rideDetails]);
 
     return (
         <View style={styles.container}>
-            {mapRegion && (
-                <>
-                    <MapView
-                        style={styles.map}
-                        provider={PROVIDER_DEFAULT}
-                        initialRegion={mapRegion}
+            <MapView
+                style={styles.map}
+                provider={PROVIDER_DEFAULT}
+                initialRegion={mapRegion}
+            >
+                {/* Always show current location marker */}
+                {location && (
+                    <Marker
+                        coordinate={{
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude,
+                        }}
+                        title="Your Location"
                     >
-                        {location && (
-                            <Marker
-                                coordinate={{
-                                    latitude: location.coords.latitude,
-                                    longitude: location.coords.longitude,
-                                }}
-                                title="Your Location"
-                            >
-                                <View style={styles.customMarker}>
-                                    <FontAwesome5 name="motorcycle" size={24} color="#2089dc" />
-                                </View>
-                            </Marker>
-                        )}
-                        
+                        <View style={styles.customMarker}>
+                            <FontAwesome5 name="motorcycle" size={24} color="#2089dc" />
+                        </View>
+                    </Marker>
+                )}
+
+                {/* Show booking-related markers only if there's a ride */}
+                {rideDetails && (
+                    <>
                         {pickupCoords && (
                             <Marker
                                 coordinate={pickupCoords}
@@ -203,53 +215,55 @@ const BookRider = () => {
                                 lineDashPattern={[1]}
                             />
                         )}
-                    </MapView>
+                    </>
+                )}
+            </MapView>
 
-                    <View style={styles.rideDetailsContainer}>
-                        <View style={styles.header}>
-                            <View style={styles.profileSection}>
-                                <View style={styles.avatarContainer}>
-                                    <FontAwesome5 name="user-circle" size={35} color="#2089dc" />
-                                </View>
-                                <View style={styles.nameSection}>
-                                    <Text style={styles.passengerName}>{rideDetails.passengerName}</Text>
-                                    <View style={styles.ratingFareContainer}>
-                                        <Text style={styles.ratingText}>₱{rideDetails.fare}</Text>
-                                    </View>
+            {rideDetails && (
+                <View style={styles.rideDetailsContainer}>
+                    <View style={styles.header}>
+                        <View style={styles.profileSection}>
+                            <View style={styles.avatarContainer}>
+                                <FontAwesome5 name="user-circle" size={35} color="#2089dc" />
+                            </View>
+                            <View style={styles.nameSection}>
+                                <Text style={styles.passengerName}>{rideDetails.passengerName}</Text>
+                                <View style={styles.ratingFareContainer}>
+                                    <Text style={styles.ratingText}>₱{rideDetails.fare}</Text>
                                 </View>
                             </View>
-                            <TouchableOpacity style={styles.startRideButton}>
-                                <Text style={styles.startRideText}>START RIDE</Text>
-                            </TouchableOpacity>
                         </View>
+                        <TouchableOpacity style={styles.startRideButton}>
+                            <Text style={styles.startRideText}>START RIDE</Text>
+                        </TouchableOpacity>
+                    </View>
 
-                        <View style={styles.divider} />
+                    <View style={styles.divider} />
 
-                        <View style={styles.locationContainer}>
-                            <View style={styles.locationItem}>
-                                <View style={styles.locationIcon}>
-                                    <MaterialIcons name="my-location" size={20} color="#ff4757" />
-                                </View>
-                                <View style={styles.locationTextContainer}>
-                                    <Text style={styles.locationLabel}>PICKUP</Text>
-                                    <Text style={styles.locationText}>{rideDetails.pickupLocation}</Text>
-                                </View>
+                    <View style={styles.locationContainer}>
+                        <View style={styles.locationItem}>
+                            <View style={styles.locationIcon}>
+                                <MaterialIcons name="my-location" size={20} color="#ff4757" />
                             </View>
-                            
-                            <View style={styles.routeLine} />
-                            
-                            <View style={styles.locationItem}>
-                                <View style={styles.locationIcon}>
-                                    <MaterialIcons name="location-on" size={24} color="#2ed573" />
-                                </View>
-                                <View style={styles.locationTextContainer}>
-                                    <Text style={styles.locationLabel}>DROP-OFF</Text>
-                                    <Text style={styles.locationText}>{rideDetails.destination}</Text>
-                                </View>
+                            <View style={styles.locationTextContainer}>
+                                <Text style={styles.locationLabel}>PICKUP</Text>
+                                <Text style={styles.locationText}>{rideDetails.pickupLocation}</Text>
+                            </View>
+                        </View>
+                        
+                        <View style={styles.routeLine} />
+                        
+                        <View style={styles.locationItem}>
+                            <View style={styles.locationIcon}>
+                                <MaterialIcons name="location-on" size={24} color="#2ed573" />
+                            </View>
+                            <View style={styles.locationTextContainer}>
+                                <Text style={styles.locationLabel}>DROP-OFF</Text>
+                                <Text style={styles.locationText}>{rideDetails.destination}</Text>
                             </View>
                         </View>
                     </View>
-                </>
+                </View>
             )}
         </View>
     );
