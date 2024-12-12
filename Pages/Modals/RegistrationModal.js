@@ -47,7 +47,7 @@ const RegistrationModal = ({ visible, onClose, email, password }) => {
         };
 
         try {
-            const response = await fetch("http://192.168.18.10:5000/users", {
+            const response = await fetch("http://192.168.1.3:5000/users", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

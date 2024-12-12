@@ -17,7 +17,7 @@ export default function SettingsScreen() {
         const fetchUserData = async () => {
             try {
                 const response = await axios.get(
-                    "http://192.168.18.10:5000/user/details",
+                    "http://192.168.1.3:5000/user/details",
                     {
                         withCredentials: true,
                     }

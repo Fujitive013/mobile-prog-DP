@@ -11,6 +11,7 @@ import { Card, TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const LoginModal = ({ visible, onClose }) => {
     const navigation = useNavigation();
@@ -19,36 +20,39 @@ const LoginModal = ({ visible, onClose }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch("http://192.168.18.10:5000/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }), // Send email and password
-            });
+            const response = await axios.post(
+                "http://192.168.1.3:5000/login",
+                { email, password },
+                { withCredentials: true }
+            );
 
-            const data = await response.json();
-            console.log("Server response:", data);
+            console.log("Server response:", response.data);
 
-            if (response.ok) {
-                // Safely store token and user_role
-                await AsyncStorage.setItem("token", data.token);
-                console.log("Login successful:", data.token);
+            if (response.status === 200) {
+                // Store token in AsyncStorage
+                await AsyncStorage.setItem("token", response.data.token);
+                console.log("Token stored:", response.data.token);
+
+                const userRole = response.data.user.user_role;
+                console.log("Login successful, user role:", userRole);
+                
                 setEmail("");
                 setPassword("");
-                navigation.navigate("Dashboard");
+
+                // Navigate based on user role without storing it
+                if (userRole === "passenger") {
+                    navigation.navigate("Dashboard");
+                } else if (userRole === "driver") {
+                    navigation.navigate("DashboardDriver");
+                }
                 onClose();
-            } else {
-                // Handle server-side validation errors
-                Alert.alert(
-                    "Login failed",
-                    data.error || "Invalid credentials."
-                );
             }
         } catch (error) {
-            // Catch network or unexpected errors
             console.error("Error:", error);
-            Alert.alert("Error", "Something went wrong. Please try again.");
+            Alert.alert(
+                "Login failed",
+                error.response?.data?.error || "Invalid credentials."
+            );
         }
     };
 

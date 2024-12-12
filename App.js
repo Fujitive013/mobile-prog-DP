@@ -20,6 +20,7 @@ import VoucherScreen from "./Pages/Screens/Voucher and Missions/VoucherScreen";
 import MissionsScreen from "./Pages/Screens/Voucher and Missions/MissionsScreen";
 import RatingsMade from "./Pages/Screens/Settings Sub Pages/RatingsMade";
 import RatingsReceived from "./Pages/Screens/Settings Sub Pages/RatingsRecieved";
+import DashboardDriver from "./Pages/DashboardDriver";
 
 const Stack = createNativeStackNavigator();
 
@@ -62,6 +63,7 @@ export default function App() {
                     name="RatingsReceived"
                     component={RatingsReceived}
                 />
+                <Stack.Screen name="DashboardDriver" component={DashboardDriver} />
             </Stack.Navigator>
         </NavigationContainer>
     );
