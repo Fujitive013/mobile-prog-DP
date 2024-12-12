@@ -63,7 +63,7 @@ app.post("/users", async (req, res) => {
             birthdate: birthDate,
             gender,
             password: hashedPassword,
-            user_role,
+            user_role: "passenger",
         });
 
         await newUser.save();
@@ -144,6 +144,7 @@ app.post("/logout", (req, res) => {
 // Booking Route
 app.post("/user/booking", async (req, res) => {
     const {
+        user_id,
         payment_status,
         payment_method,
         fare,
