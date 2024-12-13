@@ -13,13 +13,17 @@ const BookRider = () => {
     const [pickupCoords, setPickupCoords] = useState(null);
     const [destinationCoords, setDestinationCoords] = useState(null);
     const [mapRegion, setMapRegion] = useState({
-        latitude: 8.4542, // Cagayan de Oro coordinates
-        longitude: 124.6319,
+        latitude: rideDetails?.latitude || 8.4542, // Use passed latitude or default
+        longitude: rideDetails?.longitude || 124.6319, // Use passed longitude or default
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
     });
     const [routeToPickup, setRouteToPickup] = useState([]);
     const [routeToDestination, setRouteToDestination] = useState([]);
+    const [latitude, setLatitude] = useState(rideDetails?.latitude);
+    const [longitude, setLongitude] = useState(rideDetails?.longitude);
+
+    console.log(latitude, longitude);
 
     // Function to fetch route coordinates using Google Directions API
     const getRouteCoordinates = async (origin, destination) => {
@@ -84,17 +88,25 @@ const BookRider = () => {
             let currentLocation = await Location.getCurrentPositionAsync({});
             setLocation(currentLocation);
 
-            // Only proceed with geocoding if there are ride details
+            // Only proceed if there are ride details
             if (rideDetails) {
                 try {
-                    const pickupGeocode = await Location.geocodeAsync(rideDetails.pickupLocation);
-                    if (pickupGeocode.length > 0) {
-                        setPickupCoords({
-                            latitude: pickupGeocode[0].latitude,
-                            longitude: pickupGeocode[0].longitude,
-                        });
-                    }
+                    // Set pickup coordinates directly from database values
+                    const pickupLocation = {
+                        latitude: parseFloat(rideDetails.latitude),
+                        longitude: parseFloat(rideDetails.longitude)
+                    };
+                    setPickupCoords(pickupLocation);
+                    
+                    // Update map region to center on pickup location
+                    setMapRegion({
+                        latitude: pickupLocation.latitude,
+                        longitude: pickupLocation.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    });
 
+                    // Get destination coordinates through geocoding
                     const destinationGeocode = await Location.geocodeAsync(rideDetails.destination);
                     if (destinationGeocode.length > 0) {
                         setDestinationCoords({
@@ -154,10 +166,10 @@ const BookRider = () => {
             <MapView
                 style={styles.map}
                 provider={PROVIDER_DEFAULT}
-                initialRegion={mapRegion}
+                region={mapRegion}
             >
                 {/* Always show current location marker */}
-                {location && (
+                {location?.coords && (
                     <Marker
                         coordinate={{
                             latitude: location.coords.latitude,

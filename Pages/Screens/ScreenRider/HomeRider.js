@@ -51,7 +51,9 @@ const HomeRider = () => {
                         pickupLocation: request.pickupLocation,
                         destination: request.destination,
                         passengerName: request.passengerName,
-                        fare: request.fare
+                        fare: request.fare,
+                        latitude: request.latitude,
+                        longitude: request.longitude
                     }
                 }
             });
@@ -72,7 +74,9 @@ const HomeRider = () => {
                 timeRequested: "Just now",
                 status: booking.status,
                 payment_status: booking.payment_status,
-                payment_method: booking.payment_method
+                payment_method: booking.payment_method,
+                latitude: booking.latitude,
+                longitude: booking.longitude
             }));
             
             // Compare with current state and only update if there are changes
