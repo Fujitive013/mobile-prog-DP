@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { CommonActions } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 
@@ -37,19 +38,13 @@ const Profile = () => {
         fetchUserData();
     }, []);
 
-    const handleLogout = async () => {
-        try {
-            await axios.post(
-                "http://192.168.1.3:5000/logout",
-                {},
-                {
-                    withCredentials: true,
-                }
-            );
-            navigation.navigate("LandingPage");
-        } catch (error) {
-            console.error("Logout failed:", error);
-        }
+    const handleLogout = () => {
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'LandingPage' }]
+            })
+        );
     };
 
     const formatDate = (dateString) => {

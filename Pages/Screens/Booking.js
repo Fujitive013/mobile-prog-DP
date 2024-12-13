@@ -29,8 +29,8 @@ export default function App() {
     const [routeCoordinates, setRouteCoordinates] = useState([]);
 
     const [mapRegion, setMapRegion] = useState({
-        latitude: 37.78825,
-        longitude: -122.4324,
+        latitude: 8.4542,
+        longitude: 124.6319,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
     });
