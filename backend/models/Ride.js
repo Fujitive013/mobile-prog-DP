@@ -7,19 +7,18 @@ const rideSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     }, // Reference to the User
+    booking_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Booking",
+        required: true,
+    }, // Reference to the User
     driver_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Driver",
         required: true,
     }, // Reference to the Driver
-    pickup_location: {
-        latitude: { type: Number, required: true },
-        longitude: { type: Number, required: true },
-    },
-    destination: {
-        latitude: { type: Number, required: true },
-        longitude: { type: Number, required: true },
-    },
+    pickup_location: { type: String, required: true },
+    destination: { type: String, required: true },
     status: {
         type: String,
         enum: ["active", "completed", "cancelled"],

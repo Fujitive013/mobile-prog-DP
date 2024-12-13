@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -7,6 +7,7 @@ const MongoStore = require("connect-mongo");
 const User = require("./models/User");
 const Booking = require("./models/Booking"); // Import the Booking model
 const Driver = require("./models/Driver");
+const Ride = require("./models/Ride");
 const jwt = require("jsonwebtoken");
 const app = express();
 
@@ -37,6 +38,51 @@ app.use(
         cookie: { maxAge: 180 * 60 * 1000 }, // Session expiry in milliseconds
     })
 );
+
+app.post("/rides", async (req, res) => {
+    try {
+        const {
+            driver_id,
+            user_id,
+            booking_id,
+            pickup_location,
+            destination,
+            fare,
+            status,
+            created_at,
+            updated_at,
+            ride_rating,
+        } = req.body;
+
+        // Create a new ride instance
+        const newRide = new Ride({
+            driver_id: req.session.userId,
+            user_id,
+            booking_id,
+            pickup_location,
+            destination,
+            fare,
+            status,
+            created_at,
+            updated_at,
+            ride_rating,
+        });
+
+        // Save the ride to the database
+        const savedRide = await newRide.save();
+
+        // Respond with the saved ride
+        res.status(201).json({
+            message: "Ride created successfully",
+            ride: savedRide,
+        });
+    } catch (error) {
+        console.error("Error creating ride:", error);
+        res.status(500).json({
+            error: "An error occurred while creating the ride",
+        });
+    }
+});
 
 // User Registration Route
 const bcrypt = require("bcrypt");
@@ -121,37 +167,40 @@ app.put("/bookings/:id", async (req, res) => {
 
 // Register as driver
 app.post("/driver/register", async (req, res) => {
-  const { bike_model, license_number, location } = req.body;
+    const { bike_model, license_number, location } = req.body;
 
-  try {
-    const newDriver = new Driver({
-      user_id: req.session.userId,
-      bike_model,
-      license_number,
-      location: {
-        latitude: location.latitude,
-        longitude: location.longitude
-      }
-    });
+    try {
+        const newDriver = new Driver({
+            user_id: req.session.userId,
+            bike_model,
+            license_number,
+            location: {
+                latitude: location.latitude,
+                longitude: location.longitude,
+            },
+        });
 
-    await newDriver.save();
+        await newDriver.save();
 
-    // Update the user role
-    const updatedUser = await User.findByIdAndUpdate(
-      req.session.userId,
-      { user_role: "driver" },
-      { new: true }
-    );
+        // Update the user role
+        const updatedUser = await User.findByIdAndUpdate(
+            req.session.userId,
+            { user_role: "driver" },
+            { new: true }
+        );
 
-    if (!updatedUser) {
-      return res.status(404).json({ error: "User not found" });
+        if (!updatedUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(201).json({
+            success: true,
+            message: "Successfully registered as driver",
+        });
+    } catch (error) {
+        console.error("Error registering driver:", error);
+        res.status(500).json({ error: "Error registering driver" });
     }
-
-    res.status(201).json({ success: true, message: "Successfully registered as driver" });
-  } catch (error) {
-    console.error("Error registering driver:", error);
-    res.status(500).json({ error: "Error registering driver" });
-  }
 });
 
 // Login
