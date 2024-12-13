@@ -4,6 +4,7 @@ import MapView, { Marker, PROVIDER_DEFAULT, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useRoute } from "@react-navigation/native";
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import axios from 'axios';
 
 const BookRider = () => {
     const route = useRoute();
@@ -24,6 +25,18 @@ const BookRider = () => {
     const [longitude, setLongitude] = useState(rideDetails?.longitude);
 
     console.log(latitude, longitude);
+
+    const startRide = async () => {
+        try {
+            // Use rideDetails.bookingId instead of request.id since we get it from route params
+            await axios.put(`http://192.168.1.3:5000/bookings/${rideDetails.bookingId}`, {
+                status: "accepted"
+            });
+            console.log('Ride status updated successfully');
+        } catch (error) {
+            console.error('Error updating ride status:', error);
+        }
+    };
 
     // Function to fetch route coordinates using Google Directions API
     const getRouteCoordinates = async (origin, destination) => {
@@ -245,7 +258,7 @@ const BookRider = () => {
                                 </View>
                             </View>
                         </View>
-                        <TouchableOpacity style={styles.startRideButton}>
+                        <TouchableOpacity style={styles.startRideButton} onPress={startRide}>
                             <Text style={styles.startRideText}>START RIDE</Text>
                         </TouchableOpacity>
                     </View>

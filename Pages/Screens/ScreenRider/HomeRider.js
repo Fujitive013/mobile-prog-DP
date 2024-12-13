@@ -42,11 +42,6 @@ const HomeRider = () => {
 
   const acceptRide = async (request) => {
     try {
-      // Update booking status to accepted
-      await axios.put(`http://192.168.1.3:5000/bookings/${request.id}`, {
-        status: "accepted",
-      });
-
       // Navigate to BookRider screen with ride details
       navigation.navigate("DashboardDriver", {
         screen: "Book",
