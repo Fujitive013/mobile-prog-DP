@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ConfirmedBooking() {
     const navigation = useNavigation(); // Initialize navigation
@@ -21,58 +22,70 @@ export default function ConfirmedBooking() {
     const currentAddress = route.params?.currentAddress;
     const latitude = route.params?.latitude;
     const longitude = route.params?.longitude;
+    const [userName, setUserName] = useState("");
 
     console.log(latitude, longitude);
+
     const handleConfirm = async () => {
-        if (paymentMethod === "Gcash") {
-            navigation.navigate("GcashPayment", {
-                fare,
-                destination,
-                currentAddress,
-                latitude,
-                longitude
-            });
-        } else {
-            const paymentStatus = "pending";
-            try {
+        try {
+            const storedName = await AsyncStorage.getItem("userName");
+            if (!storedName) {
+                console.error("Username not found in AsyncStorage");
+                return;
+            }
+
+            if (paymentMethod === "Gcash") {
+                navigation.navigate("GcashPayment", {
+                    userName: storedName,
+                    fare,
+                    destination,
+                    currentAddress,
+                    latitude,
+                    longitude,
+                });
+            } else {
+                const paymentStatus = "pending";
+
                 console.log("Sending request with data:", {
+                    userName: storedName,
                     fare,
                     destination,
                     currentAddress,
                     paymentMethod,
                     paymentStatus,
                     latitude,
-                    longitude
+                    longitude,
                 });
+
                 const response = await axios.post(
-                    "http://192.168.1.3:5000/user/booking",
+                    "http://192.168.18.24:5000/user/booking",
                     {
+                        passenger_name: storedName,
                         fare,
                         destination,
                         payment_status: paymentStatus,
                         currentAddress,
                         payment_method: paymentMethod,
                         latitude,
-                        longitude
+                        longitude,
                     }
                 );
 
                 console.log("Booking created successfully:", response.data);
 
-                // Navigate to the Booked screen with booking details
                 navigation.navigate("Booked", {
+                    passenger_name: storedName,
                     fare,
                     payment_status: paymentStatus,
                     payment_method: paymentMethod,
                     destination,
                     currentAddress,
                     latitude,
-                    longitude
+                    longitude,
                 });
-            } catch (error) {
-                console.error("Error creating booking:", error.response?.data);
-                // Handle error (you can show a message to the user, etc.)
             }
+        } catch (error) {
+            console.error("Error creating booking:", error.message);
         }
     };
 

@@ -11,26 +11,26 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 
 export default function SettingsScreen() {
-  const navigation = useNavigation();
-  const [user, setUser] = useState(null);
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(
-          "http://192.168.1.3:5000/user/details",
-          {
-            withCredentials: true,
-          }
-        );
-        console.log("Fetched User Data:", response.data); // Log fetched data
-        setUser(response.data.user); // Access the user property
-      } catch (error) {
-        console.log("Failed to fetch user data:", error);
-        navigation.navigate("LandingPage"); // Navigate if unauthorized
-      }
-    };
-    fetchUserData();
-  }, []);
+    const navigation = useNavigation();
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(
+                    "http://192.168.18.24:5000/user/details",
+                    {
+                        withCredentials: true,
+                    }
+                );
+                console.log("Fetched User Data:", response.data); // Log fetched data
+                setUser(response.data.user); // Access the user property
+            } catch (error) {
+                console.log("Failed to fetch user data:", error);
+                navigation.navigate("LandingPage"); // Navigate if unauthorized
+            }
+        };
+        fetchUserData();
+    }, []);
 
   const profile = () => {
     navigation.navigate("Profile");
