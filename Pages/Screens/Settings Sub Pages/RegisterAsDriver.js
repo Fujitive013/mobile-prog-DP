@@ -59,7 +59,11 @@ export default function RegisterAsDriver() {
 
         if (response.data.success) {
             Alert.alert('Success', 'Successfully registered as driver');
-            navigation.navigate('DashboardDriver'); // Navigate to driver-specific dashboard
+            //navigate to landing page and reset the navigation stack
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'LandingPage' }],
+            });
         } else {
             Alert.alert('Error', response.data.message || 'Failed to register as driver');
         }
