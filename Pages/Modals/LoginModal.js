@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Modal,
     StyleSheet,
@@ -21,7 +21,7 @@ const LoginModal = ({ visible, onClose }) => {
     const handleLogin = async () => {
         try {
             const response = await axios.post(
-                "http://192.168.1.3:5000/login",
+                "http://192.168.18.24:5000/login",
                 { email, password },
                 { withCredentials: true }
             );
@@ -34,14 +34,22 @@ const LoginModal = ({ visible, onClose }) => {
                 console.log("Token stored:", response.data.token);
 
                 const userRole = response.data.user.user_role;
+                const userName =
+                    response.data.user.first_name +
+                    " " +
+                    response.data.user.last_name;
                 console.log("Login successful, user role:", userRole);
-                
+
+                // Store userName in AsyncStorage
+                await AsyncStorage.setItem("userName", userName);
+                console.log("User name stored:", userName);
+
                 setEmail("");
                 setPassword("");
 
                 // Navigate based on user role without storing it
                 if (userRole === "passenger") {
-                    navigation.navigate("Dashboard");
+                    navigation.navigate("Dashboard", { userName });
                 } else if (userRole === "driver") {
                     navigation.navigate("DashboardDriver");
                 }
