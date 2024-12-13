@@ -19,13 +19,18 @@ export default function ConfirmedBooking() {
     const fare = route.params?.fare || 0;
     const destination = route.params?.destination;
     const currentAddress = route.params?.currentAddress;
+    const latitude = route.params?.latitude;
+    const longitude = route.params?.longitude;
 
+    console.log(latitude, longitude);
     const handleConfirm = async () => {
         if (paymentMethod === "Gcash") {
             navigation.navigate("GcashPayment", {
                 fare,
                 destination,
                 currentAddress,
+                latitude,
+                longitude
             });
         } else {
             const paymentStatus = "pending";
@@ -36,6 +41,8 @@ export default function ConfirmedBooking() {
                     currentAddress,
                     paymentMethod,
                     paymentStatus,
+                    latitude,
+                    longitude
                 });
                 const response = await axios.post(
                     "http://192.168.1.3:5000/user/booking",
@@ -45,6 +52,8 @@ export default function ConfirmedBooking() {
                         payment_status: paymentStatus,
                         currentAddress,
                         payment_method: paymentMethod,
+                        latitude,
+                        longitude
                     }
                 );
 
@@ -57,6 +66,8 @@ export default function ConfirmedBooking() {
                     payment_method: paymentMethod,
                     destination,
                     currentAddress,
+                    latitude,
+                    longitude
                 });
             } catch (error) {
                 console.error("Error creating booking:", error.response?.data);

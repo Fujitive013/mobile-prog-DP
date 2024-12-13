@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 export default function BookedRideScreen() {
     const route = useRoute();
-    const { fare, paymentMethod, destination, currentAddress } = route.params;
+    const { fare, paymentMethod, destination, currentAddress, latitude, longitude } = route.params;
     const navigation = useNavigation(); // Initialize navigation
 
     // State to manage the modal visibility

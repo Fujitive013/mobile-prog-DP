@@ -192,6 +192,8 @@ app.post("/user/booking", async (req, res) => {
     fare,
     currentAddress,
     destination,
+    latitude,
+    longitude
   } = req.body;
 
   if (!req.session.userId) {
@@ -207,6 +209,8 @@ app.post("/user/booking", async (req, res) => {
       fare,
       currentAddress,
       destination,
+      latitude,
+      longitude
     });
 
     await newBooking.save();

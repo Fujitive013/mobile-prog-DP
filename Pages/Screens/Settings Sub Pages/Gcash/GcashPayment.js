@@ -17,6 +17,10 @@ const GcashPayment = () => {
     const fare = route.params?.fare || 0;
     const currentAddress = route.params?.currentAddress;
     const destination = route.params?.destination;
+    const latitude = route.params?.latitude;
+    const longitude = route.params?.longitude;
+
+    console.log(latitude, longitude);
 
     const [mobileNumber, setMobileNumber] = useState("");
     const [error, setError] = useState("");
@@ -37,6 +41,8 @@ const GcashPayment = () => {
                 currentAddress,
                 paymentMethod,
                 paymentStatus,
+                latitude,
+                longitude
             });
             const response = await axios.post(
                 "http://192.168.1.3:5000/user/booking",
@@ -46,6 +52,8 @@ const GcashPayment = () => {
                     payment_status: paymentStatus,
                     currentAddress,
                     payment_method: paymentMethod,
+                    latitude,
+                    longitude
                 }
             );
 
@@ -58,6 +66,8 @@ const GcashPayment = () => {
                 payment_method: paymentMethod,
                 destination,
                 currentAddress,
+                latitude,
+                longitude
             });
         } catch (error) {
             console.error("Error creating booking:", error.response?.data);

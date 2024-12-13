@@ -57,6 +57,8 @@ export default function App() {
                             fare,
                             destination,
                             currentAddress,
+                            latitude: currentCoords.latitude,
+                            longitude: currentCoords.longitude,
                         }),
                 },
             ]
@@ -263,7 +265,7 @@ export default function App() {
 
     return (
         <View style={styles.container}>
-            <MapView style={styles.map} region={mapRegion} mapType="standard">
+            <MapView style={styles.map} initialRegion={mapRegion} mapType="standard">
                 <Marker
                     coordinate={currentCoords}
                     title="Your Location"

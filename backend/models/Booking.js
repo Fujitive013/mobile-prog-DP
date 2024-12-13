@@ -12,6 +12,8 @@ const bookingSchema = new mongoose.Schema({
     fare: { type: Number, required: true },
     currentAddress: { type: String, required: true },
     destination: { type: String, required: true },
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true },
 });
 
 const Booking = mongoose.model("Booking", bookingSchema);
