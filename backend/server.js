@@ -6,6 +6,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const User = require("./models/User");
 const Booking = require("./models/Booking"); // Import the Booking model
+const Driver = require("./models/Driver");
 const jwt = require("jsonwebtoken");
 const app = express();
 
@@ -116,6 +117,41 @@ app.put("/bookings/:id", async (req, res) => {
         console.error("Error updating booking:", error);
         res.status(500).json({ error: "Error updating booking" });
     }
+});
+
+// Register as driver
+app.post("/driver/register", async (req, res) => {
+  const { bike_model, license_number, location } = req.body;
+
+  try {
+    const newDriver = new Driver({
+      user_id: req.session.userId,
+      bike_model,
+      license_number,
+      location: {
+        latitude: location.latitude,
+        longitude: location.longitude
+      }
+    });
+
+    await newDriver.save();
+
+    // Update the user role
+    const updatedUser = await User.findByIdAndUpdate(
+      req.session.userId,
+      { user_role: "driver" },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(201).json({ success: true, message: "Successfully registered as driver" });
+  } catch (error) {
+    console.error("Error registering driver:", error);
+    res.status(500).json({ error: "Error registering driver" });
+  }
 });
 
 // Login

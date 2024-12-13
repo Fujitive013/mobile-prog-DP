@@ -21,6 +21,7 @@ import MissionsScreen from "./Pages/Screens/Voucher and Missions/MissionsScreen"
 import RatingsMade from "./Pages/Screens/Settings Sub Pages/RatingsMade";
 import RatingsReceived from "./Pages/Screens/Settings Sub Pages/RatingsRecieved";
 import DashboardDriver from "./Pages/DashboardDriver";
+import RegisterAsDriver from "./Pages/Screens/Settings Sub Pages/RegisterAsDriver";
 
 const Stack = createNativeStackNavigator();
 
@@ -63,6 +64,7 @@ export default function App() {
                     name="RatingsReceived"
                     component={RatingsReceived}
                 />
+                <Stack.Screen name="RegisterAsDriver" component={RegisterAsDriver} />
                 <Stack.Screen name="DashboardDriver" component={DashboardDriver} />
             </Stack.Navigator>
         </NavigationContainer>
