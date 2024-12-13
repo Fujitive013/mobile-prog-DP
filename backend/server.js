@@ -8,6 +8,7 @@ const User = require("./models/User");
 const Booking = require("./models/Booking"); // Import the Booking model
 const Driver = require("./models/Driver");
 const Ride = require("./models/Ride");
+const Review = require("./models/Review");
 const jwt = require("jsonwebtoken");
 const app = express();
 
@@ -39,10 +40,116 @@ app.use(
     })
 );
 
+app.get("/view/completedRides", async (req, res) => {
+    const { status } = req.query;
+    try {
+        // Find bookings with pending status
+        const completedRides = await Ride.find({
+            status: status || "completed",
+            ride_rating: null || 0,
+            user_id: req.session.userId,
+        });
+
+        if (!completedRides || completedRides.length === 0) {
+            return res.status(200).json([]); // Return empty array if no pending bookings
+        }
+
+        res.status(200).json(completedRides);
+    } catch (error) {
+        console.error("Error fetching completedRides:", error);
+        res.status(500).json({ error: "Error fetching completedRides" });
+    }
+});
+
+// Get reviews for completed rides
+app.post("/user/makeReviews", async (req, res) => {
+    try {
+        const { driver_id, user_id, ride_id, rating, comment, created_at } =
+            req.body;
+
+        // Create a new review instance
+        const newReview = new Review({
+            driver_id,
+            user_id: req.session.userId,
+            ride_id,
+            rating,
+            comment,
+            created_at,
+        });
+
+        // Save the review to the database
+        const savedReview = await newReview.save();
+
+        // Update the ride's rating
+        const ride = await Ride.findById(ride_id);
+        if (ride) {
+            // Directly set the ride rating to the review's rating
+            ride.ride_rating = rating; // This assumes that a ride can have only one rating per review
+            await ride.save();
+        }
+
+        // Respond with the saved review
+        res.status(201).json({
+            message: "Review created successfully",
+            review: savedReview,
+        });
+    } catch (error) {
+        console.error("Error creating Review:", error);
+        res.status(500).json({
+            error: "An error occurred while creating the review",
+        });
+    }
+});
+
+app.get("/user/viewReviews", async (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    try {
+        // Query the Ride collection for completed rides and their reviews
+        const completedReviews = await Review.find({
+            user_id: req.session.userId,
+        });
+
+        if (!completedReviews || completedReviews.length === 0) {
+            console.log("No Reviews Found");
+        }
+
+        res.status(200).json(completedReviews);
+    } catch (error) {
+        console.error("Error fetching reviews:", error);
+        res.status(500).json({ error: "Error fetching reviews" });
+    }
+});
+
+app.get("/driver/viewReviews", async (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    try {
+        // Query the Ride collection for completed rides and their reviews
+        const completedReviews = await Review.find({
+            driver_id: req.session.userId,
+        });
+
+        if (!completedReviews || completedReviews.length === 0) {
+            console.log("No Reviews Found");
+        }
+
+        res.status(200).json(completedReviews);
+    } catch (error) {
+        console.error("Error fetching reviews:", error);
+        res.status(500).json({ error: "Error fetching reviews" });
+    }
+});
+
 app.post("/rides", async (req, res) => {
     try {
         const {
             driver_id,
+            driver_name,
             user_id,
             booking_id,
             pickup_location,
@@ -57,6 +164,7 @@ app.post("/rides", async (req, res) => {
         // Create a new ride instance
         const newRide = new Ride({
             driver_id: req.session.userId,
+            driver_name,
             user_id,
             booking_id,
             pickup_location,

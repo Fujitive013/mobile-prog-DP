@@ -46,6 +46,7 @@ const BookRider = () => {
 
             // Post the ride details to the server
             const ridePayload = {
+                driver_name: rideDetails.driver_name,
                 user_id: rideDetails.user_id,
                 booking_id: rideDetails.bookingId, // Booking ID from rideDetails
                 pickup_location: rideDetails.pickupLocation, // Pickup location

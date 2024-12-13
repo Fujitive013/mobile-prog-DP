@@ -5,39 +5,51 @@ import {
     View,
     TouchableOpacity,
     ScrollView,
-    Image,
     Switch,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useRoute } from "@react-navigation/native";
-import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeRider = () => {
     const [isOnline, setIsOnline] = useState(true);
     const [pendingRequests, setPendingRequests] = useState([]);
-    const [currentTrip, setCurrentTrip] = useState(null);
-    const navigation = useNavigation();
-
     const [todayStats, setTodayStats] = useState({
         totalTrips: 8,
         totalEarnings: 1250,
         totalHours: 6,
         rating: 4.8,
     });
+    const [userName, setUserName] = useState("");
+    const navigation = useNavigation();
 
     useEffect(() => {
-        // Initial fetch
+        const fetchUserName = async () => {
+            try {
+                const storedName = await AsyncStorage.getItem("userName");
+                if (storedName) {
+                    setUserName(storedName);
+                } else {
+                    console.error("Username not found in AsyncStorage");
+                }
+            } catch (error) {
+                console.error(
+                    "Error fetching userName from AsyncStorage:",
+                    error
+                );
+            }
+        };
+
+        fetchUserName();
         fetchPendingBookings();
 
-        // Set up polling interval
+        // Poll for new bookings every 3 seconds
         const pollInterval = setInterval(() => {
             fetchPendingBookings();
-        }, 3000); // Poll every 3 seconds
+        }, 3000);
 
-        return () => {
-            clearInterval(pollInterval);
-        };
+        return () => clearInterval(pollInterval); // Cleanup on component unmount
     }, []);
 
     const fetchPendingBookings = async () => {
@@ -60,12 +72,9 @@ const HomeRider = () => {
                 longitude: booking.longitude,
             }));
 
-            // Compare with current state and only update if there are changes
             setPendingRequests((prev) => {
                 const prevIds = new Set(prev.map((r) => r.id));
                 const newIds = new Set(formattedRequests.map((r) => r.id));
-
-                // Check if arrays are different
                 if (
                     prevIds.size !== newIds.size ||
                     !Array.from(prevIds).every((id) => newIds.has(id))
@@ -79,13 +88,13 @@ const HomeRider = () => {
         }
     };
 
-    const acceptRide = async (request) => {
+    const acceptRide = (request) => {
         try {
-            // Navigate to BookRider screen with ride details
             navigation.navigate("DashboardDriver", {
                 screen: "Book",
                 params: {
                     rideDetails: {
+                        driver_name: userName,
                         user_id: request.userId,
                         bookingId: request.id,
                         pickupLocation: request.pickupLocation,
@@ -110,7 +119,9 @@ const HomeRider = () => {
         <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <View>
-                    <Text style={styles.greeting}>Hello, John!</Text>
+                    <Text style={styles.greeting}>
+                        Hello, {userName || "Rider"}!
+                    </Text>
                     <Text style={styles.subGreeting}>
                         Ready to hit the road?
                     </Text>
@@ -220,7 +231,6 @@ const HomeRider = () => {
         </ScrollView>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,

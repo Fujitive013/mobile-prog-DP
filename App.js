@@ -64,8 +64,14 @@ export default function App() {
                     name="RatingsReceived"
                     component={RatingsReceived}
                 />
-                <Stack.Screen name="RegisterAsDriver" component={RegisterAsDriver} />
-                <Stack.Screen name="DashboardDriver" component={DashboardDriver} />
+                <Stack.Screen
+                    name="RegisterAsDriver"
+                    component={RegisterAsDriver}
+                />
+                <Stack.Screen
+                    name="DashboardDriver"
+                    component={DashboardDriver}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     );
