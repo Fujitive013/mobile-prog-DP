@@ -99,7 +99,7 @@ export default function RatingsMade() {
         setSelectedDriverID(item.driver_id || item.driver_id);
       }}
     >
-      <Text style={styles.rideText}>Ride with {item.driver_name}</Text>
+      <Text style={styles.rideText}>Ride with: {item.driver_name}</Text>
     </TouchableOpacity>
   );
 
@@ -171,7 +171,7 @@ export default function RatingsMade() {
               keyExtractor={(item) => item.id || item._id}
               style={styles.rideList}
             />
-            <Text style={styles.noRidesText}> No rides found</Text>
+            {rides.length === 0 && <Text style={styles.noRidesText}> No rides found</Text>}
             {selectedRide && (
               <>
                 <View style={styles.ratingInput}>
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
-    marginTop: height * 0.03
+    marginTop: height * 0.02,
   },
   backButton: {
     marginRight: 16,
@@ -303,15 +303,16 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '90%',
-    backgroundColor: '#fff',
-    padding: 20,
+    backgroundColor: '#fefefe', // Light background for contrast
+    padding: 30, // Increased padding
     borderRadius: 12,
-    elevation: 5,
+    elevation: 10, // Increased elevation for a stronger shadow
+    borderColor: '#ddd', // Light border color
+    borderWidth: 1, // Border width
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 16,
     color: '#333',
   },
   input: {
@@ -327,13 +328,14 @@ const styles = StyleSheet.create({
   },
   rideItem: {
     padding: 12,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#e0f7fa', // A light cyan for a fresh look
     borderRadius: 8,
     marginBottom: 8,
   },
   rideText: {
     fontSize: 16,
-    color: '#333',
+    fontWeight: 'bold',
+    color: '#00796b', // A darker teal for better contrast
   },
   ratingInput: {
     marginBottom: 16,
@@ -358,6 +360,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flex: 1,
     marginRight: 8,
+    elevation: 2,
   },
   submitButtonText: {
     color: '#fff',
@@ -371,6 +374,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flex: 1,
     marginLeft: 8,
+    elevation: 2,
   },
   cancelButtonText: {
     color: '#fff',

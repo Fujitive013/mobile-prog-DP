@@ -14,6 +14,7 @@ import * as Location from "expo-location";
 import { useRoute } from "@react-navigation/native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import axios from "axios";
+import { useNavigation, CommonActions } from "@react-navigation/native";
 
 const BookRider = () => {
     const route = useRoute();
@@ -33,6 +34,7 @@ const BookRider = () => {
     const [routeToDestination, setRouteToDestination] = useState([]);
     const [latitude, setLatitude] = useState(rideDetails?.latitude);
     const [longitude, setLongitude] = useState(rideDetails?.longitude);
+    const navigation = useNavigation();
 
     console.log(latitude, longitude);
     console.log(rideDetails);
@@ -79,28 +81,49 @@ const BookRider = () => {
     };
 
     const locationArrived = async () => {
-        console.log("Ride Details Booking ID:", rideDetails.user_id);
-        console.log("Driver Name:", rideDetails.driver_name);
-        try {
-            // Update the ride status to "completed"
-            const response = await axios.put(
-                `http://192.168.1.3:5000/rides/${rideDetails.user_id}`,
-                { status: "completed" }
-            );
-
-            if (response.status === 200) {
-                console.log("Ride status updated to completed successfully");
-            } else {
-                console.error(
-                    "Failed to update ride status:",
-                    response.statusText
-                );
-            }
-        } catch (error) {
-            console.error("Error updating ride status:", error.message);
-        }
-    };
-
+      Alert.alert(
+          "Confirmation", // Alert title
+          "Arrived at the destination place?", // Alert message
+          [
+              {
+                  text: "Cancel", // Cancel button text
+                  style: "cancel", // Style of the cancel button
+              },
+              {
+                  text: "Confirm", // Confirm button text
+                  onPress: async () => {
+                      console.log("Ride Details Booking ID:", rideDetails.user_id);
+                      console.log("Driver Name:", rideDetails.driver_name);
+                      try {
+                          // Update the ride status to "completed"
+                          const response = await axios.put(
+                              `http://192.168.1.3:5000/rides/${rideDetails.user_id}`,
+                              { status: "completed" }
+                          );
+  
+                          if (response.status === 200) {
+                              console.log("Ride status updated to completed successfully");
+  
+                              // Reset navigation history and navigate to Dashboard
+                              navigation.dispatch(
+                                  CommonActions.reset({
+                                      index: 0,
+                                      routes: [{ name: "DashboardDriver" }],
+                                  })
+                              );
+                          } else {
+                              console.error("Failed to update ride status:", response.statusText);
+                          }
+                      } catch (error) {
+                          console.error("Error updating ride status:", error.message);
+                      }
+                  },
+              },
+          ],
+          { cancelable: false } // Prevent closing the alert by tapping outside
+      );
+  };
+  
     // Function to fetch route coordinates using Google Directions API
     const getRouteCoordinates = async (origin, destination) => {
         try {

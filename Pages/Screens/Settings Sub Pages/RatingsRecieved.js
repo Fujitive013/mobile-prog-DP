@@ -6,10 +6,13 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
+  Dimensions
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+
+const { height } = Dimensions.get("window");
 
 export default function RatingsReceived() {
   const [reviews, setReviews] = useState([]);
@@ -93,7 +96,6 @@ export default function RatingsReceived() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginVertical: 30,
     backgroundColor: "#f5f5f5",
     marginHorizontal: 5,
   },
@@ -101,7 +103,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    marginBottom: 10,
+    marginBottom: height * 0.001,
   },
   backButton: {
     marginRight: 16,
