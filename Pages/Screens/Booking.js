@@ -120,7 +120,7 @@ export default function App() {
                     {
                         params: {
                             input: input,
-                            key: "AlzaSyLTUh72_4b820AsslVkWmMWfiYm0Ltf2aE",
+                            key: "AlzaSyilaNQygZ6THEJgkJhCjE3AvACgHCE2qkM",
                             components: "country:ph",
                         },
                     }
@@ -173,7 +173,7 @@ export default function App() {
                 {
                     params: {
                         address: address,
-                        key: "AlzaSyLTUh72_4b820AsslVkWmMWfiYm0Ltf2aE",
+                        key: "AlzaSyilaNQygZ6THEJgkJhCjE3AvACgHCE2qkM",
                     },
                 }
             );
@@ -199,7 +199,7 @@ export default function App() {
                     params: {
                         origin: `${origin.latitude},${origin.longitude}`,
                         destination: `${destination.latitude},${destination.longitude}`,
-                        key: "AlzaSyLTUh72_4b820AsslVkWmMWfiYm0Ltf2aE",
+                        key: "AlzaSyilaNQygZ6THEJgkJhCjE3AvACgHCE2qkM",
                     },
                 }
             );
@@ -265,7 +265,11 @@ export default function App() {
 
     return (
         <View style={styles.container}>
-            <MapView style={styles.map} initialRegion={mapRegion} mapType="standard">
+            <MapView
+                style={styles.map}
+                initialRegion={mapRegion}
+                mapType="standard"
+            >
                 <Marker
                     coordinate={currentCoords}
                     title="Your Location"

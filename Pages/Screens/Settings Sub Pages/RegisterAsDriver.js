@@ -51,7 +51,7 @@ export default function RegisterAsDriver() {
 
         try {
             const response = await axios.post(
-                "http://192.168.1.3:5000/driver/register",
+                "http://192.168.18.24:5000/driver/register",
                 {
                     bike_model: bikeModel,
                     license_number: licenseNumber,

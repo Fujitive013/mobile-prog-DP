@@ -55,7 +55,7 @@ const HomeRider = () => {
     const fetchPendingBookings = async () => {
         try {
             const response = await axios.get(
-                "http://192.168.1.3:5000/bookings?status=pending"
+                "http://192.168.18.24:5000/bookings?status=pending"
             );
             const formattedRequests = response.data.map((booking) => ({
                 id: booking._id,
