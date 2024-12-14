@@ -38,7 +38,7 @@ export default function RatingsMade() {
     const fetchRides = useCallback(async () => {
         try {
             const response = await axios.get(
-                "http://192.168.18.24:5000/view/completedRides"
+                "http://192.168.1.3:5000/view/completedRides"
             );
             setRides(response.data);
         } catch (error) {
@@ -49,7 +49,7 @@ export default function RatingsMade() {
     const fetchReviews = useCallback(async () => {
         try {
             const response = await axios.get(
-                "http://192.168.18.24:5000/user/viewReviews"
+                "http://192.168.1.3:5000/user/viewReviews"
             );
             setReviews(response.data);
         } catch (error) {
@@ -85,7 +85,7 @@ export default function RatingsMade() {
             };
 
             await axios.post(
-                "http://192.168.18.24:5000/user/makeReviews",
+                "http://192.168.1.3:5000/user/makeReviews",
                 reviewPayload
             );
             Alert.alert("Success", "Review posted successfully");

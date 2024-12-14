@@ -21,7 +21,7 @@ const LoginModal = ({ visible, onClose }) => {
     const handleLogin = async () => {
         try {
             const response = await axios.post(
-                "http://192.168.18.24:5000/login",
+                "http://192.168.1.3:5000/login",
                 { email, password },
                 { withCredentials: true }
             );

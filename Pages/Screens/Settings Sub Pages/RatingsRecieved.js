@@ -27,7 +27,7 @@ export default function RatingsReceived() {
         const fetchReviews = async () => {
             try {
                 const response = await axios.get(
-                    "http://192.168.18.24:5000/driver/viewReviews"
+                    "http://192.168.1.3:5000/driver/viewReviews"
                 );
                 setReviews(response.data);
             } catch (error) {
