@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
@@ -60,11 +60,39 @@ app.get("/view/completedRides", async (req, res) => {
     }
 });
 
+app.get("/driver/completedRides", async (req, res) => {
+    const { status } = req.query;
+    try {
+        // Find bookings with pending status
+        const completedRides = await Ride.find({
+            status: status || "completed",
+            driver_id: req.session.userId,
+        });
+
+        if (!completedRides || completedRides.length === 0) {
+            return res.status(200).json([]); // Return empty array if no pending bookings
+        }
+
+        res.status(200).json(completedRides);
+    } catch (error) {
+        console.error("Error fetching completedRides:", error);
+        res.status(500).json({ error: "Error fetching completedRides" });
+    }
+});
+
 // Get reviews for completed rides
 app.post("/user/makeReviews", async (req, res) => {
     try {
-        const { driver_id, driver_name, user_id, ride_id, rating, comment, created_at, passengerName } =
-            req.body;
+        const {
+            driver_id,
+            driver_name,
+            user_id,
+            ride_id,
+            rating,
+            comment,
+            created_at,
+            passengerName,
+        } = req.body;
 
         // Create a new review instance
         const newReview = new Review({

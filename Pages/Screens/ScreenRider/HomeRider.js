@@ -14,13 +14,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeRider = () => {
     const [isOnline, setIsOnline] = useState(true);
+    const [completedRidesCount, setCompletedRidesCount] = useState(0);
+    const [rides, setRides] = useState([]);
     const [pendingRequests, setPendingRequests] = useState([]);
-    const [todayStats, setTodayStats] = useState({
-        totalTrips: 8,
-        totalEarnings: 1250,
-        totalHours: 6,
-        rating: 4.8,
-    });
+    const [reviews, setReviews] = useState([]);
+    const [totalEarnings, setTotalEarnings] = useState(0);
+    const [averageRating, setAverageRating] = useState(0);
     const [userName, setUserName] = useState("");
     const navigation = useNavigation();
 
@@ -41,6 +40,51 @@ const HomeRider = () => {
             }
         };
 
+        const fetchReviews = async () => {
+            try {
+                const response = await axios.get(
+                    "http://192.168.18.24:5000/driver/viewReviews"
+                );
+                setReviews(response.data);
+
+                // Calculate the average rating
+                if (response.data.length > 0) {
+                    const totalRating = response.data.reduce(
+                        (sum, review) => sum + review.rating,
+                        0
+                    );
+                    const avgRating = totalRating / response.data.length;
+                    setAverageRating(avgRating);
+                }
+            } catch (error) {
+                console.error("Error fetching reviews:", error);
+            }
+        };
+        const fetchRides = async () => {
+            try {
+                const response = await axios.get(
+                    "http://192.168.18.24:5000/driver/completedRides"
+                );
+
+                const rides = response.data;
+                setRides(rides);
+                setCompletedRidesCount(rides.length); // Count completed rides
+
+                // Calculate the total earnings and average rating
+                if (rides.length > 0) {
+                    const totalEarnings = rides.reduce(
+                        (sum, ride) => sum + ride.fare,
+                        0
+                    );
+                    setTotalEarnings(totalEarnings);
+                }
+            } catch (error) {
+                console.error("Error fetching rides:", error);
+            }
+        };
+
+        fetchRides();
+        fetchReviews();
         fetchUserName();
         fetchPendingBookings();
 
@@ -55,7 +99,7 @@ const HomeRider = () => {
     const fetchPendingBookings = async () => {
         try {
             const response = await axios.get(
-                "http://192.168.1.3:5000/bookings?status=pending"
+                "http://192.168.18.24:5000/bookings?status=pending"
             );
             const formattedRequests = response.data.map((booking) => ({
                 id: booking._id,
@@ -114,7 +158,6 @@ const HomeRider = () => {
     const toggleOnlineStatus = () => {
         setIsOnline(!isOnline);
     };
-
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
@@ -147,21 +190,17 @@ const HomeRider = () => {
             <View style={styles.statsContainer}>
                 <View style={styles.statCard}>
                     <Icon name="bicycle" size={24} color="#3498DB" />
-                    <Text style={styles.statValue}>
-                        {todayStats.totalTrips}
-                    </Text>
+                    <Text style={styles.statValue}>{completedRidesCount}</Text>
                     <Text style={styles.statLabel}>Trips</Text>
                 </View>
                 <View style={styles.statCard}>
                     <Icon name="cash" size={24} color="#2ecc71" />
-                    <Text style={styles.statValue}>
-                        ₱{todayStats.totalEarnings}
-                    </Text>
+                    <Text style={styles.statValue}>₱{totalEarnings}</Text>
                     <Text style={styles.statLabel}>Earnings</Text>
                 </View>
                 <View style={styles.statCard}>
                     <Icon name="star" size={24} color="#f1c40f" />
-                    <Text style={styles.statValue}>{todayStats.rating}</Text>
+                    <Text style={styles.statValue}>{averageRating}</Text>
                     <Text style={styles.statLabel}>Rating</Text>
                 </View>
             </View>

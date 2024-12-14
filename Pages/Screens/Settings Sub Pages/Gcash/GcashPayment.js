@@ -46,7 +46,7 @@ const GcashPayment = () => {
                 longitude,
             });
             const response = await axios.post(
-                "http://192.168.1.3:5000/user/booking",
+                "http://192.168.18.24:5000/user/booking",
                 {
                     passenger_name: userName,
                     fare,
