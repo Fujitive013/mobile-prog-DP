@@ -6,12 +6,13 @@ import Booking from "./Screens/Booking";
 import Profile from "./Screens/Profile";
 import HomeScreen from "./Screens/HomeScreen";
 import Settings from "./Screens/Settings";
-
+import RatingsMade from "./Screens/Settings Sub Pages/RatingsMade";
 const Tab = createBottomTabNavigator();
 const home = "Home";
 const book = "Book";
 const profile = "Profile";
 const settings = "Settings";
+const ratings = "Ratings";
 
 const Dashboard = () => {
     return (
@@ -32,6 +33,8 @@ const Dashboard = () => {
                         iconName = focused ? "person" : "person-outline";
                     } else if (rn === settings) {
                         iconName = focused ? "settings" : "settings-outline";
+                    } else if (rn === ratings) {
+                        iconName = focused ? "star" : "star-outline";
                     }
 
                     return <Icon name={iconName} size={size} color={color} />;
@@ -50,6 +53,11 @@ const Dashboard = () => {
                 name={book}
                 options={{ headerShown: false }}
                 component={Booking}
+            />
+            <Tab.Screen
+                name={ratings}
+                options={{ headerShown: false }}
+                component={RatingsMade}
             />
             <Tab.Screen
                 name={profile}

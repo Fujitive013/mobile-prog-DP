@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 // Define the ride schema
 const rideSchema = new mongoose.Schema({
     driver_name: { type: String, required: true },
+    passengerName: { type: String, required: true },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

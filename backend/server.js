@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "../.env" });
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
@@ -63,12 +63,14 @@ app.get("/view/completedRides", async (req, res) => {
 // Get reviews for completed rides
 app.post("/user/makeReviews", async (req, res) => {
     try {
-        const { driver_id, user_id, ride_id, rating, comment, created_at } =
+        const { driver_id, driver_name, user_id, ride_id, rating, comment, created_at, passengerName } =
             req.body;
 
         // Create a new review instance
         const newReview = new Review({
             driver_id,
+            driver_name,
+            passengerName,
             user_id: req.session.userId,
             ride_id,
             rating,
@@ -174,6 +176,7 @@ app.post("/rides", async (req, res) => {
         const {
             driver_id,
             driver_name,
+            passengerName,
             user_id,
             booking_id,
             pickup_location,
@@ -189,6 +192,7 @@ app.post("/rides", async (req, res) => {
         const newRide = new Ride({
             driver_id: req.session.userId,
             driver_name,
+            passengerName,
             user_id,
             booking_id,
             pickup_location,

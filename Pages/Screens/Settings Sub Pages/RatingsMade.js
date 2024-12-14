@@ -1,326 +1,392 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    SafeAreaView,
-    ActivityIndicator,
-    Modal,
-    TextInput,
-    Button,
-    FlatList,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+  ActivityIndicator,
+  Modal,
+  TextInput,
+  FlatList,
+  Alert,
+  RefreshControl,
+  Dimensions
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+
+const { width, height } = Dimensions.get('window');
 
 export default function RatingsMade() {
-    const [reviews, setReviews] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [selectedRide, setSelectedRide] = useState(null);
-    const [selectedDriverID, setSelectedDriverID] = useState(null);
-    const [newReview, setNewReview] = useState({
-        rideId: "",
-        rating: "",
-        comment: "",
-    });
-    const [rides, setRides] = useState([]);
-    const [selectedRideId, setSelectedRideId] = useState(null); // Track selected ride ID
-    const navigation = useNavigation();
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedRide, setSelectedRide] = useState(null);
+  const [selectedDriverID, setSelectedDriverID] = useState(null);
+  const [newReview, setNewReview] = useState({
+    rideId: '',
+    rating: '',
+    comment: '',
+  });
+  const [rides, setRides] = useState([]);
+  const [selectedRideId, setSelectedRideId] = useState(null);
+  const navigation = useNavigation();
 
-    useEffect(() => {
-        const fetchRides = async () => {
-            try {
-                const response = await axios.get(
-                    "http://192.168.18.24:5000/view/completedRides"
-                );
-                setRides(response.data);
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching rides:", error);
-                setLoading(false);
-            }
-        };
-
-        const fetchReviews = async () => {
-            try {
-                const response = await axios.get(
-                    "http://192.168.18.24:5000/user/viewReviews"
-                );
-                setReviews(response.data);
-            } catch (error) {
-                console.error("Error fetching reviews:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchRides();
-        fetchReviews();
-    }, []);
-
-    const navigateToSettings = () => {
-        navigation.navigate("Dashboard", { screen: "settings" });
-    };
-
-    const handleAddReview = async () => {
-        try {
-            // Ensure the ride ID is included in the review data
-            const reviewPayload = {
-                ...newReview,
-                ride_id: selectedRideId, // Include the ride ID
-                driver_id: selectedDriverID,
-            };
-
-            await axios.post(
-                "http://192.168.18.24:5000/user/makeReviews",
-                reviewPayload
-            );
-            Alert.alert("Review Posted Successfully");
-            navigation.navigate("Dashboard", { screen: "settings" });
-        } catch (error) {
-            console.error("Error submitting review:", error);
-        }
-    };
-
-    const renderRideItem = ({ item }) => (
-        <TouchableOpacity
-            style={styles.rideItem}
-            onPress={() => {
-                setSelectedRide(item);
-                setSelectedRideId(item.id || item._id); // Update selected ride ID
-                setSelectedDriverID(item.driver_id || item.driver_id); // Update selected driver ID
-            }}
-        >
-            <Text style={styles.rideText}>Ride ID: {item._id}</Text>
-        </TouchableOpacity>
-    );
-
-    // Filter out the selected ride from the list
-    const filteredRides = rides.filter(
-        (ride) =>
-            !(
-                selectedRideId &&
-                (ride.id === selectedRideId || ride._id === selectedRideId)
-            )
-    );
-
-    if (loading) {
-        return (
-            <SafeAreaView style={styles.container}>
-                <ActivityIndicator size="large" color="#3498db" />
-            </SafeAreaView>
-        );
+  const fetchRides = useCallback(async () => {
+    try {
+      const response = await axios.get('http://192.168.1.3:5000/view/completedRides');
+      setRides(response.data);
+    } catch (error) {
+      console.error('Error fetching rides:', error);
     }
+  }, []);
 
+  const fetchReviews = useCallback(async () => {
+    try {
+      const response = await axios.get('http://192.168.1.3:5000/user/viewReviews');
+      setReviews(response.data);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRides();
+    fetchReviews();
+  }, [fetchRides, fetchReviews]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchReviews();
+  }, [fetchReviews]);
+
+  const navigateToSettings = () => {
+    navigation.navigate('Dashboard', { screen: 'settings' });
+  };
+
+  const handleAddReview = async () => {
+    try {
+      const reviewPayload = {
+        ...newReview,
+        ride_id: selectedRideId,
+        driver_id: selectedDriverID,
+        driver_name: selectedRide.driver_name,
+        passengerName: selectedRide.passengerName,
+      };
+
+      await axios.post('http://192.168.1.3:5000/user/makeReviews', reviewPayload);
+      Alert.alert('Success', 'Review posted successfully');
+      setModalVisible(false);
+      fetchReviews();
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      Alert.alert('Error', 'Failed to post review. Please try again.');
+    }
+  };
+
+  const renderRideItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.rideItem}
+      onPress={() => {
+        setSelectedRide(item);
+        setSelectedRideId(item.id || item._id);
+        setSelectedDriverID(item.driver_id || item.driver_id);
+      }}
+    >
+      <Text style={styles.rideText}>Ride with {item.driver_name}</Text>
+    </TouchableOpacity>
+  );
+
+  const renderReviewItem = ({ item }) => {
+  console.log('Review item:', item);
+  return (
+    <View style={styles.reviewCard}>
+      <Text style={styles.riderId}>Driver Name: {item.driver_name || 'Unknown Driver'}</Text>
+      <View style={styles.ratingContainer}>
+        <Text style={styles.rating}>Rating: {item.rating || 'N/A'}/5</Text>
+        <View style={styles.stars}>
+          {[...Array(5)].map((_, index) => (
+            <Ionicons
+              key={index}
+              name={index < (item.rating || 0) ? 'star' : 'star-outline'}
+              size={16}
+              color="#FFD700"
+            />
+          ))}
+        </View>
+      </View>
+      <Text style={styles.comment}>Comment: {item.comment || 'No comment'}</Text>
+      <Text style={styles.dateText}>{new Date(item.created_at).toLocaleDateString()}</Text>
+    </View>
+  );
+};
+
+  if (loading) {
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={navigateToSettings}
-                >
-                    <Ionicons name="arrow-back" size={25} color="black" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Passenger Ratings</Text>
-            </View>
-            <View style={styles.listContent}>
-                {reviews.length > 0 ? (
-                    reviews.map((item, index) => (
-                        <View
-                            key={item.id || item._id}
-                            style={styles.reviewCard}
-                        >
-                            <Text style={styles.rating}>
-                                Ride ID: {item.ride_id}
-                            </Text>
-                            <Text style={styles.rating}>
-                                Rating: {item.rating} / 5
-                            </Text>
-                            <Text style={styles.comment}>
-                                comment: {item.comment}
-                            </Text>
-                        </View>
-                    ))
-                ) : (
-                    <Text style={styles.noReviewsText}>
-                        No reviews available.
-                    </Text>
-                )}
-            </View>
-            <TouchableOpacity
-                style={styles.addReviewButton}
-                onPress={() => setModalVisible(true)}
-            >
-                <Text style={styles.addReviewButtonText}>Add a Review</Text>
-            </TouchableOpacity>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Review a Ride</Text>
-                        <FlatList
-                            data={filteredRides}
-                            renderItem={renderRideItem}
-                            keyExtractor={(item) => item.id || item._id}
-                            style={styles.rideList}
-                        />
-                        {selectedRide && (
-                            <>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Rating (1-5)"
-                                    keyboardType="numeric"
-                                    value={newReview.rating}
-                                    onChangeText={(text) =>
-                                        setNewReview({
-                                            ...newReview,
-                                            rating: text,
-                                        })
-                                    }
-                                />
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Comment"
-                                    value={newReview.comment}
-                                    onChangeText={(text) =>
-                                        setNewReview({
-                                            ...newReview,
-                                            comment: text,
-                                        })
-                                    }
-                                />
-                                <View style={styles.modalButtons}>
-                                    <Button
-                                        title="Submit"
-                                        onPress={handleAddReview}
-                                        color="#3498db"
-                                    />
-                                    <Button
-                                        title="Cancel"
-                                        onPress={() => setModalVisible(false)}
-                                        color="#e74c3c"
-                                    />
-                                </View>
-                            </>
-                        )}
-                    </View>
-                </View>
-            </Modal>
-        </SafeAreaView>
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="#3498db" />
+      </SafeAreaView>
     );
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={navigateToSettings}>
+          <Ionicons name="arrow-back" size={25} color="#333" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Your Ratings</Text>
+      </View>
+      <FlatList
+        data={reviews}
+        renderItem={renderReviewItem}
+        keyExtractor={(item) => item.id || item._id}
+        contentContainerStyle={styles.listContent}
+        ListEmptyComponent={<Text style={styles.noReviewsText}>No reviews available.</Text>}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
+      <TouchableOpacity style={styles.fab} onPress={() => setModalVisible(true)}>
+        <Ionicons name="add" size={24} color="#fff" />
+      </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Add a Review</Text>
+            <FlatList
+              data={rides.filter((ride) => !(selectedRideId && (ride.id === selectedRideId || ride._id === selectedRideId)))}
+              renderItem={renderRideItem}
+              keyExtractor={(item) => item.id || item._id}
+              style={styles.rideList}
+            />
+            <Text style={styles.noRidesText}> No rides found</Text>
+            {selectedRide && (
+              <>
+                <View style={styles.ratingInput}>
+                  <Text style={styles.ratingLabel}>Rating:</Text>
+                  <View style={styles.starRating}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <TouchableOpacity
+                        key={star}
+                        onPress={() => setNewReview({ ...newReview, rating: star.toString() })}
+                      >
+                        <Ionicons
+                          name={star <= parseInt(newReview.rating) ? 'star' : 'star-outline'}
+                          size={32}
+                          color="#FFD700"
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Your comment"
+                  value={newReview.comment}
+                  onChangeText={(text) => setNewReview({ ...newReview, comment: text })}
+                  multiline
+                />
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity style={styles.submitButton} onPress={handleAddReview}>
+                    <Text style={styles.submitButtonText}>Submit</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#f5f5f5",
-    },
-    header: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 16,
-        marginBottom: 10,
-    },
-    backButton: {
-        marginRight: 16,
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-    },
-    listContent: {
-        paddingHorizontal: 16,
-    },
-    reviewCard: {
-        backgroundColor: "#fff",
-        borderRadius: 8,
-        padding: 16,
-        marginBottom: 10,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
-    },
-    rating: {
-        fontSize: 14,
-        color: "#3498db",
-        marginBottom: 4,
-    },
-    comment: {
-        fontSize: 14,
-        color: "#333",
-        marginBottom: 8,
-    },
-    date: {
-        fontSize: 12,
-        color: "#aaa",
-    },
-    noReviewsText: {
-        textAlign: "center",
-        fontSize: 16,
-        color: "#aaa",
-        marginTop: 20,
-    },
-    addReviewButton: {
-        backgroundColor: "#3498db",
-        padding: 12,
-        margin: 16,
-        borderRadius: 8,
-        alignItems: "center",
-    },
-    addReviewButtonText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-    },
-    modalContent: {
-        width: "80%",
-        backgroundColor: "#fff",
-        padding: 20,
-        borderRadius: 10,
-        elevation: 5,
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 10,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 8,
-        padding: 10,
-        marginBottom: 10,
-        fontSize: 14,
-    },
-    rideList: {
-        marginVertical: 10,
-    },
-    rideItem: {
-        padding: 10,
-        backgroundColor: "#fff",
-        borderRadius: 8,
-        marginBottom: 8,
-    },
-    rideText: {
-        fontSize: 14,
-    },
-    modalButtons: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    marginTop: height * 0.03
+  },
+  backButton: {
+    marginRight: 16,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  listContent: {
+    padding: 16,
+  },
+  reviewCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  riderId: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    color: '#3498db',
+    marginBottom: 8,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  rating: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#3498db',
+    marginRight: 8,
+  },
+  stars: {
+    flexDirection: 'row',
+  },
+  comment: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
+    lineHeight: 20,
+  },
+  noReviewsText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#aaa',
+    marginTop: 20,
+  },
+  fab: {
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    backgroundColor: '#3498db',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 4,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 12,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    color: '#333',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    fontSize: 16,
+  },
+  rideList: {
+    marginVertical: 16,
+  },
+  rideItem: {
+    padding: 12,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  rideText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  ratingInput: {
+    marginBottom: 16,
+  },
+  ratingLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+    color: '#333',
+  },
+  starRating: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  submitButton: {
+    backgroundColor: '#3498db',
+    padding: 12,
+    borderRadius: 8,
+    flex: 1,
+    marginRight: 8,
+  },
+  submitButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  cancelButton: {
+    backgroundColor: '#e74c3c',
+    padding: 12,
+    borderRadius: 8,
+    flex: 1,
+    marginLeft: 8,
+  },
+  cancelButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  noRidesText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#aaa',
+    marginBottom: height * 0.04
+  },
+  dateText: {
+    fontSize: 12,
+    color: "#666",
+    marginBottom: 8,
+  },
 });

@@ -40,7 +40,7 @@ const BookRider = () => {
         try {
             // Update the ride status to "accepted"
             await axios.put(
-                `http://192.168.18.24:5000/bookings/${rideDetails.bookingId}`,
+                `http://192.168.1.3:5000/bookings/${rideDetails.bookingId}`,
                 {
                     status: "accepted",
                 }
@@ -50,6 +50,7 @@ const BookRider = () => {
             // Post the ride details to the server
             const ridePayload = {
                 driver_name: rideDetails.driver_name,
+                passengerName: rideDetails.passengerName,
                 user_id: rideDetails.user_id,
                 booking_id: rideDetails.bookingId, // Booking ID from rideDetails
                 pickup_location: rideDetails.pickupLocation, // Pickup location
@@ -62,7 +63,7 @@ const BookRider = () => {
             };
 
             const response = await axios.post(
-                `http://192.168.18.24:5000/rides`, // Replace with your API endpoint
+                `http://192.168.1.3:5000/rides`, // Replace with your API endpoint
                 ridePayload
             );
 
@@ -79,10 +80,11 @@ const BookRider = () => {
 
     const locationArrived = async () => {
         console.log("Ride Details Booking ID:", rideDetails.user_id);
+        console.log("Driver Name:", rideDetails.driver_name);
         try {
             // Update the ride status to "completed"
             const response = await axios.put(
-                `http://192.168.18.24:5000/rides/${rideDetails.user_id}`,
+                `http://192.168.1.3:5000/rides/${rideDetails.user_id}`,
                 { status: "completed" }
             );
 

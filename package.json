@@ -29,6 +29,7 @@
     "expo-speech-recognition": "^0.2.24",
     "expo-splash-screen": "^0.29.18",
     "expo-status-bar": "~2.0.0",
+    "framer-motion": "^11.14.4",
     "haversine": "^1.1.1",
     "react": "^18.3.1",
     "react-native": "^0.76.5",
