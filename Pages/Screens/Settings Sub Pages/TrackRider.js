@@ -55,6 +55,14 @@ const TrackRider = () => {
     useEffect(() => {
         fetchCurrentLocation();
         getUserLocation();
+
+        // Set an interval to fetch the current location every 3 seconds
+        const locationUpdateInterval = setInterval(() => {
+            fetchCurrentLocation();
+        }, 3000); // 3 seconds
+
+        // Clear the interval when the component unmounts
+        return () => clearInterval(locationUpdateInterval);
     }, []);
 
     return (
