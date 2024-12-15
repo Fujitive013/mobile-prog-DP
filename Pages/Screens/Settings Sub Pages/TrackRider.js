@@ -108,7 +108,7 @@ const TrackRider = () => {
                         coordinate={currentLocation}
                         title="Rider's Location"
                         description="This is where the rider is currently located."
-                        pinColor="blue"
+                        image={require('../../../Images/motorbike.png')} // Replace with the path to your image
                     />
                 )}
                 {userLocation && (
@@ -116,7 +116,7 @@ const TrackRider = () => {
                         coordinate={userLocation}
                         title="Your Location"
                         description="This is your current location."
-                        pinColor="red"
+                        image={require('../../../Images/userlocation.png')}
                     />
                 )}
             </MapView>

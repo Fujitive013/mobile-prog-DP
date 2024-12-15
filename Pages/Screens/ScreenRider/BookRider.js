@@ -304,14 +304,9 @@ const BookRider = () => {
                             longitude: location.coords.longitude,
                         }}
                         title="Your Location"
+                        description="This is where your location."
+                        image={require('../../../Images/motorbike.png')}
                     >
-                        <View style={styles.customMarker}>
-                            <FontAwesome5
-                                name="motorcycle"
-                                size={24}
-                                color="#2089dc"
-                            />
-                        </View>
                     </Marker>
                 )}
 
@@ -323,19 +318,8 @@ const BookRider = () => {
                                 coordinate={pickupCoords}
                                 title="Pickup Location"
                                 description={rideDetails.pickupLocation}
+                                image={require('../../../Images/motorbike.png')}
                             >
-                                <View
-                                    style={[
-                                        styles.customMarker,
-                                        styles.pickupMarker,
-                                    ]}
-                                >
-                                    <MaterialIcons
-                                        name="location-on"
-                                        size={30}
-                                        color="#ff4757"
-                                    />
-                                </View>
                             </Marker>
                         )}
 
@@ -344,19 +328,8 @@ const BookRider = () => {
                                 coordinate={destinationCoords}
                                 title="Destination"
                                 description={rideDetails.destination}
+                                image={require('../../../Images/destination.png')}
                             >
-                                <View
-                                    style={[
-                                        styles.customMarker,
-                                        styles.destinationMarker,
-                                    ]}
-                                >
-                                    <MaterialIcons
-                                        name="location-on"
-                                        size={30}
-                                        color="#2ed573"
-                                    />
-                                </View>
                             </Marker>
                         )}
 
