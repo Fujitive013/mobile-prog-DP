@@ -22,7 +22,6 @@ import RatingsMade from "./Pages/Screens/Settings Sub Pages/RatingsMade";
 import RatingsReceived from "./Pages/Screens/Settings Sub Pages/RatingsRecieved";
 import DashboardDriver from "./Pages/DashboardDriver";
 import RegisterAsDriver from "./Pages/Screens/Settings Sub Pages/RegisterAsDriver";
-import TrackRider from "./Pages/Screens/Settings Sub Pages/TrackRider";
 
 const Stack = createNativeStackNavigator();
 
@@ -73,7 +72,6 @@ export default function App() {
                     name="DashboardDriver"
                     component={DashboardDriver}
                 />
-                <Stack.Screen name="Track" component={TrackRider} />
             </Stack.Navigator>
         </NavigationContainer>
     );

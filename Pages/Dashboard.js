@@ -22,6 +22,7 @@ const Dashboard = () => {
   const navigation = useNavigation();
   const [activeRide, setActiveRide] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [hasClickedYes, setHasClickedYes] = useState(false);
 
   const checkActiveRide = async () => {
     try {
@@ -46,19 +47,20 @@ const Dashboard = () => {
   const handleModalClose = (shouldTrack) => {
     setModalVisible(false);
     if (shouldTrack) {
-      navigation.navigate("Track"); // Navigate to Track screen
-    } else {
-      // If "No" is clicked, do nothing
+      setHasClickedYes(true);
+      navigation.navigate("Track");
     }
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-    checkActiveRide();
-    }, 5000); // Check every 5 seconds
+    if (!hasClickedYes) {
+      const interval = setInterval(() => {
+        checkActiveRide();
+      }, 5000); // Check every 5 seconds
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
+      return () => clearInterval(interval); // Cleanup on unmount
+    }
+  }, [hasClickedYes]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -127,7 +129,7 @@ const Dashboard = () => {
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
+        visible={modalVisible && !hasClickedYes}
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
@@ -212,3 +214,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
