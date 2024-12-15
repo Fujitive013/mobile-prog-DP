@@ -39,6 +39,27 @@ app.use(
   })
 );
 
+// User Active Rides
+app.get("/view/activeRides", async (req, res) => {
+    const { status } = req.query;
+    try {
+        // Find bookings with active status
+        const activeRides = await Ride.find({
+            status: status || "active",
+            user_id: req.session.userId,
+        });
+
+        if (!activeRides || activeRides.length === 0) {
+            return res.status(200).json([]); // Return empty array if no active rides
+        }
+
+        res.status(200).json(activeRides);
+    } catch (error) {
+        console.error("Error fetching active rides:", error);
+        res.status(500).json({ error: "Error fetching active rides" });
+    }
+});
+
 app.get("/view/completedRides", async (req, res) => {
   const { status } = req.query;
   try {
@@ -78,6 +99,8 @@ app.get("/driver/getCurrentLocation", async (req, res) => {
   }
 });
 
+
+// Driver Active Rides - SAVE FOR LATER
 app.get("/driver/status/active", async (req, res) => {
   const { status } = req.query;
   try {
