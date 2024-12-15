@@ -16,7 +16,7 @@ import haversine from "haversine";
 import * as Speech from "expo-speech";
 import { useNavigation } from "@react-navigation/native";
 
-export default function App() {
+export default function Booking() {
     const navigation = useNavigation();
     const [query, setQuery] = useState("");
     const [suggestions, setSuggestions] = useState([]);

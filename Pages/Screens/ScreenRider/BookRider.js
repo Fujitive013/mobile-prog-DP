@@ -61,6 +61,10 @@ const BookRider = () => {
                 status: "active", // Start the ride with "in-progress" status
                 created_at: new Date().toISOString(), // Record the current time as ride start time
                 updated_at: new Date().toISOString(), // Record the current time as ride start time
+                current_location: {
+                    latitude: location.coords.latitude, // Corrected access
+                    longitude: location.coords.longitude, // Corrected access
+                },
                 ride_rating: null,
             };
 

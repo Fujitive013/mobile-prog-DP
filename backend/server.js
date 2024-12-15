@@ -174,6 +174,24 @@ app.get("/driver/viewReviews", async (req, res) => {
     }
 });
 
+app.get("/rides/current_location/:id", async (req, res) => {
+    const { id } = req.params; // Extract userId from the request parameters
+    try {
+        // Find the ride associated with the specified user_id
+        const ride = await Ride.findOne({ user_id: userId, status: "active" });
+
+        if (!ride) {
+            return res.status(404).json({ message: "No active ride found for this user." });
+        }
+
+        // Return the current location of the ride
+        res.status(200).json({ current_location: ride.current_location });
+    } catch (error) {
+        console.error("Error fetching current location:", error);
+        res.status(500).json({ error: "Error fetching current location" });
+    }
+});
+
 app.put("/rides/:id", async (req, res) => {
     const { id } = req.params;
     console.log("Request to update ride received:", id);
@@ -214,6 +232,7 @@ app.post("/rides", async (req, res) => {
             created_at,
             updated_at,
             ride_rating,
+            current_location,
         } = req.body;
 
         // Create a new ride instance
@@ -230,6 +249,10 @@ app.post("/rides", async (req, res) => {
             created_at,
             updated_at,
             ride_rating,
+            current_location: {
+                latitude: current_location.latitude,
+                longitude: current_location.longitude,
+            },
         });
 
         // Save the ride to the database

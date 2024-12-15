@@ -4,6 +4,10 @@ const mongoose = require("mongoose");
 const rideSchema = new mongoose.Schema({
     driver_name: { type: String, required: true },
     passengerName: { type: String, required: true },
+    current_location: {
+        latitude: { type: Number, required: true },
+        longitude: { type: Number, required: true },
+    },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
