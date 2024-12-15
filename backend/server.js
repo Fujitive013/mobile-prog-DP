@@ -99,22 +99,6 @@ app.get("/driver/getCurrentLocation", async (req, res) => {
   }
 });
 
-
-// Driver Active Rides - SAVE FOR LATER
-app.get("/driver/status/active", async (req, res) => {
-  const { status } = req.query;
-  try {
-    const activeRides = await Ride.find({
-      status: status || "active",
-      driver_id: req.session.userId,
-    });
-    res.status(200).json(activeRides);
-  } catch (error) {
-    console.error("Error fetching active rides:", error);
-    res.status(500).json({ error: "Error fetching active rides" });
-  }
-});
-
 app.get("/driver/completedRides", async (req, res) => {
   const { status } = req.query;
   try {

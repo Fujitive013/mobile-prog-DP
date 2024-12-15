@@ -1,13 +1,31 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import * as Location from "expo-location"; // Import Location from expo-location
+import * as Location from "expo-location";
 
 const TrackRider = () => {
     const [currentLocation, setCurrentLocation] = useState(null);
     const [userLocation, setUserLocation] = useState(null);
     const [mapRegion, setMapRegion] = useState(null);
+    const [activeRide, setActiveRide] = useState(null);
+    const [loading, setLoading] = useState(true); // Loading state
+
+    const fetchActiveRide = async () => {
+        try {
+            const response = await axios.get("http://192.168.1.3:5000/view/activeRides");
+            if (response.data && response.data.length > 0) {
+                setActiveRide(response.data[0]);
+            } else {
+                setActiveRide(null);
+            }
+        } catch (error) {
+            console.log("Error fetching active ride:", error.response ? error.response.data : error.message);
+            setActiveRide(null);
+        } finally {
+            setLoading(false); // Set loading to false after fetching
+        }
+    };
 
     const fetchCurrentLocation = async () => {
         try {
@@ -20,7 +38,6 @@ const TrackRider = () => {
                 };
                 setCurrentLocation(newLocation);
                 
-                // Automatically set map region to current location when fetched
                 setMapRegion({
                     latitude: newLocation.latitude,
                     longitude: newLocation.longitude,
@@ -37,14 +54,12 @@ const TrackRider = () => {
     };
 
     const getUserLocation = async () => {
-        // Request permission to access location
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
             console.log('Permission to access location was denied');
             return;
         }
 
-        // Get the user's current location
         let location = await Location.getCurrentPositionAsync({});
         setUserLocation({
             latitude: location.coords.latitude,
@@ -53,23 +68,39 @@ const TrackRider = () => {
     };
 
     useEffect(() => {
+        fetchActiveRide();
         fetchCurrentLocation();
         getUserLocation();
 
-        // Set an interval to fetch the current location every 3 seconds
-        const locationUpdateInterval = setInterval(() => {
+        const updateInterval = setInterval(() => {
+            fetchActiveRide();
             fetchCurrentLocation();
-        }, 3000); // 3 seconds
+        }, 3000);
 
-        // Clear the interval when the component unmounts
-        return () => clearInterval(locationUpdateInterval);
+        return () => clearInterval(updateInterval);
     }, []);
 
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#3498DB" />
+                <Text>Loading...</Text>
+            </View>
+        );
+    }
+
+    if (!activeRide) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.noRideText}>You haven't booked a ride yet.</Text>
+            </View>
+        );
+    }
+
     return (
-        <View style={{ flex: 1 }}>
+        <View style={styles.container}>
             <MapView
-                style={{ flex: 1 }}
-                // Use mapRegion if available, otherwise fallback to userLocation or default
+                style={styles.map}
                 region={mapRegion}
             >
                 {currentLocation && (
@@ -77,7 +108,7 @@ const TrackRider = () => {
                         coordinate={currentLocation}
                         title="Rider's Location"
                         description="This is where the rider is currently located."
-                        pinColor="blue"  // Optional: Make it visually distinct
+                        pinColor="blue"
                     />
                 )}
                 {userLocation && (
@@ -85,18 +116,40 @@ const TrackRider = () => {
                         coordinate={userLocation}
                         title="Your Location"
                         description="This is your current location."
-                        pinColor="red"  // Optional: Different color for user location
+                        pinColor="red"
                     />
                 )}
             </MapView>
-            <Text style={{ position: 'absolute', top: 10, left: 10, color: 'white' }}>
-                {currentLocation ? `Rider: Lat: ${currentLocation.latitude}, Lon: ${currentLocation.longitude}` : "Rider location not available"}
-            </Text>
-            <Text style={{ position: 'absolute', top: 30, left: 10, color: 'white' }}>
-                {userLocation ? `You: Lat: ${userLocation.latitude}, Lon: ${userLocation.longitude}` : "Your location not available"}
-            </Text>
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    map: {
+        width: '100%',
+        height: '100%',
+    },
+    noRideText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#e74c3c',
+        padding: 15,
+        borderRadius: 10,
+        margin: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+    },
+});
 
 export default TrackRider;
