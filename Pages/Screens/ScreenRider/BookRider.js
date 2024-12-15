@@ -318,7 +318,7 @@ const BookRider = () => {
                                 coordinate={pickupCoords}
                                 title="Pickup Location"
                                 description={rideDetails.pickupLocation}
-                                image={require('../../../Images/motorbike.png')}
+                                image={require('../../../Images/userlocation.png')}
                             >
                             </Marker>
                         )}
