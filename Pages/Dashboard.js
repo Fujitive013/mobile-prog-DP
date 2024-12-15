@@ -1,18 +1,20 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Icon from "react-native-vector-icons/Ionicons"; // Import icons for tabs below
+import Icon from "react-native-vector-icons/Ionicons";
 import Booking from "./Screens/Booking";
 import Profile from "./Screens/Profile";
 import HomeScreen from "./Screens/HomeScreen";
 import Settings from "./Screens/Settings";
 import RatingsMade from "./Screens/Settings Sub Pages/RatingsMade";
+import TrackRider from "./Screens/Settings Sub Pages/TrackRider";
 const Tab = createBottomTabNavigator();
 const home = "Home";
 const book = "Book";
 const profile = "Profile";
 const settings = "Settings";
 const ratings = "Ratings";
+const track = "Track";
 
 const Dashboard = () => {
     return (
@@ -35,6 +37,8 @@ const Dashboard = () => {
                         iconName = focused ? "settings" : "settings-outline";
                     } else if (rn === ratings) {
                         iconName = focused ? "star" : "star-outline";
+                    } else if (rn === track) {
+                        iconName = focused ? "map" : "map-outline";
                     }
 
                     return <Icon name={iconName} size={size} color={color} />;
@@ -68,6 +72,11 @@ const Dashboard = () => {
                 name={settings}
                 options={{ headerShown: false }}
                 component={Settings}
+            />
+            <Tab.Screen
+                name={track}
+                options={{ headerShown: false }}
+                component={TrackRider}
             />
         </Tab.Navigator>
     );

@@ -60,6 +60,22 @@ app.get("/view/completedRides", async (req, res) => {
     }
 });
 
+app.get("/driver/getCurrentLocation", async (req, res) => {
+    try {
+        const userId = req.session.userId; // Get user ID from session
+        const ride = await Ride.findOne({ user_id: userId, status: "active" }); // Find active ride for the user
+
+        if (!ride) {
+            return res.status(404).json({ message: "No active ride found for this user." });
+        }
+
+        res.status(200).json(ride.current_location); // Return the current location
+    } catch (error) {
+        console.error("Error fetching current location:", error);
+        res.status(500).json({ error: "Error fetching current location" });
+    }
+});
+
 app.get("/driver/completedRides", async (req, res) => {
     const { status } = req.query;
     try {
