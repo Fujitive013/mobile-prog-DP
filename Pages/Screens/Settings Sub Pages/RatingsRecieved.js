@@ -19,10 +19,6 @@ export default function RatingsReceived() {
     const [loading, setLoading] = useState(true);
     const navigation = useNavigation();
 
-    const Settings = () => {
-        navigation.navigate("Dashboard", { screen: "settings" });
-    };
-
     useEffect(() => {
         const fetchReviews = async () => {
             try {
@@ -51,9 +47,6 @@ export default function RatingsReceived() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton} onPress={Settings}>
-                    <Ionicons name="arrow-back" size={25} color="black" />
-                </TouchableOpacity>
                 <Text style={styles.headerTitle}>Driver</Text>
             </View>
             <View style={styles.listContent}>

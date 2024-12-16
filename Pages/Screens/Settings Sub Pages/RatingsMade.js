@@ -69,11 +69,7 @@ export default function RatingsMade() {
         setRefreshing(true);
         fetchReviews();
     }, [fetchReviews]);
-
-    const navigateToSettings = () => {
-        navigation.navigate("Dashboard", { screen: "settings" });
-    };
-
+    
     const handleAddReview = async () => {
         try {
             const reviewPayload = {
@@ -157,12 +153,6 @@ export default function RatingsMade() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={navigateToSettings}
-                >
-                    <Ionicons name="arrow-back" size={25} color="#333" />
-                </TouchableOpacity>
                 <Text style={styles.headerTitle}>Your Ratings</Text>
             </View>
             <FlatList
