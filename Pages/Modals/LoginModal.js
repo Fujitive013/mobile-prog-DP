@@ -30,7 +30,9 @@ const LoginModal = ({ visible, onClose }) => {
 
             if (response.status === 200) {
                 // Store token in AsyncStorage
+
                 await AsyncStorage.setItem("token", response.data.token);
+                await AsyncStorage.setItem("userId", response.data.user.id);
                 console.log("Token stored:", response.data.token);
 
                 const userRole = response.data.user.user_role;
@@ -38,6 +40,7 @@ const LoginModal = ({ visible, onClose }) => {
                     response.data.user.first_name +
                     " " +
                     response.data.user.last_name;
+                const userId = response.data.user.id;
                 console.log("Login successful, user role:", userRole);
 
                 // Store userName in AsyncStorage
@@ -49,7 +52,7 @@ const LoginModal = ({ visible, onClose }) => {
 
                 // Navigate based on user role without storing it
                 if (userRole === "passenger") {
-                    navigation.navigate("Dashboard", { userName });
+                    navigation.navigate("Dashboard", { userName: userName, userId: userId });
                 } else if (userRole === "driver") {
                     navigation.navigate("DashboardDriver");
                 }

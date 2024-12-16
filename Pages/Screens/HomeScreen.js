@@ -3,10 +3,13 @@ import React, { useState, useEffect } from "react";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useNavigation } from '@react-navigation/native'; // Import the hook
+import { useRoute } from "@react-navigation/native";
 
 const HomeScreens = () => {
     const [fontLoaded, setFontLoaded] = useState(false);
     const navigation = useNavigation();
+    const route = useRoute();
+    const { userId } = route.params;
 
     const handleMissions = () => {
         navigation.navigate('MissionsScreen')
@@ -17,7 +20,7 @@ const HomeScreens = () => {
     }
 
     const handleConfirm = () => {
-        navigation.navigate('Dashboard', { screen: 'Book' }); // Navigate to Booking.js
+        navigation.navigate('Dashboard', { screen: 'Book', params: { userId: userId } }); // Navigate to Booking.js
     };
 
     const fetchFonts = async () => {

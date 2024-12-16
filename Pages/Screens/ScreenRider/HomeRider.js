@@ -11,6 +11,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRoute } from "@react-navigation/native";
 
 const HomeRider = () => {
     const [isOnline, setIsOnline] = useState(true);
@@ -22,6 +23,7 @@ const HomeRider = () => {
     const [averageRating, setAverageRating] = useState(0);
     const [userName, setUserName] = useState("");
     const navigation = useNavigation();
+
 
     useEffect(() => {
         const fetchUserName = async () => {

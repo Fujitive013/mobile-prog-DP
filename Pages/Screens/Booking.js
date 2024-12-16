@@ -15,6 +15,7 @@ import * as Location from "expo-location";
 import haversine from "haversine";
 import * as Speech from "expo-speech";
 import { useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 
 export default function App() {
     const navigation = useNavigation();
@@ -27,6 +28,10 @@ export default function App() {
     const [destinationCoords, setDestinationCoords] = useState(null);
     const [fare, setFare] = useState(null);
     const [routeCoordinates, setRouteCoordinates] = useState([]);
+    const route = useRoute();
+    const { userId } = route.params;
+    console.log(userId);
+
 
     const [mapRegion, setMapRegion] = useState({
         latitude: 8.4542,
@@ -54,6 +59,7 @@ export default function App() {
                     text: "OK",
                     onPress: () =>
                         navigation.navigate("ConfirmedBooking", {
+                            userId: userId,
                             fare,
                             destination,
                             currentAddress,

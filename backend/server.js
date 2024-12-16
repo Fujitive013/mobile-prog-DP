@@ -39,6 +39,26 @@ app.use(
   })
 );
 
+// User Pending Status
+app.get("/view/pendingStatus", async (req, res) => {
+  const { status, userId } = req.query;
+  try {
+    const pendingStatus = await Booking.find({
+      status: status || "pending",
+      user_id: userId // Use the passed userId instead of session
+    });
+
+    if (!pendingStatus || pendingStatus.length === 0) {
+      return res.status(200).json([]); // Return empty array if no active rides
+    }
+
+    res.status(200).json(pendingStatus);
+  } catch (error) {
+    console.error("Error fetching pending status:", error);
+    res.status(500).json({ error: "Error fetching pending status" });
+  }
+});
+
 // User Active Rides
 app.get("/view/activeRides", async (req, res) => {
   const { status } = req.query;
@@ -353,21 +373,23 @@ app.get("/booking/pending/:id", async (req, res) => {
   const { id } = req.params;
 
   if (!id) {
-      return res.status(400).json({ error: "User ID is required" });
+    return res.status(400).json({ error: "User ID is required" });
   }
 
   try {
-      console.log("Querying pending bookings for user_id:", id);
-      const bookings = await Booking.find({ user_id: id, status: "pending" });
+    console.log("Querying pending bookings for user_id:", id);
+    const bookings = await Booking.find({ user_id: id, status: "pending" });
 
-      if (bookings.length === 0) {
-          return res.status(404).json({ message: "No pending bookings found for this user." });
-      }
+    if (bookings.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No pending bookings found for this user." });
+    }
 
-      res.status(200).json(bookings);
+    res.status(200).json(bookings);
   } catch (error) {
-      console.error("Error fetching pending bookings:", error.message);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching pending bookings:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -471,6 +493,7 @@ app.post("/login", async (req, res) => {
     }
     req.session.userId = user._id;
     req.session.user = {
+      id: user._id,
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,

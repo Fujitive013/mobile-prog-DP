@@ -9,7 +9,7 @@ import Settings from "./Screens/Settings";
 import RatingsMade from "./Screens/Settings Sub Pages/RatingsMade";
 import TrackRider from "./Screens/Settings Sub Pages/TrackRider";
 import { useNavigation } from "@react-navigation/native";
-
+import { useRoute } from "@react-navigation/native";
 const Tab = createBottomTabNavigator();
 const home = "Home";
 const book = "Book";
@@ -19,6 +19,9 @@ const ratings = "Ratings";
 const track = "Track";
 
 const Dashboard = () => {
+  const route = useRoute();
+  const { userName, userId } = route.params;
+  console.log(userId);
   const navigation = useNavigation();
   const [activeRide, setActiveRide] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -95,33 +98,39 @@ const Dashboard = () => {
         <Tab.Screen
           name={home}
           options={{ headerShown: false }}
-          component={HomeScreen}
+          component={HomeScreen}  //pass the userName to the component {HomeScreen}
+          initialParams={{ userName, userId }}
         />
         <Tab.Screen
           name={book}
           options={{ headerShown: false }}
           component={Booking}
+          initialParams={{ userName, userId }}
         />
         <Tab.Screen
           name={ratings}
           options={{ headerShown: false }}
           component={RatingsMade}
+          initialParams={{ userName, userId }}
         />
         <Tab.Screen
           name={profile}
           options={{ headerShown: false }}
           component={Profile}
+          initialParams={{ userName, userId }}
         />
         <Tab.Screen
           name={settings}
           options={{ headerShown: false }}
           component={Settings}
+          initialParams={{ userName, userId }}
         />
         {activeRide && activeRide.status === "active" && (
           <Tab.Screen
             name={track}
             options={{ headerShown: false }}
             component={TrackRider}
+            initialParams={{ userName, userId }}
           />
         )}
       </Tab.Navigator>

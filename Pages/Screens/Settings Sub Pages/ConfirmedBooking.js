@@ -18,13 +18,12 @@ export default function ConfirmedBooking() {
     const [paymentMethod, setPaymentMethod] = useState("Gcash");
     const route = useRoute();
     const fare = route.params?.fare || 0;
+    const userId = route.params?.userId;
     const destination = route.params?.destination;
     const currentAddress = route.params?.currentAddress;
     const latitude = route.params?.latitude;
     const longitude = route.params?.longitude;
-    const [userName, setUserName] = useState("");
-
-    console.log(latitude, longitude);
+    console.log(userId);
 
     const handleConfirm = async () => {
         try {
@@ -36,6 +35,7 @@ export default function ConfirmedBooking() {
 
             if (paymentMethod === "Gcash") {
                 navigation.navigate("GcashPayment", {
+                    userId: userId,
                     userName: storedName,
                     fare,
                     destination,
@@ -47,6 +47,7 @@ export default function ConfirmedBooking() {
                 const paymentStatus = "pending";
 
                 console.log("Sending request with data:", {
+                    userId: userId,
                     userName: storedName,
                     fare,
                     destination,
@@ -74,6 +75,7 @@ export default function ConfirmedBooking() {
                 console.log("Booking created successfully:", response.data);
 
                 navigation.navigate("Booked", {
+                    userId: userId,
                     passenger_name: storedName,
                     fare,
                     payment_status: paymentStatus,

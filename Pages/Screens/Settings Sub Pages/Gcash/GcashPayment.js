@@ -7,9 +7,11 @@ import {
     TextInput,
     TouchableOpacity,
     Image,
+    Alert,
 } from "react-native";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const GcashPayment = () => {
     const route = useRoute();
@@ -19,12 +21,11 @@ const GcashPayment = () => {
     const destination = route.params?.destination;
     const latitude = route.params?.latitude;
     const longitude = route.params?.longitude;
-    const userName = route.params?.userName;
-
-    console.log(latitude, longitude);
+    const userId = route.params?.userId;
 
     const [mobileNumber, setMobileNumber] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handlePayment = async () => {
         if (mobileNumber.length !== 11) {
@@ -32,11 +33,18 @@ const GcashPayment = () => {
             return;
         }
         setError("");
+        setLoading(true);
 
-        const paymentStatus = "paid";
-        const paymentMethod = "Gcash";
         try {
+            // Retrieve stored name from AsyncStorage
+            const storedName = await AsyncStorage.getItem('userName');
+
+            const paymentStatus = "paid";
+            const paymentMethod = "Gcash";
+
             console.log("Sending request with data:", {
+                userId,
+                passenger_name: storedName,
                 fare,
                 destination,
                 currentAddress,
@@ -45,17 +53,20 @@ const GcashPayment = () => {
                 latitude,
                 longitude,
             });
+
             const response = await axios.post(
                 "http://192.168.1.3:5000/user/booking",
                 {
-                    passenger_name: userName,
-                    fare,
+                    user_id: userId, // Explicitly send user_id
+                    passenger_name: storedName,
+                    fare: parseFloat(fare), // Ensure fare is a number
                     destination,
                     payment_status: paymentStatus,
                     currentAddress,
                     payment_method: paymentMethod,
                     latitude,
                     longitude,
+                    status: "pending", // Explicitly set status
                 }
             );
 
@@ -63,6 +74,8 @@ const GcashPayment = () => {
 
             // Navigate to the Booked screen with booking details
             navigation.navigate("Booked", {
+                userId,
+                passenger_name: storedName,
                 fare,
                 payment_status: paymentStatus,
                 payment_method: paymentMethod,
@@ -72,8 +85,13 @@ const GcashPayment = () => {
                 longitude,
             });
         } catch (error) {
-            console.error("Error creating booking:", error.response?.data);
-            // Handle error (you can show a message to the user, etc.)
+            console.error("Error creating booking:", error.response?.data || error.message);
+            Alert.alert(
+                "Booking Error", 
+                error.response?.data?.message || "Failed to create booking. Please try again."
+            );
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -100,8 +118,14 @@ const GcashPayment = () => {
 
             <Text style={styles.fare}>Fare: ₱{fare}</Text>
 
-            <TouchableOpacity style={styles.button} onPress={handlePayment}>
-                <Text style={styles.buttonText}>Confirm Payment</Text>
+            <TouchableOpacity 
+                style={styles.button} 
+                onPress={handlePayment}
+                disabled={loading}
+            >
+                <Text style={styles.buttonText}>
+                    {loading ? "Processing..." : "Confirm Payment"}
+                </Text>
             </TouchableOpacity>
         </View>
     );
