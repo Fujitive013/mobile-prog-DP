@@ -7,11 +7,14 @@ import { useState } from 'react';
 
 export default function BookedRideScreen() {
     const route = useRoute();
-    const { fare, paymentMethod, destination, currentAddress, latitude, longitude } = route.params;
+    const { fare, payment_method, destination, currentAddress, latitude, longitude } = route.params;
     const navigation = useNavigation(); // Initialize navigation
 
     // State to manage the modal visibility
     const [modalVisible, setModalVisible] = useState(false);
+
+    console.log(fare)
+    console.log(payment_method)
 
     const handleConfirm = () => {
         setModalVisible(true); // Show the modal
@@ -56,7 +59,7 @@ export default function BookedRideScreen() {
                 <Text style={styles.paymentTitle}>Select Payment Method</Text>
                 <View style={styles.paymentOption}>
                     <Ionicons name="checkmark-circle-outline" size={24} color="#4285F4" />
-                    <Text style={styles.paymentText}>{paymentMethod}</Text>
+                    <Text style={styles.paymentText}>{payment_method}</Text>
                 </View>
             </View>
 
@@ -211,3 +214,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
+

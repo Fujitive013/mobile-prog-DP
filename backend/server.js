@@ -41,23 +41,23 @@ app.use(
 
 // User Active Rides
 app.get("/view/activeRides", async (req, res) => {
-    const { status } = req.query;
-    try {
-        // Find bookings with active status
-        const activeRides = await Ride.find({
-            status: status || "active",
-            user_id: req.session.userId,
-        });
+  const { status } = req.query;
+  try {
+    // Find bookings with active status
+    const activeRides = await Ride.find({
+      status: status || "active",
+      user_id: req.session.userId,
+    });
 
-        if (!activeRides || activeRides.length === 0) {
-            return res.status(200).json([]); // Return empty array if no active rides
-        }
-
-        res.status(200).json(activeRides);
-    } catch (error) {
-        console.error("Error fetching active rides:", error);
-        res.status(500).json({ error: "Error fetching active rides" });
+    if (!activeRides || activeRides.length === 0) {
+      return res.status(200).json([]); // Return empty array if no active rides
     }
+
+    res.status(200).json(activeRides);
+  } catch (error) {
+    console.error("Error fetching active rides:", error);
+    res.status(500).json({ error: "Error fetching active rides" });
+  }
 });
 
 app.get("/view/completedRides", async (req, res) => {
@@ -346,6 +346,28 @@ app.post("/users", async (req, res) => {
   } catch (err) {
     console.log("Error creating user:", err);
     res.status(400).json({ error: "Error creating user." });
+  }
+});
+
+app.get("/booking/pending/:id", async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+      return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+      console.log("Querying pending bookings for user_id:", id);
+      const bookings = await Booking.find({ user_id: id, status: "pending" });
+
+      if (bookings.length === 0) {
+          return res.status(404).json({ message: "No pending bookings found for this user." });
+      }
+
+      res.status(200).json(bookings);
+  } catch (error) {
+      console.error("Error fetching pending bookings:", error.message);
+      res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
