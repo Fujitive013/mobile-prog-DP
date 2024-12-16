@@ -120,7 +120,7 @@ export default function App() {
                     {
                         params: {
                             input: input,
-                            key: "AlzaSyilaNQygZ6THEJgkJhCjE3AvACgHCE2qkM",
+                            key: "AlzaSyVN4cE66JCPQnqTFseStAzM2ZknE1wCWar",
                             components: "country:ph",
                         },
                     }
@@ -173,7 +173,7 @@ export default function App() {
                 {
                     params: {
                         address: address,
-                        key: "AlzaSyilaNQygZ6THEJgkJhCjE3AvACgHCE2qkM",
+                        key: "AlzaSyVN4cE66JCPQnqTFseStAzM2ZknE1wCWar",
                     },
                 }
             );
@@ -199,7 +199,7 @@ export default function App() {
                     params: {
                         origin: `${origin.latitude},${origin.longitude}`,
                         destination: `${destination.latitude},${destination.longitude}`,
-                        key: "AlzaSyilaNQygZ6THEJgkJhCjE3AvACgHCE2qkM",
+                        key: "AlzaSyVN4cE66JCPQnqTFseStAzM2ZknE1wCWar",
                     },
                 }
             );

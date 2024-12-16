@@ -143,7 +143,7 @@ const BookRider = () => {
     const getRouteCoordinates = async (origin, destination) => {
         try {
             const response = await fetch(
-                `https://maps.gomaps.pro/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=AlzaSyilaNQygZ6THEJgkJhCjE3AvACgHCE2qkM`
+                `https://maps.gomaps.pro/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=AlzaSyVN4cE66JCPQnqTFseStAzM2ZknE1wCWar`
             );
             const data = await response.json();
             if (data.routes.length > 0) {
