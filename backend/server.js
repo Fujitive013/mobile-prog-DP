@@ -80,6 +80,7 @@ app.get("/view/activeRides", async (req, res) => {
   }
 });
 
+// User Completed Rides
 app.get("/view/completedRides", async (req, res) => {
   const { status } = req.query;
   try {

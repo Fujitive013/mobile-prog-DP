@@ -128,7 +128,7 @@ export default function Booked() {
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: "Dashboard", params: { screen: "Home" } }],
+        routes: [{ name: "Dashboard", params: { screen: "Home", userId: userId } }],
       })
     );
   };

@@ -24,6 +24,7 @@ const Dashboard = () => {
   console.log(userId);
   const navigation = useNavigation();
   const [activeRide, setActiveRide] = useState(null);
+  const [completedRide, setCompletedRide] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [hasClickedYes, setHasClickedYes] = useState(false);
 
@@ -37,13 +38,14 @@ const Dashboard = () => {
       });
       const data = await response.json();
       if (data.length > 0 && data[0].status === "active") {
-        setActiveRide(data[0]); // Assuming you want the first active ride
+        setActiveRide(data[0]); // Set active ride
         setModalVisible(true);
       } else {
         setActiveRide(null); // Clear active ride if not active
       }
     } catch (error) {
       console.error("Error fetching active rides:", error);
+      setActiveRide(null);
     }
   };
 
@@ -56,14 +58,12 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (!hasClickedYes) {
-      const interval = setInterval(() => {
-        checkActiveRide();
-      }, 5000); // Check every 5 seconds
+    const interval = setInterval(() => {
+      checkActiveRide();
+    }, 5000); // Check every 5 seconds
 
-      return () => clearInterval(interval); // Cleanup on unmount
-    }
-  }, [hasClickedYes]);
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -101,12 +101,33 @@ const Dashboard = () => {
           component={HomeScreen}  //pass the userName to the component {HomeScreen}
           initialParams={{ userName, userId }}
         />
-        <Tab.Screen
-          name={book}
-          options={{ headerShown: false }}
-          component={Booking}
-          initialParams={{ userName, userId }}
-        />
+        {activeRide && activeRide.status === "active" ? (
+          <Tab.Screen
+            name={track}
+            options={{
+              headerShown: false,
+              tabBarLabel: 'Track',
+              tabBarIcon: ({ focused, color, size }) => (
+                <Icon name={focused ? "map" : "map-outline"} size={size} color={color} />
+              ),
+            }}
+            component={TrackRider}
+            initialParams={{ userName, userId }}
+          />
+        ) : (
+          <Tab.Screen
+            name={book}
+            options={{
+              headerShown: false,
+              tabBarLabel: 'Book',
+              tabBarIcon: ({ focused, color, size }) => (
+                <Icon name={focused ? "book" : "book-outline"} size={size} color={color} />
+              ),
+            }}
+            component={Booking}
+            initialParams={{ userName, userId }}
+          />
+        )}
         <Tab.Screen
           name={ratings}
           options={{ headerShown: false }}
@@ -125,14 +146,6 @@ const Dashboard = () => {
           component={Settings}
           initialParams={{ userName, userId }}
         />
-        {activeRide && activeRide.status === "active" && (
-          <Tab.Screen
-            name={track}
-            options={{ headerShown: false }}
-            component={TrackRider}
-            initialParams={{ userName, userId }}
-          />
-        )}
       </Tab.Navigator>
 
       <Modal
@@ -223,4 +236,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-

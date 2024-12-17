@@ -37,10 +37,22 @@ export default function RatingsMade() {
 
     const fetchRides = useCallback(async () => {
         try {
-            const response = await axios.get(
+            const completedRidesResponse = await axios.get(
                 "http://192.168.1.3:5000/view/completedRides"
             );
-            setRides(response.data);
+            const reviewsResponse = await axios.get(
+                "http://192.168.1.3:5000/user/viewReviews"
+            );
+
+            const completedRides = completedRidesResponse.data;
+            const reviews = reviewsResponse.data;
+
+            // Filter out rides that have already been reviewed
+            const availableRides = completedRides.filter(ride =>
+                !reviews.some(review => review.ride_id === ride.id || review.ride_id === ride._id)
+            );
+
+            setRides(availableRides);
         } catch (error) {
             console.error("Error fetching rides:", error);
         }
@@ -69,7 +81,7 @@ export default function RatingsMade() {
         setRefreshing(true);
         fetchReviews();
     }, [fetchReviews]);
-    
+
     const handleAddReview = async () => {
         try {
             const reviewPayload = {
@@ -86,6 +98,14 @@ export default function RatingsMade() {
             );
             Alert.alert("Success", "Review posted successfully");
             setModalVisible(false);
+
+            // Remove the rated ride from the list
+            setRides(prevRides => prevRides.filter(ride => ride.id !== selectedRideId && ride._id !== selectedRideId));
+
+            // Reset selected ride and fetch updated reviews
+            setSelectedRide(null);
+            setSelectedRideId(null);
+            setSelectedDriverID(null);
             fetchReviews();
         } catch (error) {
             console.error("Error submitting review:", error);
@@ -457,3 +477,4 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
 });
+
