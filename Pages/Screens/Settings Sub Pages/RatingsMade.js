@@ -113,7 +113,12 @@ export default function RatingsMade() {
                 )
             );
 
-            // Reset selected ride and fetch updated reviews
+            // Reset form and selected ride
+            setNewReview({
+                rideId: "",
+                rating: "",
+                comment: "",
+            });
             setSelectedRide(null);
             setSelectedRideId(null);
             setSelectedDriverID(null);
@@ -122,6 +127,17 @@ export default function RatingsMade() {
             console.error("Error submitting review:", error);
             Alert.alert("Error", "Failed to post review. Please try again.");
         }
+    };
+
+    const resetForm = () => {
+        setNewReview({
+            rideId: "",
+            rating: "",
+            comment: "",
+        });
+        setSelectedRide(null);
+        setSelectedRideId(null);
+        setSelectedDriverID(null);
     };
 
     const renderRideItem = ({ item }) => (
@@ -213,7 +229,10 @@ export default function RatingsMade() {
                 animationType="slide"
                 transparent={true}
                 visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                    resetForm();
+                }}
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
@@ -293,7 +312,10 @@ export default function RatingsMade() {
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={styles.cancelButton}
-                                        onPress={() => setModalVisible(false)}
+                                        onPress={() => {
+                                            setModalVisible(false);
+                                            resetForm();
+                                        }}
                                     >
                                         <Text style={styles.cancelButtonText}>
                                             Cancel
@@ -488,3 +510,4 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
 });
+
