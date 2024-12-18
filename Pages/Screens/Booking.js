@@ -32,7 +32,6 @@ export default function App() {
     const { userId } = route.params;
     console.log(userId);
 
-
     const [mapRegion, setMapRegion] = useState({
         latitude: 8.4542,
         longitude: 124.6319,

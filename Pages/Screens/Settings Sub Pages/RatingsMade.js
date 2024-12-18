@@ -38,18 +38,23 @@ export default function RatingsMade() {
     const fetchRides = useCallback(async () => {
         try {
             const completedRidesResponse = await axios.get(
-                "http://192.168.1.3:5000/view/completedRides"
+                "http://192.168.18.24:5000/view/completedRides"
             );
             const reviewsResponse = await axios.get(
-                "http://192.168.1.3:5000/user/viewReviews"
+                "http://192.168.18.24:5000/user/viewReviews"
             );
 
             const completedRides = completedRidesResponse.data;
             const reviews = reviewsResponse.data;
 
             // Filter out rides that have already been reviewed
-            const availableRides = completedRides.filter(ride =>
-                !reviews.some(review => review.ride_id === ride.id || review.ride_id === ride._id)
+            const availableRides = completedRides.filter(
+                (ride) =>
+                    !reviews.some(
+                        (review) =>
+                            review.ride_id === ride.id ||
+                            review.ride_id === ride._id
+                    )
             );
 
             setRides(availableRides);
@@ -61,7 +66,7 @@ export default function RatingsMade() {
     const fetchReviews = useCallback(async () => {
         try {
             const response = await axios.get(
-                "http://192.168.1.3:5000/user/viewReviews"
+                "http://192.168.18.24:5000/user/viewReviews"
             );
             setReviews(response.data);
         } catch (error) {
@@ -93,14 +98,20 @@ export default function RatingsMade() {
             };
 
             await axios.post(
-                "http://192.168.1.3:5000/user/makeReviews",
+                "http://192.168.18.24:5000/user/makeReviews",
                 reviewPayload
             );
             Alert.alert("Success", "Review posted successfully");
             setModalVisible(false);
 
             // Remove the rated ride from the list
-            setRides(prevRides => prevRides.filter(ride => ride.id !== selectedRideId && ride._id !== selectedRideId));
+            setRides((prevRides) =>
+                prevRides.filter(
+                    (ride) =>
+                        ride.id !== selectedRideId &&
+                        ride._id !== selectedRideId
+                )
+            );
 
             // Reset selected ride and fetch updated reviews
             setSelectedRide(null);
@@ -477,4 +488,3 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
 });
-

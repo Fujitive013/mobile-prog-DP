@@ -42,7 +42,7 @@ const BookRider = () => {
         try {
             // Update the ride status to "accepted"
             await axios.put(
-                `http://192.168.1.3:5000/bookings/${rideDetails.bookingId}`,
+                `http://192.168.18.24:5000/bookings/${rideDetails.bookingId}`,
                 {
                     status: "accepted",
                 }
@@ -69,7 +69,7 @@ const BookRider = () => {
             };
 
             const response = await axios.post(
-                `http://192.168.1.3:5000/rides`, // Replace with your API endpoint
+                `http://192.168.18.24:5000/rides`, // Replace with your API endpoint
                 ridePayload
             );
 
@@ -104,7 +104,7 @@ const BookRider = () => {
                         try {
                             // Update the ride status to "completed"
                             const response = await axios.put(
-                                `http://192.168.1.3:5000/rides/${rideDetails.user_id}`,
+                                `http://192.168.18.24:5000/rides/${rideDetails.user_id}`,
                                 { status: "completed" }
                             );
 
@@ -305,9 +305,8 @@ const BookRider = () => {
                         }}
                         title="Your Location"
                         description="This is where your location."
-                        image={require('../../../Images/motorbike.png')}
-                    >
-                    </Marker>
+                        image={require("../../../Images/motorbike.png")}
+                    ></Marker>
                 )}
 
                 {/* Show booking-related markers only if there's a ride */}
@@ -318,9 +317,8 @@ const BookRider = () => {
                                 coordinate={pickupCoords}
                                 title="Pickup Location"
                                 description={rideDetails.pickupLocation}
-                                image={require('../../../Images/userlocation.png')}
-                            >
-                            </Marker>
+                                image={require("../../../Images/userlocation.png")}
+                            ></Marker>
                         )}
 
                         {destinationCoords && (
@@ -328,9 +326,8 @@ const BookRider = () => {
                                 coordinate={destinationCoords}
                                 title="Destination"
                                 description={rideDetails.destination}
-                                image={require('../../../Images/destination.png')}
-                            >
-                            </Marker>
+                                image={require("../../../Images/destination.png")}
+                            ></Marker>
                         )}
 
                         {routeToPickup.length > 0 && (

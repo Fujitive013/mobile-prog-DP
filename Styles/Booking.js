@@ -108,24 +108,26 @@ export default function Booking() {
     };
 
     useEffect(() => {
-      const fetchDriverLocation = async () => {
-          try {
-              const response = await axios.get(`http://192.168.1.3:5000/rides/${rideId}`); // Fetch ride details including driver's location
-              if (response.data) {
-                  setDriverLocation({
-                      latitude: response.data.latitude,
-                      longitude: response.data.longitude,
-                  });
-              }
-          } catch (error) {
-              console.error("Error fetching driver's location:", error);
-          }
-      };
-  
-      const intervalId = setInterval(fetchDriverLocation, 5000); // Fetch every 5 seconds
-  
-      return () => clearInterval(intervalId); // Cleanup on unmount
-  }, [rideId]);
+        const fetchDriverLocation = async () => {
+            try {
+                const response = await axios.get(
+                    `http://192.168.18.24:5000/rides/${rideId}`
+                ); // Fetch ride details including driver's location
+                if (response.data) {
+                    setDriverLocation({
+                        latitude: response.data.latitude,
+                        longitude: response.data.longitude,
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching driver's location:", error);
+            }
+        };
+
+        const intervalId = setInterval(fetchDriverLocation, 5000); // Fetch every 5 seconds
+
+        return () => clearInterval(intervalId); // Cleanup on unmount
+    }, [rideId]);
 
     useEffect(() => {
         userLocation();

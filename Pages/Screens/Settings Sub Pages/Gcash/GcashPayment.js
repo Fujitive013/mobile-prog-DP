@@ -37,7 +37,7 @@ const GcashPayment = () => {
 
         try {
             // Retrieve stored name from AsyncStorage
-            const storedName = await AsyncStorage.getItem('userName');
+            const storedName = await AsyncStorage.getItem("userName");
 
             const paymentStatus = "paid";
             const paymentMethod = "Gcash";
@@ -55,7 +55,7 @@ const GcashPayment = () => {
             });
 
             const response = await axios.post(
-                "http://192.168.1.3:5000/user/booking",
+                "http://192.168.18.24:5000/user/booking",
                 {
                     user_id: userId, // Explicitly send user_id
                     passenger_name: storedName,
@@ -72,8 +72,11 @@ const GcashPayment = () => {
 
             console.log("Booking created successfully:", response.data);
 
+            const booking_id = response.data.booking._id;
+
             // Navigate to the Booked screen with booking details
             navigation.navigate("Booked", {
+                booking_id,
                 userId,
                 passenger_name: storedName,
                 fare,
@@ -85,10 +88,14 @@ const GcashPayment = () => {
                 longitude,
             });
         } catch (error) {
-            console.error("Error creating booking:", error.response?.data || error.message);
+            console.error(
+                "Error creating booking:",
+                error.response?.data || error.message
+            );
             Alert.alert(
-                "Booking Error", 
-                error.response?.data?.message || "Failed to create booking. Please try again."
+                "Booking Error",
+                error.response?.data?.message ||
+                    "Failed to create booking. Please try again."
             );
         } finally {
             setLoading(false);
@@ -118,8 +125,8 @@ const GcashPayment = () => {
 
             <Text style={styles.fare}>Fare: ₱{fare}</Text>
 
-            <TouchableOpacity 
-                style={styles.button} 
+            <TouchableOpacity
+                style={styles.button}
                 onPress={handlePayment}
                 disabled={loading}
             >

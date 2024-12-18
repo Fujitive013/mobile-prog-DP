@@ -59,7 +59,7 @@ export default function ConfirmedBooking() {
                 });
 
                 const response = await axios.post(
-                    "http://192.168.1.3:5000/user/booking",
+                    "http://192.168.18.24:5000/user/booking",
                     {
                         passenger_name: storedName,
                         fare,
@@ -73,8 +73,10 @@ export default function ConfirmedBooking() {
                 );
 
                 console.log("Booking created successfully:", response.data);
+                const booking_id = response.data.booking._id;
 
                 navigation.navigate("Booked", {
+                    booking_id,
                     userId: userId,
                     passenger_name: storedName,
                     fare,

@@ -24,7 +24,6 @@ const HomeRider = () => {
     const [userName, setUserName] = useState("");
     const navigation = useNavigation();
 
-
     useEffect(() => {
         const fetchUserName = async () => {
             try {
@@ -45,7 +44,7 @@ const HomeRider = () => {
         const fetchReviews = async () => {
             try {
                 const response = await axios.get(
-                    "http://192.168.1.3:5000/driver/viewReviews"
+                    "http://192.168.18.24:5000/driver/viewReviews"
                 );
                 setReviews(response.data);
 
@@ -65,7 +64,7 @@ const HomeRider = () => {
         const fetchRides = async () => {
             try {
                 const response = await axios.get(
-                    "http://192.168.1.3:5000/driver/completedRides"
+                    "http://192.168.18.24:5000/driver/completedRides"
                 );
 
                 const rides = response.data;
@@ -101,7 +100,7 @@ const HomeRider = () => {
     const fetchPendingBookings = async () => {
         try {
             const response = await axios.get(
-                "http://192.168.1.3:5000/bookings?status=pending"
+                "http://192.168.18.24:5000/bookings?status=pending"
             );
             const formattedRequests = response.data.map((booking) => ({
                 id: booking._id,

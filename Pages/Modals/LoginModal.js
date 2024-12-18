@@ -21,7 +21,7 @@ const LoginModal = ({ visible, onClose }) => {
     const handleLogin = async () => {
         try {
             const response = await axios.post(
-                "http://192.168.1.3:5000/login",
+                "http://192.168.18.24:5000/login",
                 { email, password },
                 { withCredentials: true }
             );
@@ -52,7 +52,10 @@ const LoginModal = ({ visible, onClose }) => {
 
                 // Navigate based on user role without storing it
                 if (userRole === "passenger") {
-                    navigation.navigate("Dashboard", { userName: userName, userId: userId });
+                    navigation.navigate("Dashboard", {
+                        userName: userName,
+                        userId: userId,
+                    });
                 } else if (userRole === "driver") {
                     navigation.navigate("DashboardDriver");
                 }

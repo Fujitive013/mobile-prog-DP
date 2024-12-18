@@ -13,14 +13,19 @@ const TrackRider = () => {
 
     const fetchActiveRide = async () => {
         try {
-            const response = await axios.get("http://192.168.1.3:5000/view/activeRides");
+            const response = await axios.get(
+                "http://192.168.18.24:5000/view/activeRides"
+            );
             if (response.data && response.data.length > 0) {
                 setActiveRide(response.data[0]);
             } else {
                 setActiveRide(null);
             }
         } catch (error) {
-            console.log("Error fetching active ride:", error.response ? error.response.data : error.message);
+            console.log(
+                "Error fetching active ride:",
+                error.response ? error.response.data : error.message
+            );
             setActiveRide(null);
         } finally {
             setLoading(false); // Set loading to false after fetching
@@ -29,15 +34,21 @@ const TrackRider = () => {
 
     const fetchCurrentLocation = async () => {
         try {
-            const response = await axios.get("http://192.168.1.3:5000/driver/getCurrentLocation");
+            const response = await axios.get(
+                "http://192.168.18.24:5000/driver/getCurrentLocation"
+            );
             console.log("Current Location:", response.data);
-            if (response.data && response.data.latitude && response.data.longitude) {
+            if (
+                response.data &&
+                response.data.latitude &&
+                response.data.longitude
+            ) {
                 const newLocation = {
                     latitude: response.data.latitude,
                     longitude: response.data.longitude,
                 };
                 setCurrentLocation(newLocation);
-                
+
                 setMapRegion({
                     latitude: newLocation.latitude,
                     longitude: newLocation.longitude,
@@ -48,15 +59,18 @@ const TrackRider = () => {
                 setCurrentLocation(null);
             }
         } catch (error) {
-            console.log("Error fetching current location:", error.response ? error.response.data : error.message);
+            console.log(
+                "Error fetching current location:",
+                error.response ? error.response.data : error.message
+            );
             setCurrentLocation(null);
         }
     };
 
     const getUserLocation = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            console.log('Permission to access location was denied');
+        if (status !== "granted") {
+            console.log("Permission to access location was denied");
             return;
         }
 
@@ -92,23 +106,22 @@ const TrackRider = () => {
     if (!activeRide) {
         return (
             <View style={styles.container}>
-                <Text style={styles.noRideText}>You haven't booked a ride yet.</Text>
+                <Text style={styles.noRideText}>
+                    You haven't booked a ride yet.
+                </Text>
             </View>
         );
     }
 
     return (
         <View style={styles.container}>
-            <MapView
-                style={styles.map}
-                region={mapRegion}
-            >
+            <MapView style={styles.map} region={mapRegion}>
                 {currentLocation && (
                     <Marker
                         coordinate={currentLocation}
                         title="Rider's Location"
                         description="This is where the rider is currently located."
-                        image={require('../../../Images/motorbike.png')} // Replace with the path to your image
+                        image={require("../../../Images/motorbike.png")} // Replace with the path to your image
                     />
                 )}
                 {userLocation && (
@@ -116,7 +129,7 @@ const TrackRider = () => {
                         coordinate={userLocation}
                         title="Your Location"
                         description="This is your current location."
-                        image={require('../../../Images/userlocation.png')}
+                        image={require("../../../Images/userlocation.png")}
                     />
                 )}
             </MapView>
@@ -127,22 +140,22 @@ const TrackRider = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
     },
     map: {
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
     },
     noRideText: {
         fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        color: '#e74c3c',
+        fontWeight: "bold",
+        textAlign: "center",
+        color: "#e74c3c",
         padding: 15,
         borderRadius: 10,
         margin: 10,
-        shadowColor: '#000',
+        shadowColor: "#000",
         shadowOffset: {
             width: 0,
             height: 2,
