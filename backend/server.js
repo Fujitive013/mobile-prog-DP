@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "../.env" });
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
@@ -380,7 +380,7 @@ app.get("/booking/pending/:id", async (req, res) => {
 
     try {
         console.log("Querying pending bookings for user_id:", id);
-        const bookings = await Booking.find({ user_id: id, status: "pending" });
+        const bookings = await Booking.find({ booking_id: id, status: "pending" });
 
         if (bookings.length === 0) {
             return res

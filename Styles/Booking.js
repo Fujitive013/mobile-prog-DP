@@ -111,7 +111,7 @@ export default function Booking() {
         const fetchDriverLocation = async () => {
             try {
                 const response = await axios.get(
-                    `http://192.168.18.24:5000/rides/${rideId}`
+                    `http://192.168.1.3:5000/rides/${rideId}`
                 ); // Fetch ride details including driver's location
                 if (response.data) {
                     setDriverLocation({

@@ -29,8 +29,9 @@ export default function App() {
     const [fare, setFare] = useState(null);
     const [routeCoordinates, setRouteCoordinates] = useState([]);
     const route = useRoute();
-    const { userId } = route.params;
-    console.log(userId);
+    const { userId, booking_id } = route.params;
+    console.log("User ID From Booking", userId)
+    console.log("booking_id From Booking", booking_id)
 
     const [mapRegion, setMapRegion] = useState({
         latitude: 8.4542,

@@ -8,6 +8,7 @@ import {
     Image,
     Animated,
     Alert,
+    ActivityIndicator,
 } from "react-native";
 import MapView, { Marker, PROVIDER_DEFAULT, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
@@ -35,14 +36,20 @@ const BookRider = () => {
     const [latitude, setLatitude] = useState(rideDetails?.latitude);
     const [longitude, setLongitude] = useState(rideDetails?.longitude);
     const navigation = useNavigation();
+    const [isLoading, setIsLoading] = useState(true);
+    const [isRideStarted, setIsRideStarted] = useState(false); // Added state variable
 
     console.log(latitude, longitude);
     console.log(rideDetails);
     const startRide = async () => {
+        if (isRideStarted) return; // Prevent multiple clicks
+        setIsRideStarted(true); // Disable the button
+        setIsLoading(true); // Show loading indicator
+
         try {
             // Update the ride status to "accepted"
             await axios.put(
-                `http://192.168.18.24:5000/bookings/${rideDetails.bookingId}`,
+                `http://192.168.1.3:5000/bookings/${rideDetails.bookingId}`,
                 {
                     status: "accepted",
                 }
@@ -54,33 +61,37 @@ const BookRider = () => {
                 driver_name: rideDetails.driver_name,
                 passengerName: rideDetails.passengerName,
                 user_id: rideDetails.user_id,
-                booking_id: rideDetails.bookingId, // Booking ID from rideDetails
-                pickup_location: rideDetails.pickupLocation, // Pickup location
-                destination: rideDetails.destination, // Destination
-                fare: rideDetails.fare, // Ride fare
-                status: "active", // Start the ride with "in-progress" status
-                created_at: new Date().toISOString(), // Record the current time as ride start time
-                updated_at: new Date().toISOString(), // Record the current time as ride start time
+                booking_id: rideDetails.bookingId,
+                pickup_location: rideDetails.pickupLocation,
+                destination: rideDetails.destination,
+                fare: rideDetails.fare,
+                status: "active",
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
                 current_location: {
-                    latitude: location.coords.latitude, // Corrected access
-                    longitude: location.coords.longitude, // Corrected access
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
                 },
                 ride_rating: null,
             };
 
             const response = await axios.post(
-                `http://192.168.18.24:5000/rides`, // Replace with your API endpoint
+                `http://192.168.1.3:5000/rides`,
                 ridePayload
             );
 
             if (response.status === 201) {
                 console.log("Ride started successfully:", response.data);
-                setRideStarted(true); // Set rideStarted to true when the ride starts
+                setRideStarted(true);
             } else {
                 console.error("Failed to start the ride:", response.statusText);
+                setIsRideStarted(false); // Reset if there's an error
             }
         } catch (error) {
             console.error("Error starting the ride:", error.message);
+            setIsRideStarted(false); // Reset if there's an error
+        } finally {
+            setIsLoading(false); // Hide loading indicator
         }
     };
 
@@ -104,7 +115,7 @@ const BookRider = () => {
                         try {
                             // Update the ride status to "completed"
                             const response = await axios.put(
-                                `http://192.168.18.24:5000/rides/${rideDetails.bookingId}`,
+                                `http://192.168.1.3:5000/rides/${rideDetails.bookingId}`,
                                 { status: "completed" }
                             );
 
@@ -233,8 +244,14 @@ const BookRider = () => {
                             longitude: destinationGeocode[0].longitude,
                         });
                     }
+
+                    // Set a timeout to change isLoading to false after 3 seconds
+                    setTimeout(() => {
+                        setIsLoading(false);
+                    }, 3000);
                 } catch (error) {
                     console.error("Geocoding error:", error);
+                    setIsLoading(false);
                 }
             }
         })();
@@ -382,13 +399,18 @@ const BookRider = () => {
                                         : "#2ed573",
                                 },
                             ]}
-                            onPress={rideStarted ? locationArrived : startRide} // Call locationArrived if rideStarted is true, otherwise call startRide
+                            onPress={rideStarted ? locationArrived : startRide}
+                            disabled={isLoading}
                         >
-                            <Text style={styles.startRideText}>
-                                {rideStarted
-                                    ? "LOCATION ARRIVED"
-                                    : "START RIDE"}
-                            </Text>
+                            {isLoading ? (
+                                <ActivityIndicator color="white" />
+                            ) : (
+                                <Text style={styles.startRideText}>
+                                    {rideStarted
+                                        ? "LOCATION ARRIVED"
+                                        : "START RIDE"}
+                                </Text>
+                            )}
                         </TouchableOpacity>
                     </View>
 
@@ -515,6 +537,9 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 20,
         borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: 40, // Add this to maintain consistent button height
     },
     startRideText: {
         color: "white",
@@ -564,3 +589,4 @@ const styles = StyleSheet.create({
 });
 
 export default BookRider;
+
