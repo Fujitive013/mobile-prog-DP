@@ -262,7 +262,7 @@ app.put("/rides/:id", async (req, res) => {
     try {
         // Check if the ride exists using booking_id instead of _id
         const ride = await Ride.findOneAndUpdate(
-            { user_id: id }, // Match by booking_id
+            { booking_id: id }, // Match by booking_id
             { status: "completed" },
             { new: true }
         );

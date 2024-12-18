@@ -98,13 +98,13 @@ const BookRider = () => {
                     onPress: async () => {
                         console.log(
                             "Ride Details Booking ID:",
-                            rideDetails.user_id
+                            rideDetails.bookingId
                         );
                         console.log("Driver Name:", rideDetails.driver_name);
                         try {
                             // Update the ride status to "completed"
                             const response = await axios.put(
-                                `http://192.168.18.24:5000/rides/${rideDetails.user_id}`,
+                                `http://192.168.18.24:5000/rides/${rideDetails.bookingId}`,
                                 { status: "completed" }
                             );
 
