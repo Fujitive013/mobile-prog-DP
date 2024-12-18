@@ -48,15 +48,16 @@ const HomeRider = () => {
                 );
                 setReviews(response.data);
 
-                // Calculate the average rating
-                if (response.data.length > 0) {
-                    const totalRating = response.data.reduce(
-                        (sum, review) => sum + review.rating,
-                        0
-                    );
-                    const avgRating = totalRating / response.data.length;
-                    setAverageRating(avgRating);
-                }
+                    // Start of Selection
+                    // Calculate the average rating
+                    if (response.data.length > 0) {
+                        const totalRating = response.data.reduce(
+                            (sum, review) => sum + review.rating,
+                            0
+                        );
+                        const avgRating = parseFloat((totalRating / response.data.length).toFixed(2));
+                        setAverageRating(avgRating);
+                    }
             } catch (error) {
                 console.error("Error fetching reviews:", error);
             }
@@ -71,14 +72,17 @@ const HomeRider = () => {
                 setRides(rides);
                 setCompletedRidesCount(rides.length); // Count completed rides
 
-                // Calculate the total earnings and average rating
-                if (rides.length > 0) {
-                    const totalEarnings = rides.reduce(
-                        (sum, ride) => sum + ride.fare,
-                        0
-                    );
-                    setTotalEarnings(totalEarnings);
-                }
+                    // Start of Selection
+                    // Calculate the total earnings and average rating
+                    if (rides.length > 0) {
+                        const totalEarnings = parseFloat(
+                            rides.reduce(
+                                (sum, ride) => sum + ride.fare,
+                                0
+                            ).toFixed(2)
+                        );
+                        setTotalEarnings(totalEarnings);
+                    }
             } catch (error) {
                 console.error("Error fetching rides:", error);
             }
