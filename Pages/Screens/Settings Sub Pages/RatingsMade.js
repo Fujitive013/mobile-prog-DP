@@ -5,13 +5,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  ActivityIndicator,
+  FlatList,
   Modal,
   TextInput,
-  FlatList,
   Alert,
-  RefreshControl,
   Dimensions,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -21,13 +20,11 @@ const { width, height } = Dimensions.get("window");
 
 export default function RatingsMade() {
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRide, setSelectedRide] = useState(null);
   const [selectedDriverID, setSelectedDriverID] = useState(null);
   const [newReview, setNewReview] = useState({
-    rideId: "",
     rating: "",
     comment: "",
   });
@@ -47,7 +44,6 @@ export default function RatingsMade() {
       const completedRides = completedRidesResponse.data;
       const reviews = reviewsResponse.data;
 
-      // Filter out rides that have already been reviewed
       const availableRides = completedRides.filter(
         (ride) =>
           !reviews.some(
@@ -71,7 +67,6 @@ export default function RatingsMade() {
     } catch (error) {
       console.error("Error fetching reviews:", error);
     } finally {
-      setLoading(false);
       setRefreshing(false);
     }
   }, []);
@@ -103,22 +98,13 @@ export default function RatingsMade() {
       Alert.alert("Success", "Review posted successfully");
       setModalVisible(false);
 
-      // Remove the rated ride from the list
       setRides((prevRides) =>
         prevRides.filter(
           (ride) => ride.id !== selectedRideId && ride._id !== selectedRideId
         )
       );
 
-      // Reset form and selected ride
-      setNewReview({
-        rideId: "",
-        rating: "",
-        comment: "",
-      });
-      setSelectedRide(null);
-      setSelectedRideId(null);
-      setSelectedDriverID(null);
+      resetForm();
       fetchReviews();
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -128,7 +114,6 @@ export default function RatingsMade() {
 
   const resetForm = () => {
     setNewReview({
-      rideId: "",
       rating: "",
       comment: "",
     });
@@ -146,58 +131,37 @@ export default function RatingsMade() {
         setSelectedDriverID(item.driver_id || item.driver_id);
       }}
     >
-      <Text style={styles.rideText}>Ride with: {item.driver_name}</Text>
+      <Text style={styles.rideText}>Rate Driver: {item.driver_name}</Text>
     </TouchableOpacity>
   );
 
-  const renderReviewItem = ({ item }) => {
-    console.log("Review item:", item);
-    return (
-      <View style={styles.reviewCard}>
-        <Text style={styles.riderId}>
-          Driver Name: {item.driver_name || "Unknown Driver"}
-        </Text>
-        <View style={styles.ratingContainer}>
-          <Text style={styles.rating}>Rating: {item.rating || "N/A"}/5</Text>
-          <View style={styles.stars}>
-            {[...Array(5)].map((_, index) => (
-              <Ionicons
-                key={index}
-                name={index < (item.rating || 0) ? "star" : "star-outline"}
-                size={16}
-                color="#FFD700"
-              />
-            ))}
-          </View>
-        </View>
-        <Text style={styles.comment}>
+  const renderReviewItem = ({ item }) => (
+    <View style={styles.reviewCard}>
+      <Text style={styles.reviewerName}>
+        {item.driver_name || "Unknown Driver"}
+      </Text>
+      <View style={styles.ratingContainer}>
+        <Text style={styles.ratingText}>{item.rating || "N/A"}/5</Text>
+        {[...Array(5)].map((_, index) => (
           <Ionicons
-            name="chatbubble-ellipses-outline"
-            size={14}
-            color="#7f8c8d"
-          />{" "}
-          Comment: {item.comment || "No comment"}
-        </Text>
-        <Text style={styles.dateText}>
-          <Ionicons name="calendar-outline" size={14} color="#bdc3c7" />{" "}
-          {new Date(item.created_at).toLocaleDateString()}
-        </Text>
+            key={index}
+            name={index < (item.rating || 0) ? "star" : "star-outline"}
+            size={16}
+            color="#FFD700"
+          />
+        ))}
       </View>
-    );
-  };
-
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#3498db" />
-      </SafeAreaView>
-    );
-  }
+      <Text style={styles.reviewComment}>{item.comment || "No comment"}</Text>
+      <Text style={styles.reviewDate}>
+        {new Date(item.created_at).toLocaleDateString()}
+      </Text>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Your Ratings</Text>
+        <Text style={styles.headerTitle}>Ratings</Text>
       </View>
       <FlatList
         data={reviews}
@@ -205,7 +169,10 @@ export default function RatingsMade() {
         keyExtractor={(item) => item.id || item._id}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
-          <Text style={styles.noReviewsText}>No reviews available.</Text>
+          <View style={styles.emptyState}>
+            <Ionicons name="star-outline" size={64} color="#ccc" />
+            <Text style={styles.emptyStateText}>No ratings available.</Text>
+          </View>
         }
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -240,12 +207,17 @@ export default function RatingsMade() {
               renderItem={renderRideItem}
               keyExtractor={(item) => item.id || item._id}
               style={styles.rideList}
+              ListEmptyComponent={
+                <Text style={styles.noRidesText}>No rides available for review</Text>
+              }
             />
-            {rides.length === 0 && (
-              <Text style={styles.noRidesText}> No rides found</Text>
-            )}
             {selectedRide && (
               <>
+                <View style={styles.selectedRideInfo}>
+                  <Text style={styles.selectedRideText}>
+                    Selected Driver: {selectedRide.driver_name}
+                  </Text>
+                </View>
                 <View style={styles.ratingInput}>
                   <Text style={styles.ratingLabel}>Rating:</Text>
                   <View style={styles.starRating}>
@@ -313,20 +285,26 @@ export default function RatingsMade() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9fafc", // Softer background color for better contrast
+    backgroundColor: "#f8f9fa",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#e5e5e5",
+    borderBottomColor: "#e0e0e0",
+    backgroundColor: "#fff",
+  },
+  backButton: {
+    marginRight: 16,
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#2c3e50",
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingHorizontal: width * 0.05,
+    paddingTop: height * 0.02,
+    paddingBottom: height * 0.01,
+    color: "#1a1a1a",
   },
   listContent: {
     padding: 16,
@@ -336,16 +314,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 5,
+    elevation: 2,
   },
-  riderId: {
+  reviewerName: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#3498db",
+    color: "#1a1a1a",
     marginBottom: 8,
   },
   ratingContainer: {
@@ -353,37 +327,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 8,
   },
-  rating: {
+  ratingText: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#f1c40f",
     marginRight: 8,
   },
-  stars: {
-    flexDirection: "row",
-  },
-  comment: {
+  reviewComment: {
     fontSize: 14,
-    color: "#7f8c8d",
+    color: "#666",
     marginBottom: 8,
     lineHeight: 20,
   },
-  dateText: {
+  reviewDate: {
     fontSize: 12,
-    color: "#bdc3c7",
-    marginTop: 4,
+    color: "#999",
   },
-  noReviewsText: {
-    textAlign: "center",
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 32,
+  },
+  emptyStateText: {
+    marginTop: 16,
     fontSize: 16,
-    color: "#7f8c8d",
-    marginTop: 20,
+    color: "#666",
+    textAlign: "center",
   },
   fab: {
     position: "absolute",
     right: 20,
     bottom: 20,
-    backgroundColor: "#3498db",
+    backgroundColor: "#007AFF",
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -406,37 +382,34 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 16,
     padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 6,
+    maxHeight: "80%",
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#2c3e50",
+    color: "#1a1a1a",
     marginBottom: 16,
   },
   rideList: {
     maxHeight: 200,
     marginBottom: 16,
   },
-  noRidesText: {
-    textAlign: "center",
-    fontSize: 14,
-    color: "#7f8c8d",
-  },
   rideItem: {
     padding: 12,
-    backgroundColor: "#ecf0f1",
+    backgroundColor: "#f0f0f0",
     borderRadius: 8,
     marginBottom: 10,
   },
   rideText: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#34495e",
+    color: "#1a1a1a",
+  },
+  noRidesText: {
+    textAlign: "center",
+    fontSize: 14,
+    color: "#666",
+    fontStyle: "italic",
   },
   ratingInput: {
     marginBottom: 16,
@@ -444,7 +417,7 @@ const styles = StyleSheet.create({
   ratingLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#34495e",
+    color: "#1a1a1a",
     marginBottom: 8,
   },
   starRating: {
@@ -453,20 +426,20 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#dcdcdc",
+    borderColor: "#e0e0e0",
     borderRadius: 8,
     padding: 12,
     fontSize: 14,
-    color: "#2c3e50",
+    color: "#1a1a1a",
     marginBottom: 16,
-    backgroundColor: "#f9fafc",
+    backgroundColor: "#f8f9fa",
   },
   modalButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
   submitButton: {
-    backgroundColor: "#2ecc71",
+    backgroundColor: "#007AFF",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -477,7 +450,7 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
   cancelButton: {
-    backgroundColor: "#e74c3c",
+    backgroundColor: "#FF3B30",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -487,4 +460,16 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#ffffff",
   },
+  selectedRideInfo: {
+    backgroundColor: '#e8f0fe',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  selectedRideText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#1a1a1a',
+  },
 });
+
