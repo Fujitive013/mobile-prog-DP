@@ -49,7 +49,7 @@ const BookRider = () => {
         try {
             // Update the ride status to "accepted"
             await axios.put(
-                `http://192.168.1.3:5000/bookings/${rideDetails.bookingId}`,
+                `http://192.168.18.24:5000/bookings/${rideDetails.bookingId}`,
                 {
                     status: "accepted",
                 }
@@ -76,7 +76,7 @@ const BookRider = () => {
             };
 
             const response = await axios.post(
-                `http://192.168.1.3:5000/rides`,
+                `http://192.168.18.24:5000/rides`,
                 ridePayload
             );
 
@@ -115,7 +115,7 @@ const BookRider = () => {
                         try {
                             // Update the ride status to "completed"
                             const response = await axios.put(
-                                `http://192.168.1.3:5000/rides/${rideDetails.bookingId}`,
+                                `http://192.168.18.24:5000/rides/${rideDetails.bookingId}`,
                                 { status: "completed" }
                             );
 
@@ -537,8 +537,8 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 20,
         borderRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
         minHeight: 40, // Add this to maintain consistent button height
     },
     startRideText: {
@@ -589,4 +589,3 @@ const styles = StyleSheet.create({
 });
 
 export default BookRider;
-

@@ -14,7 +14,7 @@ const TrackRider = () => {
     const fetchActiveRide = async () => {
         try {
             const response = await axios.get(
-                "http://192.168.1.3:5000/view/activeRides"
+                "http://192.168.18.24:5000/view/activeRides"
             );
             if (response.data && response.data.length > 0) {
                 setActiveRide(response.data[0]);
@@ -35,7 +35,7 @@ const TrackRider = () => {
     const fetchCurrentLocation = async () => {
         try {
             const response = await axios.get(
-                "http://192.168.1.3:5000/driver/getCurrentLocation"
+                "http://192.168.18.24:5000/driver/getCurrentLocation"
             );
             console.log("Current Location:", response.data);
             if (

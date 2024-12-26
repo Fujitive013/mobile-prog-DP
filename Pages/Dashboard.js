@@ -31,7 +31,7 @@ const Dashboard = () => {
     const checkActiveRide = async () => {
         try {
             const response = await fetch(
-                "http://192.168.1.3:5000/view/activeRides",
+                "http://192.168.18.24:5000/view/activeRides",
                 {
                     method: "GET",
                     headers: {

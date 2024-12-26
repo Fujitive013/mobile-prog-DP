@@ -55,7 +55,7 @@ const GcashPayment = () => {
             });
 
             const response = await axios.post(
-                "http://192.168.1.3:5000/user/booking",
+                "http://192.168.18.24:5000/user/booking",
                 {
                     user_id: userId, // Explicitly send user_id
                     passenger_name: storedName,
