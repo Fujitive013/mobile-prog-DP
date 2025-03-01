@@ -97,7 +97,7 @@ export default function App() {
 
     if (input.length > 2) {
       try {
-        const response = await axios.get('https://maps.gomaps.pro/maps/api/place/autocomplete/json', {
+        const response = await axios.get('https://maps.googleapis.com/maps/api/place/autocomplete/json', {
           params: {
             input: input,
             key: 'AlzaSy4K5kA7hcxUL4UzwGodXFs2gp4Hnqg56OU', // Replace with your API key
